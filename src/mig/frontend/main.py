@@ -1,0 +1,348 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import filedialog as fd
+import customtkinter as ctk
+import json
+from functools import partial
+import difflib
+from mig.backend.bottles import BottleClosingTimes
+
+from mig.backend.configurationhandler import ConfigurationFile
+from mig.backend.dhsipcaller import DSHIPHeader
+from mig.backend.processing import BatchProcessing
+from mig.backend.runseasave import RunSeasave
+
+
+def make_draggable(widget):
+    widget.bind("<Button-1>", on_drag_start)
+    widget.bind("<B1-Motion>", on_drag_motion)
+
+
+def on_drag_start(event):
+    widget = event.widget
+    widget._drag_start_x = event.x
+    widget._drag_start_y = event.y
+
+
+def on_drag_motion(event):
+    widget = event.widget
+    x = widget.winfo_x() - widget._drag_start_x + event.x
+    y = widget.winfo_y() - widget._drag_start_y + event.y
+    widget.place(x=x, y=y)
+
+
+class MainWindow:
+
+    def __init__(self, root, config_path):
+        # load bottle config options
+        bottles = BottleClosingTimes(config_path)
+        dship_info = DSHIPHeader(config_path)
+
+        root.title("DAM CTD Software")
+        # avoids old 'tear-off' menus
+        root.option_add('*tearOff', tk.FALSE)
+
+        # allow window resizing
+        root.columnconfigure(0, weight=1)
+        root.rowconfigure(0, weight=1)
+
+        # initialize standard menu
+        # MenuBar(root)
+
+        # creating tab organisation
+        # tabs = TabView(root).grid()
+        tabs = TabView(root)
+        tabs.grid()
+        # building individual pages in their own classes
+        Measurement(tabs.measurement, config_path, bottles, dship_info)
+        Processing(tabs.processing, config_path)
+        Configuration(tabs.configuration, config_path)
+        tabs.measurement.grid()
+        tabs.processing.grid()
+        tabs.configuration.grid()
+
+
+class NoteBookView(ttk.Notebook):
+
+    def __init__(self, window):
+        super().__init__(window)
+
+        self.measurement = ctk.CTkFrame(self)
+        self.processing = ctk.CTkFrame(self)
+        self.configuration = ctk.CTkFrame(self)
+        self.add(self.measurement, text='measurement')
+        self.add(self.processing, text='processing')
+        self.add(self.configuration, text='configuration')
+
+
+class TabView(ctk.CTkTabview):
+
+    def __init__(self, window, **kwargs):
+        super().__init__(window, **kwargs)
+
+        self.add('measurement')
+        self.add('processing')
+        self.add('configuration')
+        self.measurement = ttk.Frame(self.tab('measurement'))
+        self.processing = ttk.Frame(self.tab('processing'))
+        self.configuration = ttk.Frame(self.tab('configuration'))
+
+
+class LabelFrames(ttk.PanedWindow):
+
+    def __init__(self, window, **kwargs):
+        super().__init__(window, orient=tk.HORIZONTAL, ** kwargs)
+        self.measurement = ttk.Labelframe(self, text='measurement')
+        self.processing = ttk.Labelframe(self, text='processing')
+        self.configuration = ttk.Labelframe(self, text='configuration')
+        self.add(self.measurement)
+        self.add(self.processing)
+        self.add(self.configuration)
+
+
+class MenuBar:
+
+    def __init__(self, window) -> None:
+        menubar = tk.Menu(window)
+        window['menu'] = menubar
+        menu_file = tk.Menu(menubar)
+        menu_edit = tk.Menu(menubar)
+        menubar.add_cascade(menu=menu_file, label='File')
+        menubar.add_cascade(menu=menu_edit, label='Edit')
+
+
+class Measurement:
+
+    def __init__(self, window, config, bottles, dship_info) -> None:
+        self.config = config
+        self.bottles = bottles
+        self.dship_info = dship_info
+        self.dship_values = dship_info.dship_values
+        self.save_btl_config = tk.BooleanVar(value=False)
+
+        # show live dhsip values
+        dship_frame = ttk.Frame(window)
+        for index, (key, value) in enumerate(self.dship_values.items()):
+            index = index if index < 4 else index+1
+            tk.Label(dship_frame, text=key).grid(row=index, column=0)
+            tk.Label(dship_frame, text=value).grid(row=index, column=1)
+        tk.Label(dship_frame, text='Operator').grid(row=4, column=0)
+        self.operator = tk.StringVar(value=self.config['operators']['last'])
+        ttk.Combobox(
+            dship_frame,
+            values=list(self.config['operators'].values())[:-1],
+            textvariable=self.operator
+        ).grid(row=4, column=1)
+        dship_frame.grid(row=0, column=0)
+
+        # configure bottle closing times
+        bottle_frame = ttk.Frame(window)
+        self.bottle_values = {}
+        tk.Label(bottle_frame, text='BottleIDs').grid(column=0, row=0)
+        tk.Label(bottle_frame, text='Depth to close').grid(row=0, column=1)
+        for index, (key, value) in enumerate(bottles.items()):
+            textvariable = tk.StringVar()
+            textvariable.set(value)
+            self.bottle_values[key] = textvariable
+            tk.Label(bottle_frame, text=key).grid(row=index+1, column=0)
+            tk.Entry(bottle_frame, textvariable=textvariable,
+                     justify='center').grid(row=index+1, column=1)
+        ttk.Checkbutton(bottle_frame,
+                        text='Save Bottle Configuration',
+                        variable=self.save_btl_config).grid()
+        bottle_frame.grid(row=0, column=1)
+
+        # start measurement
+        run_frame = ttk.Frame(window)
+        self.autostart = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            run_frame,
+            text='autostart',
+            variable=self.autostart,
+        ).grid()
+        self.downcast = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            run_frame,
+            text='downcast',
+            variable=self.downcast,
+        ).grid()
+        tk.Button(run_frame,
+                  text='Start Seasave',
+                  command=self.start_seasave,
+                  ).grid()
+        run_frame.grid(row=2, column=1)
+
+    def start_seasave(self):
+        # TODO: handle exceptions
+        new_bottle_dict = {key: float(value.get())
+                           for key, value in self.bottle_values.items()}
+        self.bottles.update_bottle_information(
+            new_bottle_dict, self.save_btl_config)
+        self.dship_info.build_metadata_header(self.operator.get())
+        RunSeasave(self.config).run(self.downcast.get(), self.autostart.get())
+
+
+class Processing:
+
+    def __init__(self, window, config) -> None:
+        self.psa_modules = ['AlignCTD', 'AirPressure', 'BinAvg', 'BottleSum', 'CellTM',
+                            'DatCnv', 'Derive', 'Filter', 'LoopEdit', 'WildEdit', 'W_Filter']
+        self.config = config
+        self.path_dict = {
+            'xmlcon': tk.StringVar(value=config['user']['paths']['xmlcon']),
+            'hex': tk.StringVar(value=config['user']['paths']['hex']),
+            'psa': tk.StringVar(value=config['user']['processing']['psas'])}
+
+        # generate path selection fields
+        path_frame = tk.Frame(window)
+        for file_type, variable in self.path_dict.items():
+            # individual frame construction
+            single_frame = tk.Frame(path_frame)
+            tk.Label(single_frame, text=f'Path to {file_type}').grid()
+            tk.Entry(single_frame, textvariable=variable).grid()
+            command_with_arguments = partial(
+                self.select_file, file_type, Path(variable.get()))
+            tk.Button(single_frame, text='Browse',
+                      command=command_with_arguments).grid()
+            single_frame.grid()
+        path_frame.grid()
+
+        # generate processing selection frame
+        self.psa_paths = [path.name for path in Path(
+            self.config['user']['processing']['psas']).iterdir()]
+        self.steps = self.config['user']['processing']['modules']
+        self.step_number = 1
+        self.step_var_dict = {}
+        modules_frame = tk.Frame(window)
+        for user_defined_step in self.steps:
+            self.add_processing_step(modules_frame, user_defined_step)
+        modules_frame.grid()
+
+        button_frame = tk.Frame(window)
+        add_step = partial(self.add_processing_step, modules_frame)
+        ttk.Button(
+            button_frame,
+            text='Add processing step',
+            command=add_step
+        ).grid(row=0, column=0)
+        remove_step = partial(self.remove_processing_step, modules_frame)
+        ttk.Button(
+            button_frame,
+            text='Remove processing step',
+            command=remove_step
+        ).grid(row=0, column=1)
+        button_frame.grid()
+
+        # run processing button
+        tk.Button(
+            window,
+            text='Run processing',
+            command=self.run_processing
+        ).grid()
+
+    def add_processing_step(self, window, preset_value=''):
+        new_step = tk.Frame(window)
+        step = tk.StringVar(value=preset_value)
+
+        def psa_default_value(step_value):
+            try:
+                psa_default_value = difflib.get_close_matches(
+                    step_value, self.psa_paths, n=1)[0]
+            except IndexError:
+                psa_default_value = ''
+            return psa_default_value
+
+        def update_psa_value(comboboxObject):
+            frame = comboboxObject.widget.master
+            psa_box_object = frame.winfo_children()[-1]
+            psa_box_object.set(psa_default_value(
+                comboboxObject.widget.get()))
+
+        psa = tk.StringVar(value=psa_default_value(preset_value))
+        self.step_var_dict[self.step_number] = (step, psa)
+
+        step_box = ttk.Combobox(
+            new_step,
+            values=self.psa_modules,
+            textvariable=step
+        )
+        step_box.set(preset_value)
+        step_box.grid(row=0, column=0)
+        step_box.bind('<<ComboboxSelected>>', update_psa_value)
+        psa_box = ttk.Combobox(
+            new_step,
+            values=self.psa_paths,
+            textvariable=psa
+        )
+        psa_box.grid(row=0, column=1)
+        new_step.grid()
+        self.step_number += 1
+
+    def remove_processing_step(self, frame):
+        last_element = frame.winfo_children()[-1]
+        last_element.grid_forget()
+        last_element.destroy()
+        self.step_var_dict.pop(self.step_number-1)
+        self.step_number -= 1
+
+    def run_processing(self):
+        info_dict = {key.get(): value.get()
+                     for _, (key, value) in self.step_var_dict.items()}
+        batch_processing = BatchProcessing(self.config, info_dict)
+        batch_processing.run()
+
+    def select_file(self, file_type, path):
+        filetypes = (
+            (f'{file_type} files', f'*.{file_type}'),
+            ('All files', '*.*')
+        )
+
+        fd.askopenfilename(
+            title=f'Path to {file_type}',
+            initialdir=path,
+            filetypes=filetypes)
+
+
+class Configuration:
+
+    def __init__(self, window, master_config) -> None:
+        self.master_config = master_config
+        ttk.Button(window, text='Open configuration file',
+                   command=self.read_config('')).grid()
+
+    def read_config(self, file_path):
+        try:
+            with open(file_path, 'r') as file:
+                config_data = json.load(file)
+            return config_data
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error reading config file: {e}")
+            return {}
+
+    def save_config(self, file_path, config_data):
+        try:
+            with open(file_path, 'w') as file:
+                json.dump(config_data, file, indent=4)
+            print("Config saved successfully.")
+        except Exception as e:
+            print(f"Error saving config file: {e}")
+
+
+if __name__ == "__main__":
+    # root = tk.Tk()
+    root = ctk.CTk()
+    import platform
+    import sys
+    if platform.system() == 'Linux':
+        config_path = 'master_config.toml'
+    elif platform.system() == 'Windows':
+        from pathlib import Path
+        file_location = Path(__file__).parents[3]
+        config_path = file_location.joinpath('windows_config.toml')
+    else:
+        sys.exit(1)
+    config = ConfigurationFile(config_path)
+    MainWindow(root, config)
+    # fullscreen option:
+    # root.after(0, lambda: root.state('zoomed'))
+    root.mainloop()

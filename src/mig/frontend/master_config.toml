@@ -1,0 +1,47 @@
+# base configuration for the software internals and system specifics which are
+# usually set only once during the software installation process
+[paths]
+seasave_exe = ""
+data_archive = "/home/emil/Projects/measurementinitgui/tests/data/out"
+backup_location = ""
+
+[dship_infos]
+url = ""
+list_of_parameters = ["Cruise", "GPS_TIME", "System UTC"]
+
+[history]
+last_cast = 0
+
+[operators]
+op1 = "Heene"
+op2 = "Kolbe"
+op3 = "Faber"
+last = "Faber"
+
+# configuration that can be changed via the software interface by any operator
+[user]
+number_of_bottles = 13
+
+    [user.bottle_layout]
+    1 = 1.0
+    2 = 2.0
+    3 = 3.0
+    4 = 82.0
+    5 = 5.0
+    6 = 94.0
+    7 = 7.0
+    8 = 8.0
+    9 = 9.0
+    10 = 10.0
+    11 = 11.0
+    12 = 12.0
+    13 = 13.0
+
+    [user.paths]
+    xmlcon = ""
+    export_location = ""
+    psa = "/home/emil/Projects/mig/tests/data/Seasave_test.psa"
+
+    [user.processing]
+    batch = true
+    modules = ["DatCnv", "WildEdit", "BinAvg"]

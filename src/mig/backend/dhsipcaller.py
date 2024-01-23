@@ -2,11 +2,16 @@ import threading
 import time
 import requests
 import xmltodict
+import random
 
 
 class DSHIPHeader:
 
-    def __init__(self, config, mode='api', dship_url_part=':8080/dship-web/service/samples'):
+    def __init__(
+            self,
+            config,
+            mode='api',
+            dship_url_part=':8080/dship-web/service/samples'):
         self.data: dict
         self.dict_of_samples = config['dship']['identifier']
         self.ip = config['dship']['ip']
@@ -16,13 +21,23 @@ class DSHIPHeader:
         self.config = config
         self.dship_fail_tolerance = 10
         self.dship_fail_counter = 0
+        self.alive = False
         try:
             self.call_api(self.source, self.dict_of_samples)
-        except ValueError as error:
-            pass
+        except ValueError:
+            self.dummy = True
+            self.generate_random_numbers()
         else:
-            self.alive = False
-            self.start_listener()
+            self.dummy = False
+        finally:
+            # self.start_listener()
+            self.alive = True
+            self.listener = RepeatedTimer(self.fetch_timeout,
+                                          self.generate_random_numbers)
+
+    def generate_random_numbers(self):
+        for key in self.dict_of_samples:
+            self.dict_of_samples[key] = random.randint(0, 100)
 
     def load_udp_telegram(self, port):
         import socket
@@ -71,19 +86,54 @@ class DSHIPHeader:
 
     def fetch(self):
         """ """
-        while self.alive:
-            self.call_api(self.source, self.dict_of_samples)
-            time.sleep(self.fetch_timeout)
+        if self.dummy:
+            while self.alive:
+                self.generate_random_numbers()
+        else:
+            while self.alive:
+                self.call_api(self.source, self.dict_of_samples)
 
     def start_listener(self):
         """ """
-        self.listener_thread = threading.Thread(target=self.fetch,
-                                                name='listener')
-        self.listener_thread.daemon = False
+        random.seed()
+        self.listener_thread = threading.Timer(
+            self.fetch_timeout, self.generate_random_numbers)
+        # self.listener_thread.daemon = False
         self.alive = True
         self.listener_thread.start()
 
     def end_listener(self):
         """ """
         self.alive = False
-        self.listener_thread.join()
+        # self.listener_thread.cancel()
+        self.listener.stop()
+
+
+class RepeatedTimer(object):
+
+    def __init__(self, interval, function, *args, **kwargs):
+        self._timer = None
+        self.interval = interval
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+        self.is_running = False
+        self.next_call = time.time()
+        self.start()
+
+    def _run(self):
+        self.is_running = False
+        self.start()
+        self.function(*self.args, **self.kwargs)
+
+    def start(self):
+        if not self.is_running:
+            self.next_call += self.interval
+            self._timer = threading.Timer(
+                self.next_call - time.time(), self._run)
+            self._timer.start()
+            self.is_running = True
+
+    def stop(self):
+        self._timer.cancel()
+        self.is_running = False

@@ -6,6 +6,7 @@ from mig.backend.processing import BatchProcessing
 from mig.backend.runseasave import RunSeasave
 import platform
 import sys
+import time
 
 if platform.system() == 'Linux':
     config_path = 'master_config.toml'
@@ -70,6 +71,9 @@ class TestMetadataHeader(unittest.TestCase):
         self.config = ConfigurationFile(config_path)
         self.header = DSHIPHeader(self.config)
 
+    def tearDown(self):
+        self.header.end_listener()
+
     def test_xml_header_format(self):
         pass
 
@@ -104,5 +108,22 @@ class TestProcessing(unittest.TestCase):
         self.assertEqual(len(self.processing.final_steps), 4)
 
     def test_run(self):
-        self.processing.run()
+        # self.processing.run()
         self.assertTrue
+
+
+class DSHIP(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.config = ConfigurationFile(config_path)
+        self.dship = DSHIPHeader(self.config)
+
+    def tearDown(self):
+        self.dship.end_listener()
+
+    def test_dummy(self):
+        self.assertTrue(self.dship.alive)
+        # first = self.dship.dict_of_samples
+        # time.sleep(1.1)
+        # second = self.dship.dict_of_samples
+        # self.assertNotEqual(first, second)

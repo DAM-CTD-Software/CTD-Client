@@ -1,3 +1,4 @@
+from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
@@ -33,10 +34,9 @@ def on_drag_motion(event):
 
 class MainWindow:
 
-    def __init__(self, root, config_path):
+    def __init__(self, root, config_path, dship_info):
         # load bottle config options
         bottles = BottleClosingTimes(config_path)
-        dship_info = DSHIPHeader(config_path)
 
         root.title("DAM CTD Software")
         # avoids old 'tear-off' menus
@@ -54,7 +54,8 @@ class MainWindow:
         tabs = TabView(root)
         tabs.grid()
         # building individual pages in their own classes
-        Measurement(tabs.measurement, config_path, bottles, dship_info)
+        self.measurement = Measurement(
+            tabs.measurement, config_path, bottles, dship_info)
         Processing(tabs.processing, config_path)
         Configuration(tabs.configuration, config_path)
         tabs.measurement.grid()
@@ -118,15 +119,36 @@ class Measurement:
         self.bottles = bottles
         self.dship_info = dship_info
         self.dship_values = dship_info.dship_values
+        self.dship_vars = {key: tk.StringVar(value=value)
+                           for key, value in self.dship_values.items()}
         self.save_btl_config = tk.BooleanVar(value=False)
 
+        self.dship_frame(window)
+        self.bottle_frame(window)
+        self.run_frame(window)
+        window.grid()
+
+    def update_dship_values(self, list_of_values):
+        assert len(self.dship_vars) == len(list_of_values)
+        for ((_, var), value) in zip(self.dship_vars.items(), list_of_values):
+            var.set(value)
+
+    def dship_frame(self, window):
         # show live dhsip values
         dship_frame = ttk.Frame(window)
-        for index, (key, value) in enumerate(self.dship_values.items()):
+        self.dship_label = tk.Label(
+            dship_frame,
+            text='Live DSHIP values:',
+            background='green')
+        self.dship_label.grid(column=1)
+
+        for index, (key, value) in enumerate(self.dship_vars.items()):
             index = index if index < 4 else index+1
-            tk.Label(dship_frame, text=key).grid(row=index, column=0)
-            tk.Label(dship_frame, text=value).grid(row=index, column=1)
-        tk.Label(dship_frame, text='Operator').grid(row=4, column=0)
+            tk.Label(dship_frame, text=key).grid(row=index+1, column=0)
+            tk.Label(dship_frame, textvariable=value).grid(
+                row=index+1, column=1)
+
+        tk.Label(dship_frame, text='Operator').grid(row=5, column=0)
         self.operator = tk.StringVar(value=self.config['operators']['last'])
         ttk.Combobox(
             dship_frame,
@@ -135,12 +157,13 @@ class Measurement:
         ).grid(row=4, column=1)
         dship_frame.grid(row=0, column=0)
 
+    def bottle_frame(self, window):
         # configure bottle closing times
         bottle_frame = ttk.Frame(window)
         self.bottle_values = {}
         tk.Label(bottle_frame, text='BottleIDs').grid(column=0, row=0)
         tk.Label(bottle_frame, text='Depth to close').grid(row=0, column=1)
-        for index, (key, value) in enumerate(bottles.items()):
+        for index, (key, value) in enumerate(self.bottles.items()):
             textvariable = tk.StringVar()
             textvariable.set(value)
             self.bottle_values[key] = textvariable
@@ -152,6 +175,7 @@ class Measurement:
                         variable=self.save_btl_config).grid()
         bottle_frame.grid(row=0, column=1)
 
+    def run_frame(self, window):
         # start measurement
         run_frame = ttk.Frame(window)
         self.autostart = tk.BooleanVar(value=True)
@@ -342,7 +366,9 @@ if __name__ == "__main__":
     else:
         sys.exit(1)
     config = ConfigurationFile(config_path)
-    MainWindow(root, config)
+    dship_info = DSHIPHeader(config)
+    MainWindow(root, config, dship_info)
     # fullscreen option:
     # root.after(0, lambda: root.state('zoomed'))
     root.mainloop()
+    dship_info.end_listener()

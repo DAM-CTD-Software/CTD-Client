@@ -1,4 +1,4 @@
 from .bottles import *
 from .configurationhandler import *
-from .dhsipcaller import *
+from .dshipcaller import *
 from .runseasave import *

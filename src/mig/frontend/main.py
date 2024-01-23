@@ -9,7 +9,7 @@ import difflib
 from mig.backend.bottles import BottleClosingTimes
 
 from mig.backend.configurationhandler import ConfigurationFile
-from mig.backend.dhsipcaller import DSHIPHeader
+from mig.backend.dshipcaller import DSHIPHeader
 from mig.backend.processing import BatchProcessing
 from mig.backend.runseasave import RunSeasave
 

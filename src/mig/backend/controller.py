@@ -3,7 +3,7 @@ import sys
 import customtkinter as ctk
 
 from mig.backend.configurationhandler import ConfigurationFile
-from mig.backend.dhsipcaller import DSHIPHeader, RepeatedTimer
+from mig.backend.dshipcaller import DSHIPHeader, RepeatedTimer
 from mig.frontend.main import MainWindow
 
 

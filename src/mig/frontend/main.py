@@ -15,17 +15,50 @@ from mig.backend.runseasave import RunSeasave
 
 
 def make_draggable(widget):
+    """
+
+    Parameters
+    ----------
+    widget :
+        
+
+    Returns
+    -------
+
+    """
     widget.bind("<Button-1>", on_drag_start)
     widget.bind("<B1-Motion>", on_drag_motion)
 
 
 def on_drag_start(event):
+    """
+
+    Parameters
+    ----------
+    event :
+        
+
+    Returns
+    -------
+
+    """
     widget = event.widget
     widget._drag_start_x = event.x
     widget._drag_start_y = event.y
 
 
 def on_drag_motion(event):
+    """
+
+    Parameters
+    ----------
+    event :
+        
+
+    Returns
+    -------
+
+    """
     widget = event.widget
     x = widget.winfo_x() - widget._drag_start_x + event.x
     y = widget.winfo_y() - widget._drag_start_y + event.y
@@ -33,6 +66,7 @@ def on_drag_motion(event):
 
 
 class MainWindow:
+    """ """
 
     def __init__(self, root, config_path, dship_info):
         # load bottle config options
@@ -64,6 +98,7 @@ class MainWindow:
 
 
 class NoteBookView(ttk.Notebook):
+    """ """
 
     def __init__(self, window):
         super().__init__(window)
@@ -77,6 +112,7 @@ class NoteBookView(ttk.Notebook):
 
 
 class TabView(ctk.CTkTabview):
+    """ """
 
     def __init__(self, window, **kwargs):
         super().__init__(window, **kwargs)
@@ -90,6 +126,7 @@ class TabView(ctk.CTkTabview):
 
 
 class LabelFrames(ttk.PanedWindow):
+    """ """
 
     def __init__(self, window, **kwargs):
         super().__init__(window, orient=tk.HORIZONTAL, ** kwargs)
@@ -102,6 +139,7 @@ class LabelFrames(ttk.PanedWindow):
 
 
 class MenuBar:
+    """ """
 
     def __init__(self, window) -> None:
         menubar = tk.Menu(window)
@@ -113,6 +151,7 @@ class MenuBar:
 
 
 class Measurement:
+    """ """
 
     def __init__(self, window, config, bottles, dship_info) -> None:
         self.config = config
@@ -129,11 +168,33 @@ class Measurement:
         window.grid()
 
     def update_dship_values(self, list_of_values):
+        """
+
+        Parameters
+        ----------
+        list_of_values :
+            
+
+        Returns
+        -------
+
+        """
         assert len(self.dship_vars) == len(list_of_values)
         for ((_, var), value) in zip(self.dship_vars.items(), list_of_values):
             var.set(value)
 
     def dship_frame(self, window):
+        """
+
+        Parameters
+        ----------
+        window :
+            
+
+        Returns
+        -------
+
+        """
         # show live dhsip values
         dship_frame = ttk.Frame(window)
         self.dship_label = tk.Label(
@@ -158,6 +219,17 @@ class Measurement:
         dship_frame.grid(row=0, column=0)
 
     def bottle_frame(self, window):
+        """
+
+        Parameters
+        ----------
+        window :
+            
+
+        Returns
+        -------
+
+        """
         # configure bottle closing times
         bottle_frame = ttk.Frame(window)
         self.bottle_values = {}
@@ -176,6 +248,17 @@ class Measurement:
         bottle_frame.grid(row=0, column=1)
 
     def run_frame(self, window):
+        """
+
+        Parameters
+        ----------
+        window :
+            
+
+        Returns
+        -------
+
+        """
         # start measurement
         run_frame = ttk.Frame(window)
         self.autostart = tk.BooleanVar(value=True)
@@ -197,6 +280,7 @@ class Measurement:
         run_frame.grid(row=2, column=1)
 
     def start_seasave(self):
+        """ """
         # TODO: handle exceptions
         new_bottle_dict = {key: float(value.get())
                            for key, value in self.bottle_values.items()}
@@ -207,6 +291,7 @@ class Measurement:
 
 
 class Processing:
+    """ """
 
     def __init__(self, window, config) -> None:
         self.psa_modules = ['AlignCTD', 'AirPressure', 'BinAvg', 'BottleSum', 'CellTM',
@@ -265,10 +350,34 @@ class Processing:
         ).grid()
 
     def add_processing_step(self, window, preset_value=''):
+        """
+
+        Parameters
+        ----------
+        window :
+            
+        preset_value :
+             (Default value = '')
+
+        Returns
+        -------
+
+        """
         new_step = tk.Frame(window)
         step = tk.StringVar(value=preset_value)
 
         def psa_default_value(step_value):
+            """
+
+            Parameters
+            ----------
+            step_value :
+                
+
+            Returns
+            -------
+
+            """
             try:
                 psa_default_value = difflib.get_close_matches(
                     step_value, self.psa_paths, n=1)[0]
@@ -277,6 +386,17 @@ class Processing:
             return psa_default_value
 
         def update_psa_value(comboboxObject):
+            """
+
+            Parameters
+            ----------
+            comboboxObject :
+                
+
+            Returns
+            -------
+
+            """
             frame = comboboxObject.widget.master
             psa_box_object = frame.winfo_children()[-1]
             psa_box_object.set(psa_default_value(
@@ -303,6 +423,17 @@ class Processing:
         self.step_number += 1
 
     def remove_processing_step(self, frame):
+        """
+
+        Parameters
+        ----------
+        frame :
+            
+
+        Returns
+        -------
+
+        """
         last_element = frame.winfo_children()[-1]
         last_element.grid_forget()
         last_element.destroy()
@@ -310,12 +441,26 @@ class Processing:
         self.step_number -= 1
 
     def run_processing(self):
+        """ """
         info_dict = {key.get(): value.get()
                      for _, (key, value) in self.step_var_dict.items()}
         batch_processing = BatchProcessing(self.config, info_dict)
         batch_processing.run()
 
     def select_file(self, file_type, path):
+        """
+
+        Parameters
+        ----------
+        file_type :
+            
+        path :
+            
+
+        Returns
+        -------
+
+        """
         filetypes = (
             (f'{file_type} files', f'*.{file_type}'),
             ('All files', '*.*')
@@ -328,6 +473,7 @@ class Processing:
 
 
 class Configuration:
+    """ """
 
     def __init__(self, window, master_config) -> None:
         self.master_config = master_config
@@ -335,6 +481,17 @@ class Configuration:
                    command=self.read_config('')).grid()
 
     def read_config(self, file_path):
+        """
+
+        Parameters
+        ----------
+        file_path :
+            
+
+        Returns
+        -------
+
+        """
         try:
             with open(file_path, 'r') as file:
                 config_data = json.load(file)
@@ -344,6 +501,19 @@ class Configuration:
             return {}
 
     def save_config(self, file_path, config_data):
+        """
+
+        Parameters
+        ----------
+        file_path :
+            
+        config_data :
+            
+
+        Returns
+        -------
+
+        """
         try:
             with open(file_path, 'w') as file:
                 json.dump(config_data, file, indent=4)

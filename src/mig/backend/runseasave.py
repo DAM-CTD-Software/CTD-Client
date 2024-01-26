@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 
 
 class RunSeasave:
+    """ """
 
     def __init__(self, config) -> None:
         self.path_to_seasave_exe = config['paths']['seasave_exe']
@@ -13,6 +14,19 @@ class RunSeasave:
         self.set_psa_run_info()
 
     def run(self, downcast=True, autostart=True):
+        """
+
+        Parameters
+        ----------
+        downcast :
+             (Default value = True)
+        autostart :
+             (Default value = True)
+
+        Returns
+        -------
+
+        """
         run_command = [self.path_to_seasave_exe] + \
             self.set_seasave_command_line_parameters(downcast, autostart)
         try:
@@ -25,12 +39,26 @@ class RunSeasave:
             raise e
 
     def set_psa_run_info(self):
+        """ """
         self.config.psa.set_xmlcon_file_path(
             self.config['user']['paths']['xmlcon'])
         self.config.psa.set_hex_file_path(self.config['user']['paths']['hex'])
         self.config.psa.to_xml()
 
     def set_seasave_command_line_parameters(self, downcast, autostart) -> list:
+        """
+
+        Parameters
+        ----------
+        downcast :
+            
+        autostart :
+            
+
+        Returns
+        -------
+
+        """
         parameters = []
         if autostart:
             parameters.append(f'-autostart={self.path_to_psa}')

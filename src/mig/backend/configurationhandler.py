@@ -4,15 +4,17 @@ from seabirdfilehandler import SeasavePsa
 
 
 class ConfigurationFile:
+    """
+    A python representation of the configuration file, linux_config.toml or
+    windows_config.toml.
+    The individual key value pairs can be targeted via basic dict-like chaining
+    of keys, e.g.: config['user']['processing']['psas']
+    """
 
     def __init__(self, path_to_config):
         self.path_to_config = path_to_config
         self.data = TOMLFile(path_to_config).read()
         self.psa = SeasavePsa(self.data['user']['paths']['psa'])
-        # except (FileNotFoundError, ValueError) as error:
-        #     print(f'Could not load configuration file: {error}')
-        # else:
-        #     pass
 
     def __str__(self):
         return self.path_to_config
@@ -24,6 +26,18 @@ class ConfigurationFile:
         self.modify([keys], value)
 
     def write(self, path_to_write=None):
+        """
+        Writes changes to the configuration file to the disk.
+
+        Parameters
+        ----------
+        path_to_write :
+             (Default value = None)
+
+        Returns
+        -------
+
+        """
         output_path = self.path_to_config
         if path_to_write:
             output_path = path_to_write
@@ -34,6 +48,21 @@ class ConfigurationFile:
             print(f'Could not write configuration file: {error}')
 
     def modify(self, key, value):
+        """
+        Modifies the configuration values inside of this python representation.
+        Does not write anything to disk.
+
+        Parameters
+        ----------
+        key :
+
+        value :
+
+
+        Returns
+        -------
+
+        """
         try:
             if isinstance(key, list):
                 current_section = self.data
@@ -47,5 +76,6 @@ class ConfigurationFile:
             print(f'Value modification failed: {error}')
 
     def reload(self):
+        """Reopens the configuration file."""
         self.data = TOMLFile(self.path_to_config).read()
         self.psa = SeasavePsa(self.data['user']['paths']['psa'])

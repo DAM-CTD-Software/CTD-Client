@@ -6,23 +6,44 @@ import random
 
 
 class DSHIPHeader:
+    """
+    Fetches DSHIP information via API or UDP telegram and generates
+    Seabird-specific XML from that.
+    """
 
     def __init__(
             self,
             config,
             mode='api',
             dship_url_part=':8080/dship-web/service/samples'):
+        # will hold the dhsip info
         self.data: dict
+        # loads the key values we want to fetch from DSHIP
         self.dict_of_samples = config['dship']['identifier']
+        # vessel-specific IP, where DSHIP can be reached
         self.ip = config['dship']['ip']
+        # ?
         self.dship_values = self.dict_of_samples
+        # the URL of the API
         self.source = f'http:{self.ip}{dship_url_part}'
+        # waiting time between two rounds of API calls
         self.fetch_timeout = config['dship']['fetch_intervall']
+        # configuration file representation
         self.config = config
+        # upper limit to allow for failed API calls in a row
         self.dship_fail_tolerance = 10
+        # counts repeated failed API calls
+        # resets to 0 upon a successfull call
         self.dship_fail_counter = 0
+        # the status of the API listener
         self.alive = False
         try:
+            # TODO: fix this logic...
+            # TODO: and decide which way of repeatedely calling the API I
+            # prefer: threading vs RepeatedTimer
+
+            # tries a basic API call and upon failure generated dummy values,
+            # as we conculde that we are not on a ship
             self.call_api(self.source, self.dict_of_samples)
         except ValueError:
             self.dummy = True
@@ -30,16 +51,30 @@ class DSHIPHeader:
         else:
             self.dummy = False
         finally:
-            # self.start_listener()
+            # activates the listener in any case
             self.alive = True
             self.listener = RepeatedTimer(self.fetch_timeout,
                                           self.generate_random_numbers)
 
     def generate_random_numbers(self):
+        """A dummy number generator for GUI testing purposes."""
         for key in self.dict_of_samples:
             self.dict_of_samples[key] = random.randint(0, 100)
 
     def load_udp_telegram(self, port):
+        # TODO: finish this
+        """
+        Collects a udp telegram the ship provides.
+
+        Parameters
+        ----------
+        port :
+
+
+        Returns
+        -------
+
+        """
         import socket
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
@@ -50,8 +85,31 @@ class DSHIPHeader:
         else:
             data, address = udp_socket.recvfrom(1024)
 
-    def call_api(self, url, list_of_samples, timeout=0.1):
-        for sample, url_name in list_of_samples.items():
+    def call_api(
+        self,
+        url: str,
+        dict_of_samples: dict,
+        timeout: float = 0.1
+    ):
+        """
+        A collection of API calls according to the values in
+        the dict_of_samples, which holds the names of the individual columns
+        in the metadata header and their respective names in the API.
+
+        Parameters
+        ----------
+        url :
+
+        dict_of_samples :
+
+        timeout :
+             (Default value = 0.1)
+
+        Returns
+        -------
+
+        """
+        for sample, url_name in dict_of_samples.items():
             response = self.individual_call(f'{url}/{url_name}')
             if response:
                 value = response['sample']['value']
@@ -59,6 +117,21 @@ class DSHIPHeader:
             time.sleep(timeout)
 
     def individual_call(self, url) -> dict | None:
+        """
+        One single request to the API, which takes the full URL and returns
+        the calls' response.
+        Does also stop the API listener upon repeated failed API calls.
+
+        Parameters
+        ----------
+        url : str: full URL to the specific API method with argument
+
+
+        Returns
+        -------
+        a dictionary with the API response
+
+        """
         response = requests.get(url)
         # handle response
         if response.status_code in ['200', 200]:
@@ -76,6 +149,19 @@ class DSHIPHeader:
             return None
 
     def build_metadata_header(self, operator):
+        """
+        Generates the metadata header in the needed format and saves the last
+        operator.
+
+        Parameters
+        ----------
+        operator :
+
+
+        Returns
+        -------
+
+        """
         header_list = []
         for name, value in self.dship_values.items():
             header_list.append(f'** {name} = {value}')
@@ -85,6 +171,7 @@ class DSHIPHeader:
         self.config.write()
 
     def fetch(self):
+        # TODO: deprecated?
         """ """
         if self.dummy:
             while self.alive:
@@ -110,9 +197,14 @@ class DSHIPHeader:
 
 
 class RepeatedTimer(object):
+    # TODO: need to transfer this into its own module
+    """
+    Basic implementation of a periodic method call, as the threading module
+    is not super intuitive and often an overkill.
+    """
 
     def __init__(self, interval, function, *args, **kwargs):
-        self._timer = None
+        self.timer = None
         self.interval = interval
         self.function = function
         self.args = args
@@ -121,19 +213,22 @@ class RepeatedTimer(object):
         self.next_call = time.time()
         self.start()
 
-    def _run(self):
+    def run(self):
+        """ """
         self.is_running = False
         self.start()
         self.function(*self.args, **self.kwargs)
 
     def start(self):
+        """ """
         if not self.is_running:
             self.next_call += self.interval
-            self._timer = threading.Timer(
-                self.next_call - time.time(), self._run)
-            self._timer.start()
+            self.timer = threading.Timer(
+                self.next_call - time.time(), self.run)
+            self.timer.start()
             self.is_running = True
 
     def stop(self):
-        self._timer.cancel()
+        """ """
+        self.timer.cancel()
         self.is_running = False

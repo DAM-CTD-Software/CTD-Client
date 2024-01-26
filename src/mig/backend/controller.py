@@ -8,6 +8,12 @@ from mig.frontend.main import MainWindow
 
 
 class Controller:
+    """
+    Controller in the spirit of the MVC model.
+    Executes the business logic behind this GUI. At the moment, this is mostly
+    just bringing together the individual bits, as well as listening to the
+    dship class and updating the view accordingly.
+    """
 
     def __init__(self):
         # root = tk.Tk()
@@ -30,12 +36,19 @@ class Controller:
         self.dship_info.end_listener()
 
     def start_listener(self):
+        """
+        Activates the listener to periodically check for new dship values.
+        """
         self.listener = RepeatedTimer(5, self.update_dship_values)
 
     def end_listener(self):
+        """
+        Ends the listener, will mostly be called when closing the program.
+        """
         self.listener.stop()
 
     def update_dship_values(self):
+        """Transfers the dship values to the main window."""
         try:
             self.main_window.measurement.update_dship_values(
                 self.dship_info.dict_of_samples.values())

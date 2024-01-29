@@ -5,7 +5,11 @@ logger = logging.getLogger(__name__)
 
 
 class RunSeasave:
-    """ """
+    """
+    Calls the seasave.exe with the specified command line arguments.
+    In preparation for this, the Seasave.psa will be configured with the paths
+    to XMLCON and hex file.
+    """
 
     def __init__(self, config) -> None:
         self.path_to_seasave_exe = config['paths']['seasave_exe']
@@ -15,6 +19,7 @@ class RunSeasave:
 
     def run(self, downcast=True, autostart=True):
         """
+        Executes the seasave.exe with given command line arguments.
 
         Parameters
         ----------
@@ -39,7 +44,7 @@ class RunSeasave:
             raise e
 
     def set_psa_run_info(self):
-        """ """
+        """Sets XMLCON and hex file paths in Seasave.psa."""
         self.config.psa.set_xmlcon_file_path(
             self.config['user']['paths']['xmlcon'])
         self.config.psa.set_hex_file_path(self.config['user']['paths']['hex'])
@@ -47,13 +52,14 @@ class RunSeasave:
 
     def set_seasave_command_line_parameters(self, downcast, autostart) -> list:
         """
+        Builds command line argument list for usage in the run method.
 
         Parameters
         ----------
         downcast :
-            
+
         autostart :
-            
+
 
         Returns
         -------

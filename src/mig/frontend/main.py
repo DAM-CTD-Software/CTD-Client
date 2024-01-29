@@ -6,7 +6,6 @@ import customtkinter as ctk
 import json
 from functools import partial
 import difflib
-from mig.backend.bottles import BottleClosingTimes
 
 from mig.backend.configurationhandler import ConfigurationFile
 from mig.backend.dshipcaller import DSHIPHeader
@@ -14,64 +13,10 @@ from mig.backend.processing import BatchProcessing
 from mig.backend.runseasave import RunSeasave
 
 
-def make_draggable(widget):
-    """
-
-    Parameters
-    ----------
-    widget :
-        
-
-    Returns
-    -------
-
-    """
-    widget.bind("<Button-1>", on_drag_start)
-    widget.bind("<B1-Motion>", on_drag_motion)
-
-
-def on_drag_start(event):
-    """
-
-    Parameters
-    ----------
-    event :
-        
-
-    Returns
-    -------
-
-    """
-    widget = event.widget
-    widget._drag_start_x = event.x
-    widget._drag_start_y = event.y
-
-
-def on_drag_motion(event):
-    """
-
-    Parameters
-    ----------
-    event :
-        
-
-    Returns
-    -------
-
-    """
-    widget = event.widget
-    x = widget.winfo_x() - widget._drag_start_x + event.x
-    y = widget.winfo_y() - widget._drag_start_y + event.y
-    widget.place(x=x, y=y)
-
-
 class MainWindow:
-    """ """
+    """Top window that encapsulates all other frames."""
 
-    def __init__(self, root, config_path, dship_info):
-        # load bottle config options
-        bottles = BottleClosingTimes(config_path)
-
+    def __init__(self, root, config_path, dship_info, bottles):
         root.title("DAM CTD Software")
         # avoids old 'tear-off' menus
         root.option_add('*tearOff', tk.FALSE)
@@ -84,7 +29,7 @@ class MainWindow:
         # MenuBar(root)
 
         # creating tab organisation
-        # tabs = TabView(root).grid()
+        # select one out of NoteBookView, TabView and LabelFrames
         tabs = TabView(root)
         tabs.grid()
         # building individual pages in their own classes
@@ -98,7 +43,7 @@ class MainWindow:
 
 
 class NoteBookView(ttk.Notebook):
-    """ """
+    """Basic tkinter equivalent to customtkinter's TabView."""
 
     def __init__(self, window):
         super().__init__(window)
@@ -112,7 +57,7 @@ class NoteBookView(ttk.Notebook):
 
 
 class TabView(ctk.CTkTabview):
-    """ """
+    """Collection of multiple windows within one frame, reachable by tabs. """
 
     def __init__(self, window, **kwargs):
         super().__init__(window, **kwargs)
@@ -126,7 +71,9 @@ class TabView(ctk.CTkTabview):
 
 
 class LabelFrames(ttk.PanedWindow):
-    """ """
+    """
+    Displaying multiple windows next to each other, separated inside boxes.
+    """
 
     def __init__(self, window, **kwargs):
         super().__init__(window, orient=tk.HORIZONTAL, ** kwargs)
@@ -139,9 +86,10 @@ class LabelFrames(ttk.PanedWindow):
 
 
 class MenuBar:
-    """ """
+    """Menu bar that allows some basic configuration."""
 
     def __init__(self, window) -> None:
+        # TODO: implement
         menubar = tk.Menu(window)
         window['menu'] = menubar
         menu_file = tk.Menu(menubar)
@@ -151,7 +99,11 @@ class MenuBar:
 
 
 class Measurement:
-    """ """
+    """
+    A frame that displays the information needed for the CTD measurement,
+    DSHIP live data, bottle closing depths and operator and allows to run
+    the Seasave software with command line arguments.
+    """
 
     def __init__(self, window, config, bottles, dship_info) -> None:
         self.config = config
@@ -173,7 +125,7 @@ class Measurement:
         Parameters
         ----------
         list_of_values :
-            
+
 
         Returns
         -------
@@ -185,11 +137,15 @@ class Measurement:
 
     def dship_frame(self, window):
         """
+        Frame that displays our metadata header information with live-fetched
+        DSHIP data. Additionally features a selection field for the current
+        operators name, as this is the only header information that can not be
+        retrieved from DSHIP.
 
         Parameters
         ----------
         window :
-            
+
 
         Returns
         -------
@@ -220,11 +176,12 @@ class Measurement:
 
     def bottle_frame(self, window):
         """
+        Frame to allow setting the bottle closing depths.
 
         Parameters
         ----------
         window :
-            
+
 
         Returns
         -------
@@ -249,11 +206,13 @@ class Measurement:
 
     def run_frame(self, window):
         """
+        Frame that wraps the seasave.exe start button with two checkboxes for
+        the command line options.
 
         Parameters
         ----------
         window :
-            
+
 
         Returns
         -------
@@ -280,7 +239,10 @@ class Measurement:
         run_frame.grid(row=2, column=1)
 
     def start_seasave(self):
-        """ """
+        """
+        Method that is called upon clicking 'Start Seasave'. Organizes
+        the information flow of bottle closing information and dship metadata.
+        """
         # TODO: handle exceptions
         new_bottle_dict = {key: float(value.get())
                            for key, value in self.bottle_values.items()}
@@ -291,7 +253,12 @@ class Measurement:
 
 
 class Processing:
-    """ """
+    """
+    A frame to wrap all information and functionality for data processing.
+    Is divided in two main parts, the configuration of input paths, to xmlcon,
+    hex and psa folder, and the selection of processing modules and their
+    respective psas.
+    """
 
     def __init__(self, window, config) -> None:
         self.psa_modules = ['AlignCTD', 'AirPressure', 'BinAvg', 'BottleSum', 'CellTM',
@@ -351,12 +318,14 @@ class Processing:
 
     def add_processing_step(self, window, preset_value=''):
         """
+        Handles the processing step selection procedure.
+        Automatically selects the closest named psa inside of the psa folder.
 
         Parameters
         ----------
-        window :
-            
-        preset_value :
+        window : Parent frame
+
+        preset_value : sets the name of the processing step, if already known
              (Default value = '')
 
         Returns
@@ -368,15 +337,7 @@ class Processing:
 
         def psa_default_value(step_value):
             """
-
-            Parameters
-            ----------
-            step_value :
-                
-
-            Returns
-            -------
-
+            Scans the psa folder for the closest string compared to the step.
             """
             try:
                 psa_default_value = difflib.get_close_matches(
@@ -386,17 +347,8 @@ class Processing:
             return psa_default_value
 
         def update_psa_value(comboboxObject):
-            """
-
-            Parameters
-            ----------
-            comboboxObject :
-                
-
-            Returns
-            -------
-
-            """
+            """Automatically updates the corresponding psa value upon selecting
+            a processing step."""
             frame = comboboxObject.widget.master
             psa_box_object = frame.winfo_children()[-1]
             psa_box_object.set(psa_default_value(
@@ -424,15 +376,8 @@ class Processing:
 
     def remove_processing_step(self, frame):
         """
-
-        Parameters
-        ----------
-        frame :
-            
-
-        Returns
-        -------
-
+        Handles all the steps needed to remove a processing step from the
+        selection frame without leaving any code artifacts behind.
         """
         last_element = frame.winfo_children()[-1]
         last_element.grid_forget()
@@ -441,7 +386,8 @@ class Processing:
         self.step_number -= 1
 
     def run_processing(self):
-        """ """
+        """Collects the processing step information and feeds it into the
+        batch processing routine."""
         info_dict = {key.get(): value.get()
                      for _, (key, value) in self.step_var_dict.items()}
         batch_processing = BatchProcessing(self.config, info_dict)
@@ -449,17 +395,7 @@ class Processing:
 
     def select_file(self, file_type, path):
         """
-
-        Parameters
-        ----------
-        file_type :
-            
-        path :
-            
-
-        Returns
-        -------
-
+        Generic file selection method, that opens a file browsing pop-up.
         """
         filetypes = (
             (f'{file_type} files', f'*.{file_type}'),
@@ -474,6 +410,7 @@ class Processing:
 
 class Configuration:
     """ """
+    # TODO: implement
 
     def __init__(self, window, master_config) -> None:
         self.master_config = master_config
@@ -486,7 +423,7 @@ class Configuration:
         Parameters
         ----------
         file_path :
-            
+
 
         Returns
         -------
@@ -506,9 +443,9 @@ class Configuration:
         Parameters
         ----------
         file_path :
-            
+
         config_data :
-            
+
 
         Returns
         -------
@@ -523,14 +460,13 @@ class Configuration:
 
 
 if __name__ == "__main__":
-    # root = tk.Tk()
+    # main application when not called from inside the controller
     root = ctk.CTk()
     import platform
     import sys
     if platform.system() == 'Linux':
         config_path = 'master_config.toml'
     elif platform.system() == 'Windows':
-        from pathlib import Path
         file_location = Path(__file__).parents[3]
         config_path = file_location.joinpath('windows_config.toml')
     else:

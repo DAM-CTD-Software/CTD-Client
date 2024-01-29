@@ -17,6 +17,7 @@ from seabird_processing.configs import (
     WildEditConfig
 )
 
+# maps processing step name to Class name inside of seabird_processing
 config_classes = {
     'AirPressure': AirPressureConfig,
     'AlignCTD': AlignCTDConfig,
@@ -36,7 +37,16 @@ config_classes = {
 
 
 class BatchProcessing:
-    """ """
+    """
+    Handles the collection of parameters and preparation needed to use the
+    seabird_processing module of Hakai Institute.
+    The individual processing steps are collected inside of a dictionary that
+    holds the names and psas of the respective module. To this information,
+    the Class heavily relies on paths that are set inside of the configuration
+    file. The current setup needs an additional dictionary that maps the names
+    of the procssing step to their respective class equivalents inside of the
+    seabird_processing module, which is not able to handle these names itself.
+    """
 
     def __init__(
             self,
@@ -51,7 +61,9 @@ class BatchProcessing:
         self.final_steps = {}
 
     def get_processing_configs(self):
-        """ """
+        """Maps processing names inside the processing_steps dictionary to
+        classes of the seabird_processing module. Constructs a new dictionary
+        that fits those classes to the psas."""
         for step, psa in self.processing_steps.items():
             for step_name, proc_config in config_classes.items():
                 if step.lower() == step_name.lower():
@@ -59,7 +71,8 @@ class BatchProcessing:
         assert len(self.processing_steps) == len(self.final_steps)
 
     def clean_psa_paths(self):
-        """ """
+        """Makes sure that all the paths inside the dictionaries are absolute,
+        by using the psa folder inside the config file as prefix."""
         for step, psa_string in self.processing_steps.items():
             psa = Path(psa_string)
             if psa.is_absolute():
@@ -68,8 +81,11 @@ class BatchProcessing:
                 self.processing_steps[step] = Path(
                     self.psa_folder).joinpath(psa)
 
-    def create_config_objects(self):
-        """ """
+    def create_config_objects(self) -> list:
+        """Produces the config objects needed by the seabird_processing batch
+        module. Brings all the needed information together and instantiates
+        the processing objects. These are kept inside of a list which can
+        directly be fed into the Batch class of seabird_processing."""
         self.clean_psa_paths()
         self.get_processing_configs()
         config_objects = []
@@ -82,7 +98,9 @@ class BatchProcessing:
         return config_objects
 
     def run(self):
-        """ """
+        """The main method of this Class, calls all the other methods and runs
+        the processing steps as batch process, using Seabirds own batch
+        processing routine."""
         config_objects = self.create_config_objects()
         batch_process = sp.Batch(config_objects)
         batch_process.run(str(self.raw_hex))

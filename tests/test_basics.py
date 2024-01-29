@@ -9,7 +9,7 @@ import sys
 import time
 
 if platform.system() == 'Linux':
-    config_path = 'master_config.toml'
+    config_path = 'linux_config.toml'
 elif platform.system() == 'Windows':
     config_path = 'windows_config.toml'
 else:

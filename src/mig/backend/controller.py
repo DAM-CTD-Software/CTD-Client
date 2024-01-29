@@ -4,6 +4,7 @@ import customtkinter as ctk
 
 from mig.backend.configurationhandler import ConfigurationFile
 from mig.backend.dshipcaller import DSHIPHeader, RepeatedTimer
+from mig.backend.bottles import BottleClosingTimes
 from mig.frontend.main import MainWindow
 
 
@@ -28,7 +29,9 @@ class Controller:
             sys.exit(1)
         self.config = ConfigurationFile(config_path)
         self.dship_info = DSHIPHeader(self.config)
-        self.main_window = MainWindow(self.root, self.config, self.dship_info)
+        self.bottles = BottleClosingTimes(config_path)
+        self.main_window = MainWindow(
+            self.root, self.config, self.dship_info, self.bottles)
         # fullscreen option:
         # root.after(0, lambda: root.state('zoomed'))
         self.start_listener()

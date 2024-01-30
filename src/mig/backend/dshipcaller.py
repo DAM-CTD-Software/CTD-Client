@@ -36,9 +36,9 @@ class DSHIPHeader:
         self.last_call = 'unsucessfull'
         # counts repeated failed API calls
         # resets to 0 upon a successfull call
-        self.fail_counter = 8
-        # upper limit to allow for failed API calls in a row
-        self.fail_tolerance = 30
+        self.fail_counter = 0
+        # upper limit to allow for failed (individual!) API calls in a row
+        self.fail_tolerance = 70
         # the status of the API listener
         self.alive = False
         self.dummy = dummy
@@ -172,7 +172,7 @@ class DSHIPHeader:
 
     def start_listener(self):
         """ """
-        self.fail_counter = 3
+        self.fail_counter = 0
         self.alive = True
         if self.dummy:
             method_to_call = self.generate_random_numbers

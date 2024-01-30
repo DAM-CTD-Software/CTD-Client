@@ -20,7 +20,7 @@ class Controller:
         # root = tk.Tk()
         self.root = ctk.CTk()
         if platform.system() == 'Linux':
-            config_path = 'master_config.toml'
+            config_path = 'linux_config.toml'
         elif platform.system() == 'Windows':
             from pathlib import Path
             file_location = Path(__file__).parents[3]
@@ -28,10 +28,14 @@ class Controller:
         else:
             sys.exit(1)
         self.config = ConfigurationFile(config_path)
-        self.dship_info = DSHIPHeader(self.config)
-        self.bottles = BottleClosingTimes(config_path)
+        self.dship_info = DSHIPHeader(self.config, dummy=True)
+        self.bottles = BottleClosingTimes(self.config)
         self.main_window = MainWindow(
-            self.root, self.config, self.dship_info, self.bottles)
+            self,
+            self.root,
+            self.config,
+            self.dship_info,
+            self.bottles)
         # fullscreen option:
         # root.after(0, lambda: root.state('zoomed'))
         self.start_listener()
@@ -42,7 +46,9 @@ class Controller:
         """
         Activates the listener to periodically check for new dship values.
         """
-        self.listener = RepeatedTimer(5, self.update_dship_values)
+        self.listener = RepeatedTimer(
+            float(self.config['dship']['fetch_intervall'])+1.0,
+            self.update_dship_values)
 
     def end_listener(self):
         """
@@ -52,15 +58,20 @@ class Controller:
 
     def update_dship_values(self):
         """Transfers the dship values to the main window."""
-        try:
-            self.main_window.measurement.update_dship_values(
-                self.dship_info.dict_of_samples.values())
-            self.main_window.measurement.dship_label['background'] = 'green'
-        except AssertionError:
-            self.main_window.measurement.dship_label['background'] = 'red'
-            if self.dship_info.dship_fail_counter > 9:
-                self.end_listener()
-                self.main_window.measurement.dship_label['text'] = 'No DSHIP connection'
+        self.main_window.measurement.update_dship_values(
+            self.dship_info.dict_of_samples.values())
+        if self.dship_info.fail_counter == self.dship_info.fail_tolerance:
+            self.end_listener()
+            self.main_window.measurement.set_dship_status_bad()
+        else:
+            self.main_window.measurement.set_dship_status_good()
+
+    def reconnect_dship(self):
+        self.dship_info.start_listener()
+        if self.dship_info.last_call == 'successful':
+            self.update_dship_values()
+            # self.main_window.measurement.set_dship_status_good()
+        self.start_listener()
 
 
 if __name__ == "__main__":

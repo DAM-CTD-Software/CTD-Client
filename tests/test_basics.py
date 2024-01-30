@@ -69,7 +69,7 @@ class TestMetadataHeader(unittest.TestCase):
 
     def setUp(self):
         self.config = ConfigurationFile(config_path)
-        self.header = DSHIPHeader(self.config)
+        self.header = DSHIPHeader(self.config, dummy=True)
 
     def tearDown(self):
         self.header.end_listener()
@@ -116,14 +116,10 @@ class DSHIP(unittest.TestCase):
 
     def setUp(self) -> None:
         self.config = ConfigurationFile(config_path)
-        self.dship = DSHIPHeader(self.config)
+        self.dship = DSHIPHeader(self.config, dummy=True)
 
     def tearDown(self):
         self.dship.end_listener()
 
     def test_dummy(self):
         self.assertTrue(self.dship.alive)
-        # first = self.dship.dict_of_samples
-        # time.sleep(1.1)
-        # second = self.dship.dict_of_samples
-        # self.assertNotEqual(first, second)

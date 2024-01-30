@@ -16,7 +16,7 @@ from mig.backend.runseasave import RunSeasave
 class MainWindow:
     """Top window that encapsulates all other frames."""
 
-    def __init__(self, root, config_path, dship_info, bottles):
+    def __init__(self, controller, root, config_path, dship_info, bottles):
         root.title("DAM CTD Software")
         # avoids old 'tear-off' menus
         root.option_add('*tearOff', tk.FALSE)
@@ -34,7 +34,7 @@ class MainWindow:
         tabs.grid()
         # building individual pages in their own classes
         self.measurement = Measurement(
-            tabs.measurement, config_path, bottles, dship_info)
+            tabs.measurement, config_path, bottles, dship_info, controller)
         Processing(tabs.processing, config_path)
         Configuration(tabs.configuration, config_path)
         tabs.measurement.grid()
@@ -105,10 +105,11 @@ class Measurement:
     the Seasave software with command line arguments.
     """
 
-    def __init__(self, window, config, bottles, dship_info) -> None:
+    def __init__(self, window, config, bottles, dship_info, controller) -> None:
         self.config = config
         self.bottles = bottles
         self.dship_info = dship_info
+        self.controller = controller
         self.dship_values = dship_info.dship_values
         self.dship_vars = {key: tk.StringVar(value=value)
                            for key, value in self.dship_values.items()}
@@ -131,7 +132,6 @@ class Measurement:
         -------
 
         """
-        assert len(self.dship_vars) == len(list_of_values)
         for ((_, var), value) in zip(self.dship_vars.items(), list_of_values):
             var.set(value)
 
@@ -155,9 +155,12 @@ class Measurement:
         dship_frame = ttk.Frame(window)
         self.dship_label = tk.Label(
             dship_frame,
-            text='Live DSHIP values:',
-            background='green')
-        self.dship_label.grid(column=1)
+            text='waiting for connection...',
+            background='yellow'
+        )
+        self.dship_label.grid(row=0, column=0)
+        tk.Button(dship_frame, text='Reconnect',
+                  command=self.reconnect_dship).grid(row=0, column=1)
 
         for index, (key, value) in enumerate(self.dship_vars.items()):
             index = index if index < 4 else index+1
@@ -171,7 +174,7 @@ class Measurement:
             dship_frame,
             values=list(self.config['operators'].values())[:-1],
             textvariable=self.operator
-        ).grid(row=4, column=1)
+        ).grid(row=5, column=1)
         dship_frame.grid(row=0, column=0)
 
     def bottle_frame(self, window):
@@ -201,7 +204,7 @@ class Measurement:
                      justify='center').grid(row=index+1, column=1)
         ttk.Checkbutton(bottle_frame,
                         text='Save Bottle Configuration',
-                        variable=self.save_btl_config).grid()
+                        variable=self.save_btl_config).grid(column=1)
         bottle_frame.grid(row=0, column=1)
 
     def run_frame(self, window):
@@ -250,6 +253,20 @@ class Measurement:
             new_bottle_dict, self.save_btl_config)
         self.dship_info.build_metadata_header(self.operator.get())
         RunSeasave(self.config).run(self.downcast.get(), self.autostart.get())
+
+    def reconnect_dship(self):
+        """"""
+        self.controller.reconnect_dship()
+
+    def set_dship_status_good(self):
+        """"""
+        self.dship_label['background'] = 'green'
+        self.dship_label['text'] = 'Live DSHIP values:'
+
+    def set_dship_status_bad(self):
+        """"""
+        self.dship_label['background'] = 'red'
+        self.dship_label['text'] = 'No DSHIP connection'
 
 
 class Processing:

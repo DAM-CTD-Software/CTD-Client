@@ -3,6 +3,7 @@ import time
 import requests
 import xmltodict
 import random
+from functools import partial
 
 
 class DSHIPHeader:
@@ -12,10 +13,12 @@ class DSHIPHeader:
     """
 
     def __init__(
-            self,
-            config,
-            mode='api',
-            dship_url_part=':8080/dship-web/service/samples'):
+        self,
+        config,
+        mode='api',
+        dship_url_part=':8080/dship-web/service/samples',
+        dummy=False
+    ):
         # will hold the dhsip info
         self.data: dict
         # loads the key values we want to fetch from DSHIP
@@ -25,41 +28,32 @@ class DSHIPHeader:
         # ?
         self.dship_values = self.dict_of_samples
         # the URL of the API
-        self.source = f'http:{self.ip}{dship_url_part}'
+        self.source = f'http://{self.ip}{dship_url_part}'
         # waiting time between two rounds of API calls
         self.fetch_timeout = config['dship']['fetch_intervall']
         # configuration file representation
         self.config = config
-        # upper limit to allow for failed API calls in a row
-        self.dship_fail_tolerance = 10
+        self.last_call = 'unsucessfull'
         # counts repeated failed API calls
         # resets to 0 upon a successfull call
-        self.dship_fail_counter = 0
+        self.fail_counter = 8
+        # upper limit to allow for failed API calls in a row
+        self.fail_tolerance = 30
         # the status of the API listener
         self.alive = False
-        try:
-            # TODO: fix this logic...
-            # TODO: and decide which way of repeatedely calling the API I
-            # prefer: threading vs RepeatedTimer
-
-            # tries a basic API call and upon failure generated dummy values,
-            # as we conculde that we are not on a ship
-            self.call_api(self.source, self.dict_of_samples)
-        except ValueError:
-            self.dummy = True
-            self.generate_random_numbers()
-        else:
-            self.dummy = False
-        finally:
-            # activates the listener in any case
-            self.alive = True
-            self.listener = RepeatedTimer(self.fetch_timeout,
-                                          self.generate_random_numbers)
+        self.dummy = dummy
+        self.start_listener()
 
     def generate_random_numbers(self):
         """A dummy number generator for GUI testing purposes."""
         for key in self.dict_of_samples:
             self.dict_of_samples[key] = random.randint(0, 100)
+        self.fail_counter += 1
+        if self.fail_counter == self.fail_tolerance:
+            self.end_listener()
+            self.last_call = 'unsucessfull'
+        else:
+            self.last_call = 'successfull'
 
     def load_udp_telegram(self, port):
         # TODO: finish this
@@ -114,6 +108,14 @@ class DSHIPHeader:
             if response:
                 value = response['sample']['value']
                 self.dship_values[sample] = value
+                self.fail_counter = 0
+                self.last_call = 'successfull'
+            else:
+                self.fail_counter += 1
+                self.last_call = 'unsucessfull'
+                if self.fail_counter == self.fail_tolerance:
+                    self.end_listener()
+
             time.sleep(timeout)
 
     def individual_call(self, url) -> dict | None:
@@ -132,20 +134,18 @@ class DSHIPHeader:
         a dictionary with the API response
 
         """
-        response = requests.get(url)
+        try:
+            response = requests.get(url, timeout=1)
+        except requests.exceptions.ConnectTimeout:
+            return None
         # handle response
         if response.status_code in ['200', 200]:
             data = response.text
-            self.dship_fail_counter = 0
             try:
                 return xmltodict.parse(data)
             except ValueError:
                 return None
         else:
-            if self.dship_fail_counter == self.dship_fail_tolerance:
-                self.alive = False
-                return None
-            self.dship_fail_counter += 1
             return None
 
     def build_metadata_header(self, operator):
@@ -170,29 +170,22 @@ class DSHIPHeader:
         self.config['operators']['last'] = operator
         self.config.write()
 
-    def fetch(self):
-        # TODO: deprecated?
-        """ """
-        if self.dummy:
-            while self.alive:
-                self.generate_random_numbers()
-        else:
-            while self.alive:
-                self.call_api(self.source, self.dict_of_samples)
-
     def start_listener(self):
         """ """
-        random.seed()
-        self.listener_thread = threading.Timer(
-            self.fetch_timeout, self.generate_random_numbers)
-        # self.listener_thread.daemon = False
+        self.fail_counter = 3
         self.alive = True
-        self.listener_thread.start()
+        if self.dummy:
+            method_to_call = self.generate_random_numbers
+        else:
+            method_to_call = partial(
+                self.call_api, self.source, self.dict_of_samples)
+        method_to_call()
+        self.listener = RepeatedTimer(self.fetch_timeout,
+                                      method_to_call)
 
     def end_listener(self):
         """ """
         self.alive = False
-        # self.listener_thread.cancel()
         self.listener.stop()
 
 

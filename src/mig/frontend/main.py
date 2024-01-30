@@ -7,8 +7,6 @@ import json
 from functools import partial
 import difflib
 
-from mig.backend.configurationhandler import ConfigurationFile
-from mig.backend.dshipcaller import DSHIPHeader
 from mig.backend.processing import BatchProcessing
 from mig.backend.runseasave import RunSeasave
 
@@ -105,7 +103,14 @@ class Measurement:
     the Seasave software with command line arguments.
     """
 
-    def __init__(self, window, config, bottles, dship_info, controller) -> None:
+    def __init__(
+        self,
+        window,
+        config,
+        bottles,
+        dship_info,
+        controller
+    ):
         self.config = config
         self.bottles = bottles
         self.dship_info = dship_info
@@ -278,40 +283,57 @@ class Processing:
     """
 
     def __init__(self, window, config) -> None:
-        self.psa_modules = ['AlignCTD', 'AirPressure', 'BinAvg', 'BottleSum', 'CellTM',
-                            'DatCnv', 'Derive', 'Filter', 'LoopEdit', 'WildEdit', 'W_Filter']
+        self.window = window
+        self.psa_modules = ['AlignCTD', 'AirPressure', 'BinAvg', 'BottleSum',
+                            'CellTM', 'DatCnv', 'Derive', 'Filter', 'LoopEdit',
+                            'WildEdit', 'W_Filter']
         self.config = config
         self.path_dict = {
             'xmlcon': tk.StringVar(value=config['user']['paths']['xmlcon']),
             'hex': tk.StringVar(value=config['user']['paths']['hex']),
-            'psa': tk.StringVar(value=config['user']['processing']['psas'])}
-
-        # generate path selection fields
-        path_frame = tk.Frame(window)
-        for file_type, variable in self.path_dict.items():
-            # individual frame construction
-            single_frame = tk.Frame(path_frame)
-            tk.Label(single_frame, text=f'Path to {file_type}').grid()
-            tk.Entry(single_frame, textvariable=variable).grid()
-            command_with_arguments = partial(
-                self.select_file, file_type, Path(variable.get()))
-            tk.Button(single_frame, text='Browse',
-                      command=command_with_arguments).grid()
-            single_frame.grid()
-        path_frame.grid()
-
-        # generate processing selection frame
+            'psas': tk.StringVar(value=config['user']['processing']['psas'])}
         self.psa_paths = [path.name for path in Path(
             self.config['user']['processing']['psas']).iterdir()]
         self.steps = self.config['user']['processing']['modules']
+
+        self.path_frame = self.path_selection_frame()
+        self.step_frame = self.step_selection_frame()
+        self.window.grid()
+
+    def path_selection_frame(self):
+        """
+        Frame that encapsulates the selection of the three paths needed in
+        order to run the processing.
+        """
+        frame = tk.Frame(self.window)
+        for file_type, variable in self.path_dict.items():
+            # individual frame construction
+            single_frame = tk.Frame(frame)
+            tk.Label(single_frame, text=f'Path to {file_type}').grid()
+            tk.Entry(single_frame, textvariable=variable).grid()
+            command_with_arguments = partial(
+                self.select_file, file_type, variable)
+            tk.Button(single_frame, text='Browse',
+                      command=command_with_arguments).grid()
+            single_frame.grid()
+        frame.grid()
+        return frame
+
+    def step_selection_frame(self):
+        """
+        Frame to hold the dynamic drop-downs for processing step and psa
+        selection.
+        """
+        frame = tk.Frame(self.window)
         self.step_number = 1
         self.step_var_dict = {}
-        modules_frame = tk.Frame(window)
+        # steps and psas frame
+        modules_frame = tk.Frame(frame)
         for user_defined_step in self.steps:
             self.add_processing_step(modules_frame, user_defined_step)
         modules_frame.grid()
-
-        button_frame = tk.Frame(window)
+        # button frame
+        button_frame = tk.Frame(frame)
         add_step = partial(self.add_processing_step, modules_frame)
         ttk.Button(
             button_frame,
@@ -325,13 +347,22 @@ class Processing:
             command=remove_step
         ).grid(row=0, column=1)
         button_frame.grid()
-
         # run processing button
         tk.Button(
-            window,
+            frame,
             text='Run processing',
             command=self.run_processing
         ).grid()
+        frame.grid()
+        return frame
+
+    def update_psa_selection(self, directory):
+        """"""
+        self.psa_paths = [path.name for path in Path(directory).iterdir()]
+        self.step_frame.grid_forget()
+        self.step_frame.destroy()
+        self.step_frame = self.step_selection_frame()
+        self.window.grid()
 
     def add_processing_step(self, window, preset_value=''):
         """
@@ -410,19 +441,30 @@ class Processing:
         batch_processing = BatchProcessing(self.config, info_dict)
         batch_processing.run()
 
-    def select_file(self, file_type, path):
+    def select_file(self, file_type, variable):
         """
         Generic file selection method, that opens a file browsing pop-up.
         """
+        path = Path(variable.get())
         filetypes = (
             (f'{file_type} files', f'*.{file_type}'),
             ('All files', '*.*')
         )
 
-        fd.askopenfilename(
-            title=f'Path to {file_type}',
-            initialdir=path,
-            filetypes=filetypes)
+        if file_type == 'psas':
+            directory = fd.askdirectory(
+                title=f'Path to {file_type}',
+                initialdir=path,
+            )
+            variable.set(directory)
+            self.update_psa_selection(directory)
+
+        else:
+            file = fd.askopenfilename(
+                title=f'Path to {file_type}',
+                initialdir=path,
+                filetypes=filetypes)
+            variable.set(file)
 
 
 class Configuration:
@@ -431,8 +473,6 @@ class Configuration:
 
     def __init__(self, window, master_config) -> None:
         self.master_config = master_config
-        ttk.Button(window, text='Open configuration file',
-                   command=self.read_config('')).grid()
 
     def read_config(self, file_path):
         """
@@ -474,24 +514,3 @@ class Configuration:
             print("Config saved successfully.")
         except Exception as e:
             print(f"Error saving config file: {e}")
-
-
-if __name__ == "__main__":
-    # main application when not called from inside the controller
-    root = ctk.CTk()
-    import platform
-    import sys
-    if platform.system() == 'Linux':
-        config_path = 'master_config.toml'
-    elif platform.system() == 'Windows':
-        file_location = Path(__file__).parents[3]
-        config_path = file_location.joinpath('windows_config.toml')
-    else:
-        sys.exit(1)
-    config = ConfigurationFile(config_path)
-    dship_info = DSHIPHeader(config)
-    MainWindow(root, config, dship_info)
-    # fullscreen option:
-    # root.after(0, lambda: root.state('zoomed'))
-    root.mainloop()
-    dship_info.end_listener()

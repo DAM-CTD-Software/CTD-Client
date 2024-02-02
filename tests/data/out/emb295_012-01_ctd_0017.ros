@@ -37,7 +37,7 @@
 ** Pos_Alias = Gotland
 * System UTC = Jul 04 2022 07:51:47
 # nquan = 19
-# nvalues = 196                                   
+# nvalues = 196
 # units = specified
 # name 0 = prDM: Pressure, Digiquartz [db]
 # name 1 = t090C: Temperature [ITS-90, deg C]

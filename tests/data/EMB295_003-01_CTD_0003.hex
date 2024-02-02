@@ -23,18 +23,18 @@
 * advance secondary conductivity  0.073 seconds
 * autorun on power up is disabled
 * S>
-** Cruise = EMB295 
-** Station = EMB295_3-1 
-** Platform = CTD 
-** Cast = 0003 
-** Operator = Jan Donath 
-** GPS_Time = 04.07.2022 07:51:16 
-** GPS_Lat = 57 18.992 N 
-** GPS_Lon = 20  7.964 E 
-** Echo_Depth =  248.0 m 
-** Air_Pressure = 1014.5 hPa 
-** WsStartID =    76 
-** Pos_Alias = Gotland 
+** Cruise = EMB295
+** Station = EMB295_3-1
+** Platform = CTD
+** Cast = 0003
+** Operator = Jan Donath
+** GPS_Time = 04.07.2022 07:51:16
+** GPS_Lat = 57 18.992 N
+** GPS_Lon = 20  7.964 E
+** Echo_Depth =  248.0 m
+** Air_Pressure = 1014.5 hPa
+** WsStartID =    76
+** Pos_Alias = Gotland
 * System UTC = Jul 04 2022 07:51:47
 *END*
 11ED1D1028008049B113EC58101CF95C572289403CEE5EAFFFFF040004872BBAA50F5C2D009458552A89D34E139CC262

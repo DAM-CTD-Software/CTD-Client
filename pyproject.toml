@@ -9,11 +9,12 @@ readme = "README.md"
 python = ">=3.11.4, <3.13"
 tomlkit = "^0.12.3"
 pyyaml = "^6.0.1"
-seabirdfilehandler = {path = "../seabirdfilehandler", develop = true}
 requests = "^2.31.0"
 customtkinter = "^5.2.2"
-seabird-processing = {path = "../seabird_processing", develop = true}
 xmltodict = "^0.13.0"
+code-tools = {version = "^0.1.0", source = "gitea"}
+seabirdfilehandler = {version = "^0.1.0", source = "gitea"}
+seabird-processing = {version = "^0.1.0", source = "gitea"}
 
 
 [tool.poetry.group.dev.dependencies]
@@ -23,6 +24,14 @@ sphinx = "^7.2.6"
 sphinx-rtd-theme = "^2.0.0"
 sphinx-autodoc-typehints = "^1.25.2"
 pyment = "^0.3.3"
+twine = "^4.0.2"
+pre-commit = "^3.6.0"
+
+
+[[tool.poetry.source]]
+name = "gitea"
+url = "https://git.io-warnemuende.de/api/packages/CTD-Software/pypi/simple/"
+priority = "supplemental"
 
 [tool.pytest.ini_options]
 pythonpath = [".",

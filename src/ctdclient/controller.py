@@ -3,10 +3,10 @@ import sys
 import customtkinter as ctk
 from code_tools.repeating import RepeatedTimer
 
-from mig.backend.configurationhandler import ConfigurationFile
-from mig.backend.dshipcaller import DSHIPHeader
-from mig.backend.bottles import BottleClosingTimes
-from mig.frontend.main import MainWindow
+from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.dshipcaller import DSHIPHeader
+from ctdclient.bottles import BottleClosingDepths
+from ctdclient.view import MainWindow
 
 
 class Controller:
@@ -30,7 +30,7 @@ class Controller:
             sys.exit(1)
         self.config = ConfigurationFile(config_path)
         self.dship_info = DSHIPHeader(self.config, dummy=True)
-        self.bottles = BottleClosingTimes(self.config)
+        self.bottles = BottleClosingDepths(self.config)
         self.main_window = MainWindow(
             self,
             self.root,

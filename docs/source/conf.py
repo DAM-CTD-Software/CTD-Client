@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(
     '..', '..', 'src')))
 
-project = 'mig'
+project = 'ctdclient'
 copyright = '2024, Emil Michels'
 author = 'Emil Michels'
 

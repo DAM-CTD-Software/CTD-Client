@@ -1,12 +1,11 @@
 import unittest
-from mig.backend.bottles import BottleClosingTimes
-from mig.backend.configurationhandler import ConfigurationFile
-from mig.backend.dshipcaller import DSHIPHeader
-from mig.backend.processing import BatchProcessing
-from mig.backend.runseasave import RunSeasave
+from ctdclient.bottles import BottleClosingDepths
+from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.dshipcaller import DSHIPHeader
+from ctdclient.processing import BatchProcessing
+from ctdclient.runseasave import RunSeasave
 import platform
 import sys
-import time
 
 if platform.system() == 'Linux':
     config_path = 'linux_config.toml'
@@ -44,7 +43,7 @@ class TestBottles(unittest.TestCase):
 
     def setUp(self):
         config = ConfigurationFile(config_path)
-        self.bottles = BottleClosingTimes(config)
+        self.bottles = BottleClosingDepths(config)
 
     def test_correct_base_dict(self):
         self.assertEqual(len(self.bottles), 13)

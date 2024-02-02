@@ -55,19 +55,19 @@ last = "Michels"
 number_of_bottles = 13
 
     [user.bottle_layout]
-    1 = 1.0
-    2 = 2.0
-    3 = 3.0
-    4 = 4.0
-    5 = 5.0
-    6 = 6.0
-    7 = 7.0
-    8 = 8.0
-    9 = 9.0
-    10 = 10.0
-    11 = 11.0
-    12 = 12.0
-    13 = 13.0
+    1 = 1
+    2 = 2
+    3 = 3
+    4 = 4
+    5 = 5
+    6 = 6
+    7 = 7
+    8 = 8
+    9 = 9
+    10 = 10
+    11 = 11
+    12 = 12
+    13 = 13
 
     [user.paths]
     xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"

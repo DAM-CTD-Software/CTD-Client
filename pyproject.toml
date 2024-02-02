@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "mig"
-version = "0.1.0"
+name = "ctdclient"
+version = "0.1.1"
 description = ""
 authors = ["Emil Michels <emil.michels@io-warnemuende.de>"]
 readme = "README.md"
@@ -36,9 +36,7 @@ priority = "supplemental"
 [tool.pytest.ini_options]
 pythonpath = [".",
              "src",
-             "src/mig",
-             "src/mig/backend",
-             "src/mig/frontend"]
+             "src/ctdclient"]
 filterwarnings = [
     "error",
     "ignore::UserWarning",
@@ -47,7 +45,7 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = ['src/mig']
+source = ['src/ctdclient']
 
 [build-system]
 requires = ["poetry-core"]

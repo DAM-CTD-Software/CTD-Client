@@ -7,8 +7,8 @@ import json
 from functools import partial
 import difflib
 
-from mig.backend.processing import BatchProcessing
-from mig.backend.runseasave import RunSeasave
+from ctdclient.processing import BatchProcessing
+from ctdclient.runseasave import RunSeasave
 
 
 class MainWindow:

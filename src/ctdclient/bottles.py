@@ -1,7 +1,7 @@
 from collections import UserDict
 
 
-class BottleClosingTimes(UserDict):
+class BottleClosingDepths(UserDict):
     """
     Writes the pressure values one wants to close the bottles to the
     Seasave.psa in the required format. The class is instantiated with a

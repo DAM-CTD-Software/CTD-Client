@@ -1,6 +1,10 @@
 from tomlkit import dumps, table
 from tomlkit.toml_file import TOMLFile
 from seabirdfilehandler import SeasavePsa
+from code_tools.logging import configure_logging, get_logger
+
+configure_logging(f'{__name__}.log')
+logger = get_logger(__name__)
 
 
 class ConfigurationFile:
@@ -45,7 +49,9 @@ class ConfigurationFile:
             with open(output_path, 'w') as file:
                 file.write(dumps(self.data))
         except IOError as error:
-            print(f'Could not write configuration file: {error}')
+            logger.error(f'Could not write configuration file: {error}')
+        else:
+            logger.info(f'Wrote new configuration {output_path} to disk.')
 
     def modify(self, key, value):
         """
@@ -73,7 +79,7 @@ class ConfigurationFile:
             else:
                 self.data.update({key: value})
         except ValueError as error:
-            print(f'Value modification failed: {error}')
+            logger.error(f'Value modification failed: {error}')
 
     def reload(self):
         """Reopens the configuration file."""

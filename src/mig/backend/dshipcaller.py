@@ -1,9 +1,13 @@
-import threading
 import time
 import requests
 import xmltodict
 import random
 from functools import partial
+from code_tools.logging import configure_logging, get_logger
+from code_tools.repeating import RepeatedTimer
+
+configure_logging(f'{__name__}.log')
+logger = get_logger(__name__)
 
 
 class DSHIPHeader:
@@ -22,6 +26,7 @@ class DSHIPHeader:
         # will hold the dhsip info
         self.data: dict
         # loads the key values we want to fetch from DSHIP
+        # TODO: dict_of_samples vs dship_values
         self.dict_of_samples = config['dship']['identifier']
         # vessel-specific IP, where DSHIP can be reached
         self.ip = config['dship']['ip']
@@ -114,6 +119,8 @@ class DSHIPHeader:
                 self.fail_counter += 1
                 self.last_call = 'unsucessfull'
                 if self.fail_counter == self.fail_tolerance:
+                    logger.info(
+                        f'{self.fail_tolerance} failed API calls in a row.')
                     self.end_listener()
 
             time.sleep(timeout)
@@ -143,7 +150,9 @@ class DSHIPHeader:
             data = response.text
             try:
                 return xmltodict.parse(data)
-            except ValueError:
+            except ValueError as error:
+                logger.error(f'Could not unpack payload of call {
+                             url}: {error}')
                 return None
         else:
             return None
@@ -187,41 +196,3 @@ class DSHIPHeader:
         """ """
         self.alive = False
         self.listener.stop()
-
-
-class RepeatedTimer(object):
-    # TODO: need to transfer this into its own module
-    """
-    Basic implementation of a periodic method call, as the threading module
-    is not super intuitive and often an overkill.
-    """
-
-    def __init__(self, interval, function, *args, **kwargs):
-        self.timer = None
-        self.interval = interval
-        self.function = function
-        self.args = args
-        self.kwargs = kwargs
-        self.is_running = False
-        self.next_call = time.time()
-        self.start()
-
-    def run(self):
-        """ """
-        self.is_running = False
-        self.start()
-        self.function(*self.args, **self.kwargs)
-
-    def start(self):
-        """ """
-        if not self.is_running:
-            self.next_call += self.interval
-            self.timer = threading.Timer(
-                self.next_call - time.time(), self.run)
-            self.timer.start()
-            self.is_running = True
-
-    def stop(self):
-        """ """
-        self.timer.cancel()
-        self.is_running = False

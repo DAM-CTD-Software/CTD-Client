@@ -1,7 +1,8 @@
 import subprocess
-import logging
+from code_tools.logging import configure_logging, get_logger
 
-logger = logging.getLogger(__name__)
+configure_logging(f'{__name__}.log')
+logger = get_logger(__name__)
 
 
 class RunSeasave:
@@ -38,10 +39,14 @@ class RunSeasave:
             ps = subprocess.Popen(run_command)
             if ps.stdout:
                 logger.debug(ps.stdout)
-        except subprocess.CalledProcessError as e:
-            if e.stderr:
-                logger.error(e.stderr)
-            raise e
+        except subprocess.CalledProcessError as error:
+            if error.stderr:
+                logger.error(error.stderr)
+            raise error
+        except PermissionError as error:
+            logger.error(f'Insufficient permissions to run the command {
+                         run_command}: {error}')
+            raise error
 
     def set_psa_run_info(self):
         """Sets XMLCON and hex file paths in Seasave.psa."""

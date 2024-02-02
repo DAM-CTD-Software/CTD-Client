@@ -1,9 +1,10 @@
 import platform
 import sys
 import customtkinter as ctk
+from code_tools.repeating import RepeatedTimer
 
 from mig.backend.configurationhandler import ConfigurationFile
-from mig.backend.dshipcaller import DSHIPHeader, RepeatedTimer
+from mig.backend.dshipcaller import DSHIPHeader
 from mig.backend.bottles import BottleClosingTimes
 from mig.frontend.main import MainWindow
 

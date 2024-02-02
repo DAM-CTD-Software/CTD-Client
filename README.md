@@ -13,14 +13,13 @@ Should in general support these key use-cases:
 ## installation/configuration
 
 - needs a fairly new python version of 3.11.4 or newer
-- needs seabirdfilehandler and seabird_processing from this git organization
-cloned into the same parent directory than this project sits in
-- easiest way of getting started would be by using poetry
-- then, a basic `poetry install` should suffice
-- to run the GUI, call `poetry run python -m src.mig.backend.controller`
-- feel then free to open an Issue in this repository when finding a bug
-- in general, do not expect anything to work out-of-the-box at the moment
-- and expect a lot of changes, so pull often
+- when your local python packaging tool is setup according to this
+[Guide](https://git.io-warnemuende.de/CTD-Software/Ueberblick/src/branch/master/installation.md),
+you can just run `pip install ctdclient` or `poetry add --source gitea ctdclient`,
+respectively.
+- if not, you can clone the repository and install the project with its
+dependencies manually
+- launching the GUI can be achieved by `python -m src.ctdclient.controller`
 
 ## Outlook
 - heavy refactoring

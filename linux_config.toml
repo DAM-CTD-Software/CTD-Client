@@ -24,18 +24,18 @@ fetch_intervall = 1
 #     airpressure='Weatherstation_DWD.PEUMA.Air_pressure'
 #     deviceshortname='ActionLog.PUP.DevShortname'
     # cnv metadata header values
-    Cruise = 49
-    Station = 71
-    Platform = 32
-    Cast = 4
+    Cruise = 'ActionLog.PUP.ExpNumber'
+# Station = 'ActionLog.PUP.DopName'
+    Platform = 'Web.PUP.NextWPName'
+    # Cast = ''
     # Operator = ''
-    GPS_Time = 71
-    GPS_Lat = 70
-    GPS_Lon = 93
-    Echo_Depth = 11
-    Air_Pressure = 11
-    WsStartID = 93
-    Pos_Alias = 8
+    GPS_Time = 'SYS.DISP.TimeTxt'
+    GPS_Lat = 'SYS.STR.PosLat'
+    GPS_Lon = 'SYS.STR.PosLon'
+    Echo_Depth = 'SYS.CALC.WaterDepth'
+    Air_Pressure = 'Weatherstation_DWD.PEUMA.Air_pressure'
+#WsStartID = 'ActionLog.PUP.Scientist'
+    # Pos_Alias = 'Web.PUP.NextWPName'
 
 [history]
 last_cast = 0

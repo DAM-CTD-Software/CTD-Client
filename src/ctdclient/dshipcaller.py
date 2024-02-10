@@ -31,7 +31,7 @@ class DSHIPHeader:
         # vessel-specific IP, where DSHIP can be reached
         self.ip = config['dship']['ip']
         # ?
-        self.dship_values = self.dict_of_samples
+        self.dship_values = {}
         # the URL of the API
         self.source = f'http://{self.ip}{dship_url_part}'
         # waiting time between two rounds of API calls
@@ -43,7 +43,7 @@ class DSHIPHeader:
         # resets to 0 upon a successfull call
         self.fail_counter = 0
         # upper limit to allow for failed (individual!) API calls in a row
-        self.fail_tolerance = 70
+        self.fail_tolerance = 700
         # the status of the API listener
         self.alive = False
         self.dummy = dummy
@@ -52,7 +52,7 @@ class DSHIPHeader:
     def generate_random_numbers(self):
         """A dummy number generator for GUI testing purposes."""
         for key in self.dict_of_samples:
-            self.dict_of_samples[key] = random.randint(0, 100)
+            self.dship_values[key] = random.randint(0, 100)
         self.fail_counter += 1
         if self.fail_counter == self.fail_tolerance:
             self.end_listener()

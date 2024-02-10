@@ -29,7 +29,7 @@ class Controller:
         else:
             sys.exit(1)
         self.config = ConfigurationFile(config_path)
-        self.dship_info = DSHIPHeader(self.config, dummy=True)
+        self.dship_info = DSHIPHeader(self.config)
         self.bottles = BottleClosingDepths(self.config)
         self.main_window = MainWindow(
             self,
@@ -60,7 +60,7 @@ class Controller:
     def update_dship_values(self):
         """Transfers the dship values to the main window."""
         self.main_window.measurement.update_dship_values(
-            self.dship_info.dict_of_samples.values())
+            self.dship_info.dship_values.values())
         if self.dship_info.fail_counter == self.dship_info.fail_tolerance:
             self.end_listener()
             self.main_window.measurement.set_dship_status_bad()

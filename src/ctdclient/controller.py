@@ -48,7 +48,7 @@ class Controller:
         Activates the listener to periodically check for new dship values.
         """
         self.listener = RepeatedTimer(
-            float(self.config['dship']['fetch_intervall'])+1.0,
+            float(self.config['dship']['fetch_intervall']),
             self.update_dship_values)
 
     def end_listener(self):
@@ -66,6 +66,8 @@ class Controller:
             self.main_window.measurement.set_dship_status_bad()
         else:
             self.main_window.measurement.set_dship_status_good()
+        self.main_window.measurement.update_file_name(
+            self.dship_info.build_file_name(self.main_window.measurement.cast_number))
 
     def reconnect_dship(self):
         self.dship_info.start_listener()

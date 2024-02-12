@@ -39,6 +39,7 @@ fetch_intervall = 1
 
 [history]
 last_cast = 0
+last_filename = ''
 
 [operators]
 op1 = "Heene"

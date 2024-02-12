@@ -81,7 +81,7 @@ class TestSeasaveRun(unittest.TestCase):
 
     def setUp(self):
         self.config = ConfigurationFile(config_path)
-        self.seasave = RunSeasave(self.config)
+        self.seasave = RunSeasave(self.config, '')
 
     def test_psa_set_run_infos(self):
         self.seasave.set_psa_run_info()

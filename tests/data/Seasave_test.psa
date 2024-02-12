@@ -28,18 +28,14 @@
 			<Parity value="78"></Parity>
 		</InstrumentPortConfiguration>
 		<HeaderForm HeaderChoice="1">
-			<Prompt index="0" value="** Cruise = 49"></Prompt>
-			<Prompt index="1" value="** Station = 71"></Prompt>
-			<Prompt index="2" value="** Platform = 32"></Prompt>
-			<Prompt index="3" value="** Cast = 4"></Prompt>
+			<Prompt index="0" value="** Station = None"></Prompt>
+			<Prompt index="1" value="** Platform = Sassnitz"></Prompt>
+			<Prompt index="2" value="** GPS_Time = 11.02.2024 14:56:33"></Prompt>
+			<Prompt index="3" value="** GPS_Lat = 54.51013666666667"></Prompt>
 			<Prompt index="4" value="** Operator = Michels"></Prompt>
-			<Prompt index="5" value="** GPS_Time = 71"></Prompt>
-			<Prompt index="6" value="** GPS_Lat = 70"></Prompt>
-			<Prompt index="7" value="** GPS_Lon = 93"></Prompt>
-			<Prompt index="8" value="** Echo_Depth = 11"></Prompt>
-			<Prompt index="9" value="** Air_Pressure = 11"></Prompt>
-			<Prompt index="10" value="** WsStartID = 93"></Prompt>
-			<Prompt index="11" value="** Pos_Alias = 8"></Prompt>
+			<Prompt index="5" value="** GPS_Lon = 13.636106666666667"></Prompt>
+			<Prompt index="6" value="** Echo_Depth = 9.0"></Prompt>
+			<Prompt index="7" value="** Air_Pressure = 993.3"></Prompt>
 		</HeaderForm>
 		<ArchivedDataPlaybackSettings>
 			<PlaybackFilePath value="C:\Geraete\Seabird\SeasaveV7-Demo\Demo.hex"></PlaybackFilePath>

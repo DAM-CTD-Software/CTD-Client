@@ -24,8 +24,8 @@ fetch_intervall = 1
 #     airpressure='Weatherstation_DWD.PEUMA.Air_pressure'
 #     deviceshortname='ActionLog.PUP.DevShortname'
     # cnv metadata header values
-    Cruise = 'ActionLog.PUP.ExpNumber'
-# Station = 'ActionLog.PUP.DopName'
+    #Cruise = 'ActionLog.PUP.ExpNumber'
+    Station = 'ActionLog.PUP.DopName'
     Platform = 'Web.PUP.NextWPName'
     # Cast = ''
     # Operator = ''
@@ -39,6 +39,7 @@ fetch_intervall = 1
 
 [history]
 last_cast = 0
+last_filename = ""
 
 [operators]
 op1 = "Heene"

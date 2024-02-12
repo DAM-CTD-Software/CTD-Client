@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ctdclient"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = ["Emil Michels <emil.michels@io-warnemuende.de>"]
 readme = "README.md"
@@ -26,6 +26,7 @@ sphinx-autodoc-typehints = "^1.25.2"
 pyment = "^0.3.3"
 twine = "^4.0.2"
 pre-commit = "^3.6.0"
+jupyterlab = "^4.1.0"
 
 
 [[tool.poetry.source]]

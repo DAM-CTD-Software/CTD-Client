@@ -12,10 +12,11 @@ class RunSeasave:
     to XMLCON and hex file.
     """
 
-    def __init__(self, config) -> None:
+    def __init__(self, config, hex_name) -> None:
         self.path_to_seasave_exe = config['paths']['seasave_exe']
         self.path_to_psa = config['user']['paths']['psa']
         self.config = config
+        self.hex_name = hex_name
         self.set_psa_run_info()
 
     def run(self, downcast=True, autostart=True):
@@ -50,9 +51,11 @@ class RunSeasave:
 
     def set_psa_run_info(self):
         """Sets XMLCON and hex file paths in Seasave.psa."""
+        self.config['history']['last_filename'] = self.hex_name
+        self.config.write()
         self.config.psa.set_xmlcon_file_path(
             self.config['user']['paths']['xmlcon'])
-        self.config.psa.set_hex_file_path(self.config['user']['paths']['hex'])
+        self.config.psa.set_hex_file_path(self.hex_name)
         self.config.psa.to_xml()
 
     def set_seasave_command_line_parameters(self, downcast, autostart) -> list:

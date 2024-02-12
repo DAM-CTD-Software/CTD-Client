@@ -1,3 +1,4 @@
+from sys import call_tracing
 import time
 import requests
 import xmltodict
@@ -26,11 +27,10 @@ class DSHIPHeader:
         # will hold the dhsip info
         self.data: dict
         # loads the key values we want to fetch from DSHIP
-        # TODO: dict_of_samples vs dship_values
         self.dict_of_samples = config['dship']['identifier']
         # vessel-specific IP, where DSHIP can be reached
         self.ip = config['dship']['ip']
-        # ?
+        # the values fetched from dship with corresponding header names
         self.dship_values = {}
         # the URL of the API
         self.source = f'http://{self.ip}{dship_url_part}'
@@ -87,8 +87,7 @@ class DSHIPHeader:
     def call_api(
         self,
         url: str,
-        dict_of_samples: dict,
-        timeout: float = 0.1
+        dict_of_samples: dict
     ):
         """
         A collection of API calls according to the values in
@@ -108,6 +107,7 @@ class DSHIPHeader:
         -------
 
         """
+        timeout = self.fetch_timeout/(len(dict_of_samples)+1)
         for sample, url_name in dict_of_samples.items():
             response = self.individual_call(f'{url}/{url_name}')
             if response:
@@ -178,6 +178,9 @@ class DSHIPHeader:
         self.config.psa.set_metadata_header(header_list)
         self.config['operators']['last'] = operator
         self.config.write()
+
+    def build_file_name(self, cast_number):
+        return f'{self.dship_values['Station']}_CTD_{int(cast_number.get()):04d}.hex'
 
     def start_listener(self):
         """ """

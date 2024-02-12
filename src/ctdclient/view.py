@@ -121,6 +121,7 @@ class Measurement:
         self.save_btl_config = tk.BooleanVar(value=False)
 
         self.dship_frame(window)
+        self.info_frame(window)
         self.bottle_frame(window)
         self.run_frame(window)
         window.grid()
@@ -168,19 +169,41 @@ class Measurement:
                   command=self.reconnect_dship).grid(row=0, column=1)
 
         for index, (key, value) in enumerate(self.dship_vars.items()):
-            index = index if index < 4 else index+1
+            # index = index if index < 4 else index+1
             tk.Label(dship_frame, text=key).grid(row=index+1, column=0)
             tk.Label(dship_frame, textvariable=value).grid(
                 row=index+1, column=1)
 
-        tk.Label(dship_frame, text='Operator').grid(row=5, column=0)
+        dship_frame.grid(row=0, column=0)
+
+    def info_frame(self, window):
+        info_frame = ttk.Frame(window)
+        # current filename
+        self.current_filename = tk.StringVar(value='')
+        tk.Label(info_frame, text='current filename').grid(row=0, column=0)
+        tk.Label(info_frame, textvariable=self.current_filename).grid(
+            row=0, column=1)
+        # last filename
+        tk.Label(info_frame, text='last filename').grid(row=1, column=0)
+        tk.Label(
+            info_frame, textvariable=self.config['history']['last_filename']).grid(row=1, column=1)
+        # operator selection
+        tk.Label(info_frame, text='Operator').grid(row=2, column=0)
         self.operator = tk.StringVar(value=self.config['operators']['last'])
         ttk.Combobox(
-            dship_frame,
+            info_frame,
             values=list(self.config['operators'].values())[:-1],
             textvariable=self.operator
-        ).grid(row=5, column=1)
-        dship_frame.grid(row=0, column=0)
+        ).grid(row=2, column=1)
+        # cast selection/display
+        tk.Label(info_frame, text='Cast number').grid(row=3, column=0)
+        self.cast_number = tk.StringVar(
+            value=int(self.config['history']['last_cast'])+1
+        )
+        ttk.Spinbox(info_frame, from_=1.0, to=1000.0,
+                    textvariable=self.cast_number).grid(row=3, column=1)
+
+        info_frame.grid()
 
     def bottle_frame(self, window):
         """
@@ -257,7 +280,8 @@ class Measurement:
         self.bottles.update_bottle_information(
             new_bottle_dict, self.save_btl_config)
         self.dship_info.build_metadata_header(self.operator.get())
-        RunSeasave(self.config).run(self.downcast.get(), self.autostart.get())
+        RunSeasave(self.config, self.current_filename.get()).run(
+            self.downcast.get(), self.autostart.get())
 
     def reconnect_dship(self):
         """"""
@@ -272,6 +296,10 @@ class Measurement:
         """"""
         self.dship_label['background'] = 'red'
         self.dship_label['text'] = 'No DSHIP connection'
+
+    def update_file_name(self, name):
+        """"""
+        self.current_filename.set(name)
 
 
 class Processing:

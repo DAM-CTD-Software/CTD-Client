@@ -1,5 +1,6 @@
 from sys import call_tracing
 import time
+from typing import cast
 import requests
 import xmltodict
 import random
@@ -151,8 +152,8 @@ class DSHIPHeader:
             try:
                 return xmltodict.parse(data)
             except ValueError as error:
-                logger.error(f'Could not unpack payload of call {
-                             url}: {error}')
+                logger.error(
+                    f'Could not unpack payload of call {url}: {error}')
                 return None
         else:
             return None
@@ -180,7 +181,9 @@ class DSHIPHeader:
         self.config.write()
 
     def build_file_name(self, cast_number):
-        return f'{self.dship_values['Station']}_CTD_{int(cast_number.get()):04d}.hex'
+        cruise_and_station = self.dship_values['Station']
+        cast_number = int(cast_number.get())
+        return f'{cruise_and_station}_CTD_{cast_number: 04d}.hex'
 
     def start_listener(self):
         """ """

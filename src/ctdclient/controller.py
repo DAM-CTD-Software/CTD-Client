@@ -24,7 +24,7 @@ class Controller:
             config_path = 'linux_config.toml'
         elif platform.system() == 'Windows':
             from pathlib import Path
-            file_location = Path(__file__).parents[3]
+            file_location = Path(__file__).parents[2]
             config_path = file_location.joinpath('windows_config.toml')
         else:
             sys.exit(1)
@@ -41,6 +41,7 @@ class Controller:
         # root.after(0, lambda: root.state('zoomed'))
         self.start_listener()
         self.root.mainloop()
+        self.end_listener()
         self.dship_info.end_listener()
 
     def start_listener(self):
@@ -79,4 +80,3 @@ class Controller:
 
 if __name__ == "__main__":
     controller = Controller()
-    controller.end_listener()

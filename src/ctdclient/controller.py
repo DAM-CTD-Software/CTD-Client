@@ -24,8 +24,12 @@ class Controller:
             config_path = 'linux_config.toml'
         elif platform.system() == 'Windows':
             from pathlib import Path
-            file_location = Path(__file__).parents[2]
+            # check position of config_file
+            file_location = Path(__file__).parents[1]
             config_path = file_location.joinpath('windows_config.toml')
+            if not config_path.is_file():
+                file_location = Path(__file__).parents[2]
+                config_path = file_location.joinpath('windows_config.toml')
         else:
             sys.exit(1)
         self.config = ConfigurationFile(config_path)

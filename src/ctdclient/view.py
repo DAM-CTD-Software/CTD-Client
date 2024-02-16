@@ -6,6 +6,7 @@ import customtkinter as ctk
 import json
 from functools import partial
 import difflib
+from processing.processing import Processing as own_processing
 
 from ctdclient.processing import BatchProcessing
 from ctdclient.runseasave import RunSeasave
@@ -369,12 +370,17 @@ class Processing:
             command=add_step
         ).grid(row=0, column=0)
         remove_step = partial(self.remove_processing_step, modules_frame)
+        # remove step button
         ttk.Button(
             button_frame,
             text='Remove processing step',
             command=remove_step
         ).grid(row=0, column=1)
         button_frame.grid()
+        # checkbox to select the canadian processing vs my own one
+        self.canadian = tk.BooleanVar(frame, value=True)
+        ttk.Checkbutton(frame, text='Canadian processing?',
+                        variable=self.canadian).grid()
         # run processing button
         tk.Button(
             frame,
@@ -466,8 +472,14 @@ class Processing:
         batch processing routine."""
         info_dict = {key.get(): value.get()
                      for _, (key, value) in self.step_var_dict.items()}
-        batch_processing = BatchProcessing(self.config, info_dict)
-        batch_processing.run()
+        if self.canadian.get():
+            batch_processing = BatchProcessing(self.config, info_dict)
+            batch_processing.run()
+        else:
+            proc = own_processing(config_path=self.config.path_to_config,
+                                  steps=info_dict,
+                                  input_file=self.config['user']['paths']['hex'])
+            proc.run()
 
     def select_file(self, file_type, variable):
         """

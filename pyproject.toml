@@ -15,7 +15,7 @@ xmltodict = "^0.13.0"
 code-tools = {version = "^0.1.0", source = "gitea"}
 seabirdfilehandler = {version = "^0.1.0", source = "gitea"}
 seabird-processing = {version = "^0.1.0", source = "gitea"}
-
+processing = {version = "^0.1.0", source = "gitea"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
@@ -27,6 +27,7 @@ pyment = "^0.3.3"
 twine = "^4.0.2"
 pre-commit = "^3.6.0"
 jupyterlab = "^4.1.0"
+pyinstaller = "^6.4.0"
 
 
 [[tool.poetry.source]]

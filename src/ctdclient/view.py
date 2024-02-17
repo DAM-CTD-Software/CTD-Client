@@ -8,7 +8,7 @@ from functools import partial
 import difflib
 from processing.processing import Processing as own_processing
 
-from ctdclient.processing import BatchProcessing
+from ctdclient.batchprocessing import BatchProcessing
 from ctdclient.runseasave import RunSeasave
 
 

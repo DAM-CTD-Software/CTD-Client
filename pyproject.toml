@@ -28,6 +28,7 @@ twine = "^4.0.2"
 pre-commit = "^3.6.0"
 jupyterlab = "^4.1.0"
 pyinstaller = "^6.4.0"
+black = "^24.2.0"
 
 
 [[tool.poetry.source]]
@@ -48,6 +49,9 @@ filterwarnings = [
 
 [tool.coverage.run]
 source = ['src/ctdclient']
+
+[tool.black]
+line-length = 79
 
 [build-system]
 requires = ["poetry-core"]

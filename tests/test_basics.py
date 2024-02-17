@@ -2,7 +2,7 @@ import unittest
 from ctdclient.bottles import BottleClosingDepths
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.dshipcaller import DSHIPHeader
-from ctdclient.processing import BatchProcessing
+from ctdclient.batchprocessing import BatchProcessing
 from ctdclient.runseasave import RunSeasave
 import platform
 import sys

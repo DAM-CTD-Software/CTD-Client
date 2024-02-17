@@ -23,9 +23,11 @@ class BottleClosingDepths(UserDict):
 
     def instantiate_bottle_info(self):
         """Sets a default bottle layout according to the configuration file."""
-        self.number_of_bottles = self.config['user']['number_of_bottles']
-        self.data = {number+1: 0.0 for number in range(self.number_of_bottles)}
-        for key, value in self.config['user']['bottle_layout'].items():
+        self.number_of_bottles = self.config["user"]["number_of_bottles"]
+        self.data = {
+            number + 1: 0.0 for number in range(self.number_of_bottles)
+        }
+        for key, value in self.config["user"]["bottle_layout"].items():
             if int(key) in self.data.keys():
                 self.data[int(key)] = value
 
@@ -53,9 +55,9 @@ class BottleClosingDepths(UserDict):
         self.update_psa()
 
     def write_new_config(self):
-        """Writes the current bottle layout to the configuration file """
+        """Writes the current bottle layout to the configuration file"""
         for key, value in self.data.items():
-            self.config.modify(['user', 'bottle_layout', str(key)], value)
+            self.config.modify(["user", "bottle_layout", str(key)], value)
         self.config.write()
 
     def update_psa(self):

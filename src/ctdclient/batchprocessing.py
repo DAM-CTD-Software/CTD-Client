@@ -14,25 +14,25 @@ from seabird_processing.configs import (
     SeaPlotConfig,
     SectionConfig,
     W_FilterConfig,
-    WildEditConfig
+    WildEditConfig,
 )
 
 # maps processing step name to Class name inside of seabird_processing
 config_classes = {
-    'AirPressure': AirPressureConfig,
-    'AlignCTD': AlignCTDConfig,
-    'BinAvg': BinAvgConfig,
-    'BottleSum': BottleSumConfig,
-    'CellTM': CellTMConfig,
-    'DatCnv': DatCnvConfig,
-    'Derive': DeriveConfig,
-    'DeriveTEOS10': DeriveTEOS10Config,
-    'Filter': FilterConfig,
-    'LoopEdit': LoopEditConfig,
-    'SeaPlot': SeaPlotConfig,
-    'Section': SectionConfig,
-    'W_Filter': W_FilterConfig,
-    'WildEdit': WildEditConfig,
+    "AirPressure": AirPressureConfig,
+    "AlignCTD": AlignCTDConfig,
+    "BinAvg": BinAvgConfig,
+    "BottleSum": BottleSumConfig,
+    "CellTM": CellTMConfig,
+    "DatCnv": DatCnvConfig,
+    "Derive": DeriveConfig,
+    "DeriveTEOS10": DeriveTEOS10Config,
+    "Filter": FilterConfig,
+    "LoopEdit": LoopEditConfig,
+    "SeaPlot": SeaPlotConfig,
+    "Section": SectionConfig,
+    "W_Filter": W_FilterConfig,
+    "WildEdit": WildEditConfig,
 }
 
 
@@ -49,14 +49,14 @@ class BatchProcessing:
     """
 
     def __init__(
-            self,
-            config,
-            processing_steps: dict,
+        self,
+        config,
+        processing_steps: dict,
     ):
-        self.raw_hex = config['user']['paths']['hex']
-        self.xmlcon = config['user']['paths']['xmlcon']
-        self.psa_folder = config['user']['processing']['psas']
-        self.outdir_path = config['user']['paths']['export_location']
+        self.raw_hex = config["user"]["paths"]["hex"]
+        self.xmlcon = config["user"]["paths"]["xmlcon"]
+        self.psa_folder = config["user"]["processing"]["psas"]
+        self.outdir_path = config["user"]["paths"]["export_location"]
         self.processing_steps = processing_steps
         self.final_steps = {}
 
@@ -78,8 +78,9 @@ class BatchProcessing:
             if psa.is_absolute():
                 self.processing_steps[step] = psa
             else:
-                self.processing_steps[step] = Path(
-                    self.psa_folder).joinpath(psa)
+                self.processing_steps[step] = Path(self.psa_folder).joinpath(
+                    psa
+                )
 
     def create_config_objects(self) -> list:
         """Produces the config objects needed by the seabird_processing batch
@@ -91,9 +92,8 @@ class BatchProcessing:
         config_objects = []
         for step, psa in self.final_steps.items():
             processing_object = step(
-                xmlcon=self.xmlcon,
-                psa=psa,
-                output_dir=self.outdir_path)
+                xmlcon=self.xmlcon, psa=psa, output_dir=self.outdir_path
+            )
             config_objects.append(processing_object)
         return config_objects
 

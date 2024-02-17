@@ -1,7 +1,7 @@
 import subprocess
 from code_tools.logging import configure_logging, get_logger
 
-configure_logging(f'{__name__}.log')
+configure_logging(f"{__name__}.log")
 logger = get_logger(__name__)
 
 
@@ -13,8 +13,8 @@ class RunSeasave:
     """
 
     def __init__(self, config, hex_name) -> None:
-        self.path_to_seasave_exe = config['paths']['seasave_exe']
-        self.path_to_psa = config['user']['paths']['psa']
+        self.path_to_seasave_exe = config["paths"]["seasave_exe"]
+        self.path_to_psa = config["user"]["paths"]["psa"]
         self.config = config
         self.hex_name = hex_name
         self.set_psa_run_info()
@@ -34,8 +34,9 @@ class RunSeasave:
         -------
 
         """
-        run_command = [self.path_to_seasave_exe] + \
-            self.set_seasave_command_line_parameters(downcast, autostart)
+        run_command = [
+            self.path_to_seasave_exe
+        ] + self.set_seasave_command_line_parameters(downcast, autostart)
         try:
             ps = subprocess.Popen(run_command)
             if ps.stdout:
@@ -46,15 +47,17 @@ class RunSeasave:
             raise error
         except PermissionError as error:
             logger.error(
-                f'Insufficient permissions to run the command {run_command}: {error}')
+                f"Insufficient permissions to run the command {run_command}: {error}"
+            )
             raise error
 
     def set_psa_run_info(self):
         """Sets XMLCON and hex file paths in Seasave.psa."""
-        self.config['history']['last_filename'] = self.hex_name
+        self.config["history"]["last_filename"] = self.hex_name
         self.config.write()
         self.config.psa.set_xmlcon_file_path(
-            self.config['user']['paths']['xmlcon'])
+            self.config["user"]["paths"]["xmlcon"]
+        )
         self.config.psa.set_hex_file_path(self.hex_name)
         self.config.psa.to_xml()
 
@@ -75,9 +78,9 @@ class RunSeasave:
         """
         parameters = []
         if autostart:
-            parameters.append(f'-autostart={self.path_to_psa}')
+            parameters.append(f"-autostart={self.path_to_psa}")
         else:
-            parameters.append(f'-p={self.path_to_psa}')
+            parameters.append(f"-p={self.path_to_psa}")
         if downcast:
-            parameters.append('-autofireondowncast')
+            parameters.append("-autofireondowncast")
         return parameters

@@ -3,7 +3,7 @@ from tomlkit.toml_file import TOMLFile
 from seabirdfilehandler import SeasavePsa
 from code_tools.logging import configure_logging, get_logger
 
-configure_logging(f'{__name__}.log')
+configure_logging(f"{__name__}.log")
 logger = get_logger(__name__)
 
 
@@ -18,7 +18,7 @@ class ConfigurationFile:
     def __init__(self, path_to_config):
         self.path_to_config = path_to_config
         self.data = TOMLFile(path_to_config).read()
-        self.psa = SeasavePsa(self.data['user']['paths']['psa'])
+        self.psa = SeasavePsa(self.data["user"]["paths"]["psa"])
 
     def __str__(self):
         return self.path_to_config
@@ -46,12 +46,12 @@ class ConfigurationFile:
         if path_to_write:
             output_path = path_to_write
         try:
-            with open(output_path, 'w') as file:
+            with open(output_path, "w") as file:
                 file.write(dumps(self.data))
         except IOError as error:
-            logger.error(f'Could not write configuration file: {error}')
+            logger.error(f"Could not write configuration file: {error}")
         else:
-            logger.info(f'Wrote new configuration {output_path} to disk.')
+            logger.info(f"Wrote new configuration {output_path} to disk.")
 
     def modify(self, key, value):
         """
@@ -79,9 +79,9 @@ class ConfigurationFile:
             else:
                 self.data.update({key: value})
         except ValueError as error:
-            logger.error(f'Value modification failed: {error}')
+            logger.error(f"Value modification failed: {error}")
 
     def reload(self):
         """Reopens the configuration file."""
         self.data = TOMLFile(self.path_to_config).read()
-        self.psa = SeasavePsa(self.data['user']['paths']['psa'])
+        self.psa = SeasavePsa(self.data["user"]["paths"]["psa"])

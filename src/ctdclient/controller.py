@@ -20,27 +20,25 @@ class Controller:
     def __init__(self):
         # root = tk.Tk()
         self.root = ctk.CTk()
-        if platform.system() == 'Linux':
-            config_path = 'linux_config.toml'
-        elif platform.system() == 'Windows':
+        if platform.system() == "Linux":
+            config_path = "linux_config.toml"
+        elif platform.system() == "Windows":
             from pathlib import Path
+
             # check position of config_file
             file_location = Path(__file__).parents[1]
-            config_path = file_location.joinpath('windows_config.toml')
+            config_path = file_location.joinpath("windows_config.toml")
             if not config_path.is_file():
                 file_location = Path(__file__).parents[2]
-                config_path = file_location.joinpath('windows_config.toml')
+                config_path = file_location.joinpath("windows_config.toml")
         else:
             sys.exit(1)
         self.config = ConfigurationFile(config_path)
         self.dship_info = DSHIPHeader(self.config)
         self.bottles = BottleClosingDepths(self.config)
         self.main_window = MainWindow(
-            self,
-            self.root,
-            self.config,
-            self.dship_info,
-            self.bottles)
+            self, self.root, self.config, self.dship_info, self.bottles
+        )
         # fullscreen option:
         # root.after(0, lambda: root.state('zoomed'))
         self.start_listener()
@@ -53,8 +51,9 @@ class Controller:
         Activates the listener to periodically check for new dship values.
         """
         self.listener = RepeatedTimer(
-            float(self.config['dship']['fetch_intervall']),
-            self.update_dship_values)
+            float(self.config["dship"]["fetch_intervall"]),
+            self.update_dship_values,
+        )
 
     def end_listener(self):
         """
@@ -65,18 +64,22 @@ class Controller:
     def update_dship_values(self):
         """Transfers the dship values to the main window."""
         self.main_window.measurement.update_dship_values(
-            self.dship_info.dship_values.values())
+            self.dship_info.dship_values.values()
+        )
         if self.dship_info.fail_counter == self.dship_info.fail_tolerance:
             self.end_listener()
             self.main_window.measurement.set_dship_status_bad()
         else:
             self.main_window.measurement.set_dship_status_good()
         self.main_window.measurement.update_file_name(
-            self.dship_info.build_file_name(self.main_window.measurement.cast_number))
+            self.dship_info.build_file_name(
+                self.main_window.measurement.cast_number
+            )
+        )
 
     def reconnect_dship(self):
         self.dship_info.start_listener()
-        if self.dship_info.last_call == 'successful':
+        if self.dship_info.last_call == "successful":
             self.update_dship_values()
             # self.main_window.measurement.set_dship_status_good()
         self.start_listener()

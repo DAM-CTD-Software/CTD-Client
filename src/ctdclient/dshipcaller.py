@@ -8,7 +8,7 @@ from functools import partial
 from code_tools.logging import configure_logging, get_logger
 from code_tools.repeating import RepeatedTimer
 
-configure_logging(f'{__name__}.log')
+configure_logging(f"{__name__}.log")
 logger = get_logger(__name__)
 
 
@@ -21,25 +21,25 @@ class DSHIPHeader:
     def __init__(
         self,
         config,
-        mode='api',
-        dship_url_part=':8080/dship-web/service/samples',
-        dummy=False
+        mode="api",
+        dship_url_part=":8080/dship-web/service/samples",
+        dummy=False,
     ):
         # will hold the dhsip info
         self.data: dict
         # loads the key values we want to fetch from DSHIP
-        self.dict_of_samples = config['dship']['identifier']
+        self.dict_of_samples = config["dship"]["identifier"]
         # vessel-specific IP, where DSHIP can be reached
-        self.ip = config['dship']['ip']
+        self.ip = config["dship"]["ip"]
         # the values fetched from dship with corresponding header names
         self.dship_values = {}
         # the URL of the API
-        self.source = f'http://{self.ip}{dship_url_part}'
+        self.source = f"http://{self.ip}{dship_url_part}"
         # waiting time between two rounds of API calls
-        self.fetch_timeout = config['dship']['fetch_intervall']
+        self.fetch_timeout = config["dship"]["fetch_intervall"]
         # configuration file representation
         self.config = config
-        self.last_call = 'unsucessfull'
+        self.last_call = "unsucessfull"
         # counts repeated failed API calls
         # resets to 0 upon a successfull call
         self.fail_counter = 0
@@ -57,9 +57,9 @@ class DSHIPHeader:
         self.fail_counter += 1
         if self.fail_counter == self.fail_tolerance:
             self.end_listener()
-            self.last_call = 'unsucessfull'
+            self.last_call = "unsucessfull"
         else:
-            self.last_call = 'successfull'
+            self.last_call = "successfull"
 
     def load_udp_telegram(self, port):
         # TODO: finish this
@@ -76,6 +76,7 @@ class DSHIPHeader:
 
         """
         import socket
+
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         try:
@@ -85,11 +86,7 @@ class DSHIPHeader:
         else:
             data, address = udp_socket.recvfrom(1024)
 
-    def call_api(
-        self,
-        url: str,
-        dict_of_samples: dict
-    ):
+    def call_api(self, url: str, dict_of_samples: dict):
         """
         A collection of API calls according to the values in
         the dict_of_samples, which holds the names of the individual columns
@@ -108,20 +105,21 @@ class DSHIPHeader:
         -------
 
         """
-        timeout = self.fetch_timeout/(len(dict_of_samples)+1)
+        timeout = self.fetch_timeout / (len(dict_of_samples) + 1)
         for sample, url_name in dict_of_samples.items():
-            response = self.individual_call(f'{url}/{url_name}')
+            response = self.individual_call(f"{url}/{url_name}")
             if response:
-                value = response['sample']['value']
+                value = response["sample"]["value"]
                 self.dship_values[sample] = value
                 self.fail_counter = 0
-                self.last_call = 'successfull'
+                self.last_call = "successfull"
             else:
                 self.fail_counter += 1
-                self.last_call = 'unsucessfull'
+                self.last_call = "unsucessfull"
                 if self.fail_counter == self.fail_tolerance:
                     logger.info(
-                        f'{self.fail_tolerance} failed API calls in a row.')
+                        f"{self.fail_tolerance} failed API calls in a row."
+                    )
                     self.end_listener()
 
             time.sleep(timeout)
@@ -147,13 +145,14 @@ class DSHIPHeader:
         except requests.exceptions.ConnectTimeout:
             return None
         # handle response
-        if response.status_code in ['200', 200]:
+        if response.status_code in ["200", 200]:
             data = response.text
             try:
                 return xmltodict.parse(data)
             except ValueError as error:
                 logger.error(
-                    f'Could not unpack payload of call {url}: {error}')
+                    f"Could not unpack payload of call {url}: {error}"
+                )
                 return None
         else:
             return None
@@ -174,16 +173,16 @@ class DSHIPHeader:
         """
         header_list = []
         for name, value in self.dship_values.items():
-            header_list.append(f'** {name} = {value}')
-        header_list.insert(4, f'** Operator = {operator}')
+            header_list.append(f"** {name} = {value}")
+        header_list.insert(4, f"** Operator = {operator}")
         self.config.psa.set_metadata_header(header_list)
-        self.config['operators']['last'] = operator
+        self.config["operators"]["last"] = operator
         self.config.write()
 
     def build_file_name(self, cast_number):
-        cruise_and_station = self.dship_values['Station']
+        cruise_and_station = self.dship_values["Station"]
         cast_number = int(cast_number.get())
-        return f'{cruise_and_station}_CTD_{cast_number: 04d}.hex'
+        return f"{cruise_and_station}_CTD_{cast_number: 04d}.hex"
 
     def start_listener(self):
         """ """
@@ -193,10 +192,10 @@ class DSHIPHeader:
             method_to_call = self.generate_random_numbers
         else:
             method_to_call = partial(
-                self.call_api, self.source, self.dict_of_samples)
+                self.call_api, self.source, self.dict_of_samples
+            )
         method_to_call()
-        self.listener = RepeatedTimer(self.fetch_timeout,
-                                      method_to_call)
+        self.listener = RepeatedTimer(self.fetch_timeout, method_to_call)
 
     def end_listener(self):
         """ """

@@ -1,4 +1,19 @@
 repos:
+-   repo: local
+    hooks:
+    -   id: black-formatter
+        name: black-formatter
+        description: Automatically apply black formatting to python files in the staging area.
+        entry: black-hook
+        language: script
+        types: [python]
+    -   id: export-requirements
+        name: Convert pyproject.toml to requirements.txt
+        description: Generate requirements.txt pyproject.toml for backwards compatibility.
+        language: system
+        entry: poetry export -f requirements.txt -o requirements.txt
+        files: "^pyproject.toml$"
+        pass_filenames: false
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:

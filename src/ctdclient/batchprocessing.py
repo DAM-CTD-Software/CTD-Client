@@ -1,5 +1,8 @@
 import seabird_processing as sp
 from pathlib import Path
+import subprocess
+from code_tools.logging import configure_logging, get_logger
+
 from seabird_processing.configs import (
     AirPressureConfig,
     AlignCTDConfig,
@@ -34,6 +37,9 @@ config_classes = {
     "W_Filter": W_FilterConfig,
     "WildEdit": WildEditConfig,
 }
+
+configure_logging(f"{__name__}.log")
+logger = get_logger(__name__)
 
 
 class BatchProcessing:
@@ -104,3 +110,26 @@ class BatchProcessing:
         config_objects = self.create_config_objects()
         batch_process = sp.Batch(config_objects)
         batch_process.run(str(self.raw_hex))
+
+
+class WindowsBatch:
+    """Simple class to only run the old windows batch we actually want to
+    replace"""
+
+    def __init__(self, batch: Path | str):
+        try:
+            self.batch = Path(batch)
+        except TypeError as error:
+            logger.error(f"Wrong input type: {error}")
+        else:
+            self.run()
+
+    def run(self):
+        try:
+            ps = subprocess.Popen(self.batch, cwd=self.batch.parent)
+            if ps.stdout:
+                logger.debug(ps.stdout)
+        except subprocess.CalledProcessError as error:
+            if error.stderr:
+                logger.error(error.stderr)
+            raise error

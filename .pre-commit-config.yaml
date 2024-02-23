@@ -1,33 +1,22 @@
 repos:
--   repo: local
+-   repo: ../pre-commit-hooks
+    rev: 0.0.2
     hooks:
     -   id: black-formatter
-        name: black-formatter
-        description: Automatically apply black formatting to python files in the staging area.
-        entry: black-hook
-        language: script
-        types: [python]
     -   id: export-requirements
-        name: Convert pyproject.toml to requirements.txt
-        description: Generate requirements.txt pyproject.toml for backwards compatibility.
-        language: system
-        entry: poetry export -f requirements.txt -o requirements.txt
-        files: "^pyproject.toml$"
-        pass_filenames: false
+    -   id: poetry-version-dump
+    -   id: poetry-build
+    -   id: upload-package
+    -   id: update-sphinx-doc
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
-  #-   repo: https://github.com/psf/black-pre-commit-mirror
-  #    rev: 24.2.0
-  #    hooks:
-  #      - id: black
-  #        language_version: python3.12
 -   repo: https://github.com/python-poetry/poetry
     rev: '1.7.0'
     hooks:
     -   id: poetry-check
-      # -   id: poetry-lock
-      # -   id: poetry-export
+      #-   id: poetry-lock
+    -   id: poetry-export

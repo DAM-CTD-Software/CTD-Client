@@ -1,5 +1,5 @@
 repos:
--   repo: ../pre-commit-hooks
+-   repo: https://git.io-warnemuende.de/michels/my-hooks
     rev: 0.0.2
     hooks:
     -   id: black-formatter

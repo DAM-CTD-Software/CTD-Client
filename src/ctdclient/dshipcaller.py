@@ -1,6 +1,4 @@
-from sys import call_tracing
 import time
-from typing import cast
 import requests
 import xmltodict
 import random
@@ -157,7 +155,7 @@ class DSHIPHeader:
         else:
             return None
 
-    def build_metadata_header(self, operator):
+    def build_metadata_header(self, platform, cast, operator):
         """
         Generates the metadata header in the needed format and saves the last
         operator.
@@ -173,11 +171,41 @@ class DSHIPHeader:
         """
         header_list = []
         for name, value in self.dship_values.items():
-            header_list.append(f"** {name} = {value}")
-        header_list.insert(4, f"** Operator = {operator}")
+            header_list.append(self.formatting_header_values(name, value))
+        header_list.insert(
+            1, self.formatting_header_values("Platform", platform)
+        )
+        header_list.insert(
+            2, self.formatting_header_values("Cast", f"{int(cast):04d}")
+        )
+        header_list.insert(
+            3, self.formatting_header_values("Operator", operator)
+        )
         self.config.psa.set_metadata_header(header_list)
         self.config["operators"]["last"] = operator
+        self.config["history"]["last_cast"] = cast
         self.config.write()
+        return "\n".join(header_list)
+
+    def formatting_header_values(self, name, value):
+        if name == "Station":
+            # special case, because of the redundancy of the cruise value:
+            # generates a double line, for Cruise and Station
+            name = "Cruise"
+            formatted_value = f"{value[:6]}\n** Station = {value}"
+        elif name == "GPS_Lat":
+            values = value.split()
+            formatted_value = f"{values[0]}{float(values[1]): .3f} N"
+        elif name == "GPS_Lon":
+            values = value.split()
+            formatted_value = f"{values[0]} {float(values[1]): .3f} E"
+        elif name == "Echo_Depth":
+            formatted_value = f"{float(value): .1f} m"
+        elif name == "Air_Pressure":
+            formatted_value = f"{float(value): .1f} hPa"
+        else:
+            formatted_value = value
+        return f"** {name} = {formatted_value}"
 
     def build_file_name(self, cast_number):
         cruise_and_station = self.dship_values["Station"]

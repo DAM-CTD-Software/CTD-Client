@@ -184,7 +184,7 @@ class Measurement:
         # last filename
         tk.Label(info_frame, text="last filename").grid(row=1, column=0)
         tk.Label(
-            info_frame, textvariable=self.config["history"]["last_filename"]
+            info_frame, text=self.config["history"]["last_filename"]
         ).grid(row=1, column=1)
         # operator selection
         tk.Label(info_frame, text="Operator").grid(row=2, column=0)
@@ -202,6 +202,16 @@ class Measurement:
         ttk.Spinbox(
             info_frame, from_=1.0, to=1000.0, textvariable=self.cast_number
         ).grid(row=3, column=1)
+        # platform selection
+        tk.Label(info_frame, text="Platform").grid(row=4, column=0)
+        self.platform = tk.StringVar(
+            value=self.config["history"]["last_platform"]
+        )
+        ttk.Combobox(
+            info_frame,
+            values=list(self.config["platforms"]),
+            textvariable=self.platform,
+        ).grid(row=4, column=1)
 
         info_frame.grid()
 
@@ -279,6 +289,7 @@ class Measurement:
         the information flow of bottle closing information and dship metadata.
         """
         # TODO: handle exceptions
+        # TODO: move into controller
         new_bottle_dict = {
             key: float(value.get())
             for key, value in self.bottle_values.items()
@@ -286,7 +297,9 @@ class Measurement:
         self.bottles.update_bottle_information(
             new_bottle_dict, self.save_btl_config
         )
-        self.dship_info.build_metadata_header(self.operator.get())
+        self.dship_info.build_metadata_header(
+            self.platform.get(), self.cast_number.get(), self.operator.get()
+        )
         RunSeasave(self.config, self.current_filename.get()).run(
             self.downcast.get(), self.autostart.get()
         )

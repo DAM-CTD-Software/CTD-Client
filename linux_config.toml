@@ -1,5 +1,8 @@
 # base configuration for the software internals and system specifics which are
 # usually set only once during the software installation process
+
+platforms = ['CTD', 'pCTD', 'sfCTD']
+
 [paths]
 seasave_exe = ""
 data_archive = ""
@@ -12,21 +15,10 @@ udp_port=5558
 fetch_intervall = 1
 
     [dship.identifier]
-    # Toralfs ini values
-#     expedition_name='SYS.DISP.ExpName'
-#     expedition_number='SYS.DISP.ExpNumber'
-#     station_number='ActionLog.PUP.DopName'
-#     datetime='SYS.DISP.TimeTxt'
-#     timestamp='SYS.CALC.Timestamp'
-#     latitude='SYS.STR.PosLat'
-#     longitude='SYS.STR.PosLon'
-#     echodepth='SYS.CALC.WaterDepth'
-#     airpressure='Weatherstation_DWD.PEUMA.Air_pressure'
-#     deviceshortname='ActionLog.PUP.DevShortname'
     # cnv metadata header values
-    #Cruise = 'ActionLog.PUP.ExpNumber'
+    # Cruise = ''
     Station = 'ActionLog.PUP.DopName'
-    Platform = 'Web.PUP.NextWPName'
+    # Platform = ''
     # Cast = ''
     # Operator = ''
     GPS_Time = 'SYS.DISP.TimeTxt'
@@ -34,12 +26,13 @@ fetch_intervall = 1
     GPS_Lon = 'SYS.STR.PosLon'
     Echo_Depth = 'SYS.CALC.WaterDepth'
     Air_Pressure = 'Weatherstation_DWD.PEUMA.Air_pressure'
-#WsStartID = 'ActionLog.PUP.Scientist'
-    # Pos_Alias = 'Web.PUP.NextWPName'
+    # WsStartID = ''
+    Pos_Alias = 'Web.PUP.NextWPName'
 
 [history]
-last_cast = 0
+last_cast = "3"
 last_filename = ""
+last_platform = "CTD"
 
 [operators]
 op1 = "Heene"
@@ -49,7 +42,7 @@ op4 = "Ruickoldt"
 op5 = "Michels"
 op6 = "Koehn"
 op7 = "Mars"
-last = "Michels"
+last = "Jan Donath"
 
 # configuration that can be changed via the software interface by any operator
 [user]

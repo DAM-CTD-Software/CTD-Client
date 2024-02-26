@@ -34,7 +34,7 @@ class Controller:
         else:
             sys.exit(1)
         self.config = ConfigurationFile(config_path)
-        self.dship_info = DSHIPHeader(self.config)
+        self.dship_info = DSHIPHeader(self.config, dummy=False)
         self.bottles = BottleClosingDepths(self.config)
         self.main_window = MainWindow(
             self, self.root, self.config, self.dship_info, self.bottles

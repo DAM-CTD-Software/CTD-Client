@@ -6,6 +6,7 @@ import customtkinter as ctk
 import json
 from functools import partial
 import difflib
+import datetime
 from processing.processing import Processing as own_processing
 
 from ctdclient.batchprocessing import BatchProcessing
@@ -117,9 +118,16 @@ class Measurement:
         }
         self.save_btl_config = tk.BooleanVar(value=False)
 
+        # configure window layout
+        window.columnconfigure(0, weight=1)
+        window.columnconfigure(1, weight=3)
+        self.padx = 5
+        self.pady = 5
+
         self.dship_frame(window)
         self.info_frame(window)
         self.bottle_frame(window)
+        self.stopwatch_frame(window)
         self.run_frame(window)
         window.grid()
 
@@ -155,7 +163,7 @@ class Measurement:
 
         """
         # show live dhsip values
-        dship_frame = ttk.Frame(window)
+        dship_frame = ttk.Labelframe(window, text="DSHIP")
         self.dship_label = tk.Label(
             dship_frame, text="waiting for connection...", background="yellow"
         )
@@ -171,39 +179,53 @@ class Measurement:
                 row=index + 1, column=1
             )
 
-        dship_frame.grid(row=0, column=0)
+        dship_frame.grid(column=0, row=0, padx=self.padx, pady=self.pady)
 
     def info_frame(self, window):
-        info_frame = ttk.Frame(window)
+        """
+        Frame that displays the filename, that is currently created, and allows
+        cast number and operator name selection.
+        """
+        info_frame = ttk.Labelframe(window, text="File info")
         # current filename
         self.current_filename = tk.StringVar(value="")
-        tk.Label(info_frame, text="current filename").grid(row=0, column=0)
+        tk.Label(info_frame, text="current filename").grid(
+            row=0, column=0, sticky=tk.W
+        )
         tk.Label(info_frame, textvariable=self.current_filename).grid(
-            row=0, column=1
+            row=0, column=1, sticky=tk.E
         )
         # last filename
-        tk.Label(info_frame, text="last filename").grid(row=1, column=0)
+        tk.Label(info_frame, text="last filename").grid(
+            row=1, column=0, sticky=tk.W
+        )
         tk.Label(
             info_frame, text=self.config["history"]["last_filename"]
-        ).grid(row=1, column=1)
+        ).grid(row=1, column=1, sticky=tk.E)
         # operator selection
-        tk.Label(info_frame, text="Operator").grid(row=2, column=0)
+        tk.Label(info_frame, text="Operator").grid(
+            row=2, column=0, sticky=tk.W
+        )
         self.operator = tk.StringVar(value=self.config["operators"]["last"])
         ttk.Combobox(
             info_frame,
             values=list(self.config["operators"].values())[:-1],
             textvariable=self.operator,
-        ).grid(row=2, column=1)
+        ).grid(row=2, column=1, sticky=tk.E)
         # cast selection/display
-        tk.Label(info_frame, text="Cast number").grid(row=3, column=0)
+        tk.Label(info_frame, text="Cast number").grid(
+            row=3, column=0, sticky=tk.W
+        )
         self.cast_number = tk.StringVar(
             value=int(self.config["history"]["last_cast"]) + 1
         )
         ttk.Spinbox(
             info_frame, from_=1.0, to=1000.0, textvariable=self.cast_number
-        ).grid(row=3, column=1)
+        ).grid(row=3, column=1, sticky=tk.E)
         # platform selection
-        tk.Label(info_frame, text="Platform").grid(row=4, column=0)
+        tk.Label(info_frame, text="Platform").grid(
+            row=4, column=0, sticky=tk.W
+        )
         self.platform = tk.StringVar(
             value=self.config["history"]["last_platform"]
         )
@@ -211,9 +233,9 @@ class Measurement:
             info_frame,
             values=list(self.config["platforms"]),
             textvariable=self.platform,
-        ).grid(row=4, column=1)
+        ).grid(row=4, column=1, sticky=tk.E)
 
-        info_frame.grid()
+        info_frame.grid(column=0, row=1, padx=self.padx, pady=self.pady)
 
     def bottle_frame(self, window):
         """
@@ -229,7 +251,7 @@ class Measurement:
 
         """
         # configure bottle closing times
-        bottle_frame = ttk.Frame(window)
+        bottle_frame = ttk.Labelframe(window, text="Bottle closing depths")
         self.bottle_values = {}
         tk.Label(bottle_frame, text="BottleIDs").grid(column=0, row=0)
         tk.Label(bottle_frame, text="Depth to close").grid(row=0, column=1)
@@ -246,7 +268,9 @@ class Measurement:
             text="Save Bottle Configuration",
             variable=self.save_btl_config,
         ).grid(column=1)
-        bottle_frame.grid(row=0, column=1)
+        bottle_frame.grid(
+            column=1, row=0, rowspan=2, padx=self.padx, pady=self.pady
+        )
 
     def run_frame(self, window):
         """
@@ -263,7 +287,7 @@ class Measurement:
 
         """
         # start measurement
-        run_frame = ttk.Frame(window)
+        run_frame = ttk.Labelframe(window)
         self.autostart = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             run_frame,
@@ -281,7 +305,47 @@ class Measurement:
             text="Start Seasave",
             command=self.start_seasave,
         ).grid()
-        run_frame.grid(row=2, column=1)
+        run_frame.grid(
+            column=0, row=4, columnspan=2, padx=self.padx, pady=self.pady
+        )
+
+    def stopwatch_frame(self, window):
+        """Frame that acts as a simple stopwatch."""
+        stopwatch_frame = ttk.Labelframe(window, text="Stopwatch")
+        self.timer_seconds = 0
+        self.stopwatch_label = tk.Label(
+            stopwatch_frame,
+            height=5,
+            width=10,
+            background="grey",
+            text="00:00:00",
+            font=("Normal", 15, "bold"),
+        )
+        self.stopwatch_label.grid()
+
+        def update():
+            self.timer_seconds += 1
+            self.stopwatch_label.config(
+                text=str(datetime.timedelta(seconds=self.timer_seconds))
+            )
+            self.stopwatch_label.after(1000, update)
+
+        def reset(event):
+            self.timer_seconds = 0
+
+        self.stopwatch_label.bind("<Button-1>", reset)
+        self.stopwatch_label.bind(
+            "<Enter>",
+            func=lambda e: self.stopwatch_label.config(background="#1e7898"),
+        )
+        self.stopwatch_label.bind(
+            "<Leave>",
+            func=lambda e: self.stopwatch_label.config(background="grey"),
+        )
+        update()
+        stopwatch_frame.grid(
+            column=0, row=3, columnspan=2, padx=self.padx, pady=self.pady
+        )
 
     def start_seasave(self):
         """

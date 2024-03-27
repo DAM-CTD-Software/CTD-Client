@@ -1,10 +1,12 @@
+fail_fast: true
+
 repos:
 -   repo: https://git.io-warnemuende.de/michels/my-hooks
-    rev: 0.0.2
+    rev: 0.0.7
     hooks:
     -   id: black-formatter
     -   id: export-requirements
-    -   id: poetry-version-dump
+    -   id: poetry-version-bump
     -   id: poetry-build
     -   id: upload-package
     -   id: update-sphinx-doc

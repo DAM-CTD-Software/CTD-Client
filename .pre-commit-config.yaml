@@ -7,6 +7,7 @@ repos:
     -   id: black-formatter
     -   id: export-requirements
     -   id: poetry-version-bump
+    -   id: git-tag-bump
     -   id: poetry-build
     -   id: upload-package
     -   id: update-sphinx-doc

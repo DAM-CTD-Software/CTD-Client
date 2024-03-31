@@ -185,7 +185,6 @@ class Measurement:
         ).grid(row=0, column=1)
 
         for index, (key, value) in enumerate(self.dship_vars.items()):
-            # index = index if index < 4 else index+1
             tk.Label(dship_frame, text=key).grid(row=index + 1, column=0)
             tk.Label(dship_frame, textvariable=value).grid(
                 row=index + 1, column=1
@@ -211,8 +210,9 @@ class Measurement:
         tk.Label(info_frame, text="last filename").grid(
             row=1, column=0, sticky=tk.W
         )
+        self.last_filename = tk.StringVar(value=Path(self.config["history"]["last_filename"]).name)
         tk.Label(
-            info_frame, text=Path(self.config["history"]["last_filename"]).name
+            info_frame, textvariable=self.last_filename
         ).grid(row=1, column=1, sticky=tk.E)
         # operator selection
         tk.Label(info_frame, text="Operator").grid(
@@ -243,6 +243,16 @@ class Measurement:
             values=list(self.config["platforms"]),
             textvariable=self.platform,
         ).grid(row=4, column=1, sticky=tk.E)
+        # scanfish-specific option to override the current Pos_Alias
+        self.station = tk.StringVar(value="")
+        if self.platform.get() == 'sfCTD':
+            tk.Label(info_frame, text="Station").grid(
+                row=5, column=0, sticky=tk.W
+            )
+            ttk.Entry(
+                info_frame,
+                textvariable=self.station,
+            ).grid(row=5, column=1, sticky=tk.E)
 
         info_frame.grid(column=0, row=1, padx=self.padx, pady=self.pady)
 
@@ -371,9 +381,19 @@ class Measurement:
             self.bottles.update_bottle_information(
                 new_bottle_dict, self.save_btl_config
             )
-        self.dship_info.build_metadata_header(
-            self.platform.get(), self.cast_number.get(), self.operator.get()
-        )
+            self.dship_info.build_metadata_header(
+                self.platform.get(), self.cast_number.get(), self.operator.get()
+            )
+        else:
+            self.dship_info.build_metadata_header(
+                self.platform.get(),
+                self.cast_number.get(),
+                self.operator.get(),
+                self.station.get()
+            )
+
+        self.last_filename.set(self.current_filename.get())
+        self.cast_number.set(str(int(self.cast_number.get()) + 1))
         output_dir = Path(self.config["paths"]["data_archive"])
         full_file_path = output_dir.joinpath(self.current_filename.get())
         RunSeasave(self.config, full_file_path).run(

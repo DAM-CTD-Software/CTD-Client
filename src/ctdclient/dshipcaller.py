@@ -158,7 +158,7 @@ class DSHIPHeader:
         else:
             return None
 
-    def build_metadata_header(self, platform, cast, operator):
+    def build_metadata_header(self, platform, cast, operator, pos_alias=False):
         """
         Generates the metadata header in the needed format and saves the last
         operator.
@@ -186,6 +186,8 @@ class DSHIPHeader:
         header_list.insert(
             4, self.create_metadata_header_line("Operator", operator)
         )
+        if pos_alias:
+            header_list[-1] = self.create_metadata_header_line("Pos_Alias", pos_alias)
         self.config.psa.set_metadata_header(header_list)
         self.config["operators"]["last"] = operator
         self.config["history"]["last_cast"] = cast

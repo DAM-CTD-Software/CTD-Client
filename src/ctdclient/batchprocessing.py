@@ -116,17 +116,22 @@ class WindowsBatch:
     """Simple class to only run the old windows batch we actually want to
     replace"""
 
-    def __init__(self, batch: Path | str):
+    def __init__(
+            self,
+            batch: Path | str,
+            hex_file: Path | str
+        ):
         try:
             self.batch = Path(batch)
+            self.hex_file = str(hex_file)[:-4]
         except TypeError as error:
             logger.error(f"Wrong input type: {error}")
         else:
-            self.run()
+            self.run(self.hex_file)
 
-    def run(self):
+    def run(self, hex_file):
         try:
-            ps = subprocess.Popen(self.batch, cwd=self.batch.parent)
+            ps = subprocess.Popen([self.batch, hex_file]) #, cwd=self.batch.parent)
             if ps.stdout:
                 logger.debug(ps.stdout)
         except subprocess.CalledProcessError as error:

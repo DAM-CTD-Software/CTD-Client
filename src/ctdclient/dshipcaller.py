@@ -108,7 +108,10 @@ class DSHIPHeader:
             response = self.individual_call(f"{url}/{url_name}")
             if response:
                 value = response["sample"]["value"]
-                self.dship_values[sample] = value
+                try:
+                    self.dship_values[sample] = self.format_dship_response(sample, value)
+                except IndexError:
+                    pass
                 self.fail_counter = 0
                 self.last_call = "successfull"
             else:
@@ -171,15 +174,17 @@ class DSHIPHeader:
         """
         header_list = []
         for name, value in self.dship_values.items():
-            header_list.append(self.formatting_header_values(name, value))
+            if name == "Station":
+                header_list.append(f"** Cruise = {value[:6]}")
+            header_list.append(self.create_metadata_header_line(name, value))
         header_list.insert(
-            1, self.formatting_header_values("Platform", platform)
+            2, self.create_metadata_header_line("Platform", platform)
         )
         header_list.insert(
-            2, self.formatting_header_values("Cast", f"{int(cast):04d}")
+            3, self.create_metadata_header_line("Cast", f"{int(cast):04d}")
         )
         header_list.insert(
-            3, self.formatting_header_values("Operator", operator)
+            4, self.create_metadata_header_line("Operator", operator)
         )
         self.config.psa.set_metadata_header(header_list)
         self.config["operators"]["last"] = operator
@@ -187,30 +192,33 @@ class DSHIPHeader:
         self.config.write()
         return "\n".join(header_list)
 
-    def formatting_header_values(self, name, value):
+    def create_metadata_header_line(self, name, value):
+        return f"** {name} = {value}"
+
+    def format_dship_response(self, name, value):
         if name == "Station":
-            # special case, because of the redundancy of the cruise value:
-            # generates a double line, for Cruise and Station
-            name = "Cruise"
-            formatted_value = f"{value[:6]}\n** Station = {value}"
+            cruise_name, action_log_info = value.split("_")
+            station, event = action_log_info.split("-")
+            formatted_value = f"{cruise_name}_{int(station):03d}-{int(event):02d}"
         elif name == "GPS_Lat":
-            values = value.split()
-            formatted_value = f"{values[0]}{float(values[1]): .3f} N"
+            #values = value.split()
+            formatted_value = f"{float(value):.3f} N"
         elif name == "GPS_Lon":
-            values = value.split()
-            formatted_value = f"{values[0]} {float(values[1]): .3f} E"
+            #values = value.split()
+            formatted_value = f"{float(value):.3f} E"
         elif name == "Echo_Depth":
             formatted_value = f"{float(value): .1f} m"
         elif name == "Air_Pressure":
             formatted_value = f"{float(value): .1f} hPa"
         else:
             formatted_value = value
-        return f"** {name} = {formatted_value}"
+        return formatted_value
 
-    def build_file_name(self, cast_number):
+    def build_file_name(self, cast_number, platform):
         cruise_and_station = self.dship_values["Station"]
         cast_number = int(cast_number.get())
-        return f"{cruise_and_station}_CTD_{cast_number: 04d}.hex"
+        platform_name_mapper = {'CTD': 'CTD', 'vCTD': 'CTD', 'sfCTD': 'SF'}
+        return f"{cruise_and_station}_{platform_name_mapper[platform]}_{cast_number:04d}.hex"
 
     def start_listener(self):
         """ """

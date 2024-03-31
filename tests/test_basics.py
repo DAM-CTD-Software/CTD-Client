@@ -87,21 +87,17 @@ class TestMetadataHeader(unittest.TestCase):
 
     @parameterized.expand(
         [
-            (
-                "Station",
-                "EMB295_3-1",
-                "** Cruise = EMB295\n** Station = EMB295_3-1",
-            ),
-            ("GPS_Lat", "57 18.9919367281", "** GPS_Lat = 57 18.992 N"),
-            ("GPS_Lon", "20  7.9643222314", "** GPS_Lon = 20  7.964 E"),
-            ("Echo_Depth", "248.023438423", "** Echo_Depth =  248.0 m"),
-            ("Air_Pressure", "1014.523132", "** Air_Pressure =  1014.5 hPa"),
-            ("Pos_Alias", "Gotland", "** Pos_Alias = Gotland"),
+            ("Station", "EMB295_3-1", "EMB295_003-01"),
+            ("GPS_Lat", "57 18.9919367281", "57 18.992 N"),
+            ("GPS_Lon", "20  7.9643222314", "20  7.964 E"),
+            ("Echo_Depth", "248.023438423", " 248.0 m"),
+            ("Air_Pressure", "1014.523132", " 1014.5 hPa"),
+            ("Pos_Alias", "Gotland", "Gotland"),
         ]
     )
     def test_value_formatter(self, name, value, result):
         self.assertEqual(
-            self.header.formatting_header_values(name, value), result
+            self.header.format_dship_response(name, value), result
         )
 
     def test_full_header(self):

@@ -73,7 +73,8 @@ class Controller:
             self.main_window.measurement.set_dship_status_good()
         self.main_window.measurement.update_file_name(
             self.dship_info.build_file_name(
-                self.main_window.measurement.cast_number
+                self.main_window.measurement.cast_number,
+                self.main_window.measurement.platform.get()
             )
         )
 

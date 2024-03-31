@@ -2,6 +2,7 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
+import tkinter.font as tkFont
 import customtkinter as ctk
 import json
 from functools import partial
@@ -9,7 +10,7 @@ import difflib
 import datetime
 from processing.processing import Processing as own_processing
 
-from ctdclient.batchprocessing import BatchProcessing
+from ctdclient.batchprocessing import BatchProcessing, WindowsBatch
 from ctdclient.runseasave import RunSeasave
 
 
@@ -25,6 +26,10 @@ class MainWindow:
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
 
+        default_font = tkFont.nametofont("TkDefaultFont")
+        default_font.configure(size=14)
+        root.option_add("*Font", default_font)
+
         # initialize standard menu
         # MenuBar(root)
 
@@ -37,10 +42,10 @@ class MainWindow:
             tabs.measurement, config_path, bottles, dship_info, controller
         )
         Processing(tabs.processing, config_path)
-        Configuration(tabs.configuration, config_path)
+        #Configuration(tabs.configuration, config_path)
         tabs.measurement.grid()
         tabs.processing.grid()
-        tabs.configuration.grid()
+        #tabs.configuration.grid()
 
 
 class NoteBookView(ttk.Notebook):
@@ -65,10 +70,10 @@ class TabView(ctk.CTkTabview):
 
         self.add("measurement")
         self.add("processing")
-        self.add("configuration")
+        #self.add("configuration")
         self.measurement = ttk.Frame(self.tab("measurement"))
         self.processing = ttk.Frame(self.tab("processing"))
-        self.configuration = ttk.Frame(self.tab("configuration"))
+        #self.configuration = ttk.Frame(self.tab("configuration"))
 
 
 class LabelFrames(ttk.PanedWindow):
@@ -116,6 +121,9 @@ class Measurement:
             key: tk.StringVar(value=value)
             for key, value in self.dship_values.items()
         }
+        self.platform = tk.StringVar(
+            value=self.config["history"]["last_platform"]
+        )
         self.save_btl_config = tk.BooleanVar(value=False)
 
         # configure window layout
@@ -126,10 +134,14 @@ class Measurement:
 
         self.dship_frame(window)
         self.info_frame(window)
-        self.bottle_frame(window)
-        self.stopwatch_frame(window)
+        if self.platform.get() != 'sfCTD':
+            self.bottle_frame(window)
+            self.stopwatch_frame(window)
         self.run_frame(window)
         window.grid()
+
+    def update_frame(self):
+        pass
 
     def update_dship_values(self, list_of_values):
         """
@@ -200,7 +212,7 @@ class Measurement:
             row=1, column=0, sticky=tk.W
         )
         tk.Label(
-            info_frame, text=self.config["history"]["last_filename"]
+            info_frame, text=Path(self.config["history"]["last_filename"]).name
         ).grid(row=1, column=1, sticky=tk.E)
         # operator selection
         tk.Label(info_frame, text="Operator").grid(
@@ -225,9 +237,6 @@ class Measurement:
         # platform selection
         tk.Label(info_frame, text="Platform").grid(
             row=4, column=0, sticky=tk.W
-        )
-        self.platform = tk.StringVar(
-            value=self.config["history"]["last_platform"]
         )
         ttk.Combobox(
             info_frame,
@@ -354,17 +363,20 @@ class Measurement:
         """
         # TODO: handle exceptions
         # TODO: move into controller
-        new_bottle_dict = {
-            key: float(value.get())
-            for key, value in self.bottle_values.items()
-        }
-        self.bottles.update_bottle_information(
-            new_bottle_dict, self.save_btl_config
-        )
+        if self.platform.get() != "sfCTD":
+            new_bottle_dict = {
+                key: float(value.get())
+                for key, value in self.bottle_values.items()
+            }
+            self.bottles.update_bottle_information(
+                new_bottle_dict, self.save_btl_config
+            )
         self.dship_info.build_metadata_header(
             self.platform.get(), self.cast_number.get(), self.operator.get()
         )
-        RunSeasave(self.config, self.current_filename.get()).run(
+        output_dir = Path(self.config["paths"]["data_archive"])
+        full_file_path = output_dir.joinpath(self.current_filename.get())
+        RunSeasave(self.config, full_file_path).run(
             self.downcast.get(), self.autostart.get()
         )
 
@@ -423,28 +435,37 @@ class Processing:
             ).iterdir()
         ]
         self.steps = self.config["user"]["processing"]["modules"]
+        self.processing_type = self.config["user"]["processing"]["type"].lower()
 
+        if self.processing_type != "windowsbatch":
+            self.step_frame = self.step_selection_frame()
+        else:
+            self.path_dict.pop("xmlcon")
+            self.path_dict.pop("psas")
         self.path_frame = self.path_selection_frame()
-        self.step_frame = self.step_selection_frame()
+        self.run_processing_frame()
         self.window.grid()
 
-    def path_selection_frame(self):
+    def path_selection_frame(self, padx=5, pady=5):
         """
         Frame that encapsulates the selection of the three paths needed in
         order to run the processing.
         """
         frame = tk.Frame(self.window)
-        for file_type, variable in self.path_dict.items():
+        for index, (file_type, variable) in enumerate(self.path_dict.items()):
             # individual frame construction
             single_frame = tk.Frame(frame)
-            tk.Label(single_frame, text=f"Path to {file_type}").grid()
-            tk.Entry(single_frame, textvariable=variable).grid()
+            single_frame.columnconfigure(0, weight=1)
+            single_frame.columnconfigure(1, weight=7)
+            single_frame.columnconfigure(2, weight=1)
+            tk.Label(single_frame, text=f"Path to {file_type}").grid(row=index, column=0, sticky=tk.W, padx=padx, pady=pady)
+            tk.Entry(single_frame, textvariable=variable).grid(row=index, column=1, sticky=tk.E, padx=padx, pady=pady)
             command_with_arguments = partial(
                 self.select_file, file_type, variable
             )
             tk.Button(
                 single_frame, text="Browse", command=command_with_arguments
-            ).grid()
+            ).grid(row=index, column=2, padx=padx, pady=pady)
             single_frame.grid()
         frame.grid()
         return frame
@@ -474,11 +495,11 @@ class Processing:
             button_frame, text="Remove processing step", command=remove_step
         ).grid(row=0, column=1)
         button_frame.grid()
-        # checkbox to select the canadian processing vs my own one
-        self.canadian = tk.BooleanVar(frame, value=True)
-        ttk.Checkbutton(
-            frame, text="Canadian processing?", variable=self.canadian
-        ).grid()
+        frame.grid()
+        return frame
+
+    def run_processing_frame(self):
+        frame = tk.Frame(self.window)
         # run processing button
         tk.Button(
             frame, text="Run processing", command=self.run_processing
@@ -562,20 +583,31 @@ class Processing:
     def run_processing(self):
         """Collects the processing step information and feeds it into the
         batch processing routine."""
-        info_dict = {
-            key.get(): value.get()
-            for _, (key, value) in self.step_var_dict.items()
-        }
-        if self.canadian.get():
+        try:
+            info_dict = {
+                key.get(): value.get()
+                for _, (key, value) in self.step_var_dict.items()
+            }
+        except AttributeError:
+            pass
+        if self.processing_type == "canadian":
             batch_processing = BatchProcessing(self.config, info_dict)
             batch_processing.run()
-        else:
+        elif self.processing_type == "own":
             proc = own_processing(
                 config_path=self.config.path_to_config,
                 steps=info_dict,
                 input_file=self.config["user"]["paths"]["hex"],
             )
             proc.run()
+        elif self.processing_type == "windowsbatch":
+            try:
+                windows_batch = WindowsBatch(
+                    self.config['user']['processing']['batch_path'],
+                    self.path_dict["hex"].get()
+                )
+            except TypeError:
+                pass
 
     def select_file(self, file_type, variable):
         """

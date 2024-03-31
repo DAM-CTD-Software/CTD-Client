@@ -53,7 +53,7 @@ class RunSeasave:
 
     def set_psa_run_info(self):
         """Sets XMLCON and hex file paths in Seasave.psa."""
-        self.config["history"]["last_filename"] = self.hex_name
+        self.config["history"]["last_filename"] = str(self.hex_name)
         self.config.write()
         self.config.psa.set_xmlcon_file_path(
             self.config["user"]["paths"]["xmlcon"]

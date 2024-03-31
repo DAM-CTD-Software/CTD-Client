@@ -175,7 +175,7 @@ class DSHIPHeader:
         header_list = []
         for name, value in self.dship_values.items():
             if name == "Station":
-                header_list.append(f"** Cruise = {value[:6]}")
+                header_list.append(f"Cruise = {value[:6]}")
             header_list.append(self.create_metadata_header_line(name, value))
         header_list.insert(
             2, self.create_metadata_header_line("Platform", platform)
@@ -195,7 +195,7 @@ class DSHIPHeader:
         return "\n".join(header_list)
 
     def create_metadata_header_line(self, name, value):
-        return f"** {name} = {value}"
+        return f"{name} = {value}"
 
     def format_dship_response(self, name, value):
         if name == "Station":

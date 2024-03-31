@@ -1,4 +1,4 @@
-from tomlkit import dumps, table
+import tomlkit
 from tomlkit.toml_file import TOMLFile
 from seabirdfilehandler import SeasavePsa
 from code_tools.logging import configure_logging, get_logger
@@ -18,6 +18,7 @@ class ConfigurationFile:
     def __init__(self, path_to_config):
         self.path_to_config = path_to_config
         self.data = TOMLFile(path_to_config).read()
+        # TODO: handle non-presence of the psa
         self.psa = SeasavePsa(self.data["user"]["paths"]["psa"])
 
     def __str__(self):
@@ -45,9 +46,11 @@ class ConfigurationFile:
         output_path = self.path_to_config
         if path_to_write:
             output_path = path_to_write
+        out_str = tomlkit.dumps(self.data)
+        out_str = out_str.replace("\r", "")
         try:
             with open(output_path, "w") as file:
-                file.write(dumps(self.data))
+                file.write(out_str)
         except IOError as error:
             logger.error(f"Could not write configuration file: {error}")
         else:
@@ -73,7 +76,7 @@ class ConfigurationFile:
             if isinstance(key, list):
                 current_section = self.data
                 for position in key[:-1]:
-                    current_section = current_section.get(position, table())
+                    current_section = current_section.get(position, tomlkit.table())
 
                 current_section[key[-1]] = value
             else:

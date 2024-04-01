@@ -15,24 +15,18 @@ udp_port=5558
 fetch_intervall = 1
 
     [dship.identifier]
-    # cnv metadata header values
-    # Cruise = ''
     Station = 'ActionLog.PUP.DopName'
-    # Platform = ''
-    # Cast = ''
-    # Operator = ''
     GPS_Time = 'SYS.DISP.TimeTxt'
     GPS_Lat = 'SYS.STR.PosLat'
     GPS_Lon = 'SYS.STR.PosLon'
     Echo_Depth = 'SYS.CALC.WaterDepth'
     Air_Pressure = 'Weatherstation_DWD.PEUMA.Air_pressure'
-    # WsStartID = ''
     Pos_Alias = 'Web.PUP.NextWPName'
 
 [history]
 last_cast = "3"
 last_filename = ""
-last_platform = "CTD"
+last_platform = "sfCTD"
 
 [operators]
 op1 = "Heene"
@@ -70,7 +64,9 @@ number_of_bottles = 13
     hex = ""
 
     [user.processing]
-    batch = true
+    # one of Own, Canadian or WindowsBatch
+    type = "WindowsBatch"
+    batch_path = "D:\\mig\\tests\\data\\processing_batch.bat"
     modules = ["DatCnv", "AirPressure", "WildEdit", "W_Filter", "AlignCTD", "CellTM", "Derive", "BinAvg"]
     processing_exes = ""
     psas = ""

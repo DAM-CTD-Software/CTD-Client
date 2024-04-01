@@ -112,6 +112,7 @@ class Measurement:
     """
 
     def __init__(self, window, config, bottles, dship_info, controller):
+        self.window = window
         self.config = config
         self.bottles = bottles
         self.dship_info = dship_info
@@ -127,38 +128,50 @@ class Measurement:
         self.save_btl_config = tk.BooleanVar(value=False)
 
         # configure window layout
-        window.columnconfigure(0, weight=1)
-        window.columnconfigure(1, weight=3)
+        self.window.columnconfigure(0, weight=1)
+        self.window.columnconfigure(1, weight=3)
         self.padx = 5
         self.pady = 5
 
         # frame set-up
-        self.frame_dship = self.dship_frame(window)
-        self.frame_info = self.info_frame(window)
-        if self.platform.get() != "sfCTD":
-            self.frame_bottle = self.bottle_frame(window)
-            self.frame_stopwatch = self.stopwatch_frame(window)
-        self.frame_run = self.run_frame(window)
+        self.frame_dship = self.dship_frame()
+        self.frame_info = self.info_frame()
+        self.frame_bottle = self.bottle_frame()
+        self.frame_stopwatch = self.stopwatch_frame()
+        self.frame_run = self.run_frame()
 
-        # style specifications
-        self.frame_dship.grid(column=0, row=0, padx=self.padx, pady=self.pady)
-        self.frame_info.grid(column=0, row=1, padx=self.padx, pady=self.pady)
-        self.frame_run.grid(
-            column=0, row=4, columnspan=2, padx=self.padx, pady=self.pady
-        )
-        try:
-            self.frame_stopwatch.grid(
+        self.update_frames("")
+
+    def update_frames(self, event):
+        if self.platform.get() == "sfCTD":
+            self.frame_dship.grid(
+                column=0, row=0, padx=self.padx, pady=self.pady
+            )
+            self.frame_info.grid(
+                column=0, row=1, padx=self.padx, pady=self.pady
+            )
+            self.frame_run.grid(
+                column=0, row=2, columnspan=2, padx=self.padx, pady=self.pady
+            )
+            self.frame_stopwatch.grid_remove()
+            self.frame_bottle.grid_remove()
+        else:
+            self.frame_dship.grid(
+                column=0, row=0, padx=self.padx, pady=self.pady
+            )
+            self.frame_info.grid(
+                column=0, row=1, padx=self.padx, pady=self.pady
+            )
+            self.frame_run.grid(
                 column=0, row=3, columnspan=2, padx=self.padx, pady=self.pady
+            )
+            self.frame_stopwatch.grid(
+                column=0, row=2, columnspan=2, padx=self.padx, pady=self.pady
             )
             self.frame_bottle.grid(
                 column=1, row=0, rowspan=2, padx=self.padx, pady=self.pady
             )
-        except Exception:
-            pass
-        window.grid()
-
-    def update_frame(self):
-        pass
+        self.window.grid()
 
     def update_dship_values(self, list_of_values):
         """
@@ -175,7 +188,7 @@ class Measurement:
         for (_, var), value in zip(self.dship_vars.items(), list_of_values):
             var.set(value)
 
-    def dship_frame(self, window):
+    def dship_frame(self):
         """
         Frame that displays our metadata header information with live-fetched
         DSHIP data. Additionally features a selection field for the current
@@ -192,7 +205,7 @@ class Measurement:
 
         """
         # show live dhsip values
-        dship_frame = ttk.Labelframe(window, text="DSHIP")
+        dship_frame = ttk.Labelframe(self.window, text="DSHIP")
         self.dship_label = tk.Label(
             dship_frame, text="waiting for connection...", background="yellow"
         )
@@ -209,12 +222,12 @@ class Measurement:
 
         return dship_frame
 
-    def info_frame(self, window):
+    def info_frame(self):
         """
         Frame that displays the filename, that is currently created, and allows
         cast number and operator name selection.
         """
-        info_frame = ttk.Labelframe(window, text="File info")
+        info_frame = ttk.Labelframe(self.window, text="File info")
         # current filename
         self.current_filename = tk.StringVar(value="")
         tk.Label(info_frame, text="current filename").grid(
@@ -257,11 +270,13 @@ class Measurement:
         tk.Label(info_frame, text="Platform").grid(
             row=4, column=0, sticky=tk.W
         )
-        ttk.Combobox(
+        platform_selector = ttk.Combobox(
             info_frame,
             values=list(self.config["platforms"]),
             textvariable=self.platform,
-        ).grid(row=4, column=1, sticky=tk.E)
+        )
+        platform_selector.grid(row=4, column=1, sticky=tk.E)
+        platform_selector.bind("<<ComboboxSelected>>", self.update_frames)
         # scanfish-specific option to override the current Pos_Alias
         self.station = tk.StringVar(value="")
         if self.platform.get() == "sfCTD":
@@ -275,7 +290,7 @@ class Measurement:
 
         return info_frame
 
-    def bottle_frame(self, window):
+    def bottle_frame(self):
         """
         Frame to allow setting the bottle closing depths.
 
@@ -289,7 +304,9 @@ class Measurement:
 
         """
         # configure bottle closing times
-        bottle_frame = ttk.Labelframe(window, text="Bottle closing depths")
+        bottle_frame = ttk.Labelframe(
+            self.window, text="Bottle closing depths"
+        )
         self.bottle_values = {}
         tk.Label(bottle_frame, text="BottleIDs").grid(column=0, row=0)
         tk.Label(bottle_frame, text="Depth to close").grid(row=0, column=1)
@@ -308,7 +325,7 @@ class Measurement:
         ).grid(column=1)
         return bottle_frame
 
-    def run_frame(self, window):
+    def run_frame(self):
         """
         Frame that wraps the seasave.exe start button with two checkboxes for
         the command line options.
@@ -323,7 +340,7 @@ class Measurement:
 
         """
         # start measurement
-        run_frame = ttk.Labelframe(window)
+        run_frame = ttk.Labelframe()
         self.autostart = tk.BooleanVar(value=True)
         ttk.Checkbutton(
             run_frame,
@@ -343,9 +360,9 @@ class Measurement:
         ).grid()
         return run_frame
 
-    def stopwatch_frame(self, window):
+    def stopwatch_frame(self):
         """Frame that acts as a simple stopwatch."""
-        stopwatch_frame = ttk.Labelframe(window, text="Stopwatch")
+        stopwatch_frame = ttk.Labelframe(text="Stopwatch")
         self.timer_seconds = 0
         self.stopwatch_label = tk.Label(
             stopwatch_frame,

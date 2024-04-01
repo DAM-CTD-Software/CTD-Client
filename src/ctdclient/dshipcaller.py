@@ -109,7 +109,9 @@ class DSHIPHeader:
             if response:
                 value = response["sample"]["value"]
                 try:
-                    self.dship_values[sample] = self.format_dship_response(sample, value)
+                    self.dship_values[sample] = self.format_dship_response(
+                        sample, value
+                    )
                 except IndexError:
                     pass
                 self.fail_counter = 0
@@ -187,7 +189,9 @@ class DSHIPHeader:
             4, self.create_metadata_header_line("Operator", operator)
         )
         if pos_alias:
-            header_list[-1] = self.create_metadata_header_line("Pos_Alias", pos_alias)
+            header_list[-1] = self.create_metadata_header_line(
+                "Pos_Alias", pos_alias
+            )
         self.config.psa.set_metadata_header(header_list)
         self.config["operators"]["last"] = operator
         self.config["history"]["last_cast"] = cast
@@ -199,14 +203,15 @@ class DSHIPHeader:
 
     def format_dship_response(self, name, value):
         if name == "Station":
-            cruise_name, action_log_info = value.split("_")
-            station, event = action_log_info.split("-")
-            formatted_value = f"{cruise_name}_{int(station):03d}-{int(event):02d}"
+            try:
+                _, action_log_info = value.split("_")
+                station, event = action_log_info.split("-")
+                formatted_value = f"{int(station):03d}-{int(event):02d}"
+            except AttributeError:
+                formatted_value = "000-00"
         elif name == "GPS_Lat":
-            #values = value.split()
             formatted_value = f"{float(value):.3f} N"
         elif name == "GPS_Lon":
-            #values = value.split()
             formatted_value = f"{float(value):.3f} E"
         elif name == "Echo_Depth":
             formatted_value = f"{float(value): .1f} m"
@@ -217,10 +222,16 @@ class DSHIPHeader:
         return formatted_value
 
     def build_file_name(self, cast_number, platform):
-        cruise_and_station = self.dship_values["Station"]
+        cruise = self.dship_values["Cruise"]
+        station = self.dship_values["Station"]
         cast_number = int(cast_number.get())
-        platform_name_mapper = {'CTD': 'CTD', 'vCTD': 'CTD', 'sfCTD': 'SF'}
-        return f"{cruise_and_station}_{platform_name_mapper[platform]}_{cast_number:04d}.hex"
+        platform_name_mapper = {
+            "CTD": "CTD",
+            "vCTD": "CTD",
+            "sfCTD": "SF",
+            "pCTD": "pCTD",
+        }
+        return f"{cruise}_{station}_{platform_name_mapper[platform]}_{cast_number:04d}.hex"
 
     def start_listener(self):
         """ """

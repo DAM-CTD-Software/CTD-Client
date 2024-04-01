@@ -8,9 +8,6 @@ repos:
     -   id: export-requirements
     -   id: poetry-version-bump
     -   id: git-tag-bump
-    -   id: poetry-build
-    -   id: upload-package
-    -   id: update-sphinx-doc
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -23,3 +20,9 @@ repos:
     -   id: poetry-check
       #-   id: poetry-lock
     -   id: poetry-export
+-   repo: https://git.io-warnemuende.de/michels/my-hooks
+    rev: 0.0.7
+    hooks:
+    -   id: poetry-build
+    -   id: upload-package
+    -   id: update-sphinx-doc

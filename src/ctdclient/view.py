@@ -219,10 +219,13 @@ class Measurement:
         ).grid(row=0, column=1)
 
         for index, (key, value) in enumerate(self.dship_vars.items()):
-            ctk.CTkLabel(dship_frame, text=key).grid(row=index + 1, column=0)
-            ctk.CTkLabel(dship_frame, textvariable=value).grid(
-                row=index + 1, column=1
-            )
+            if key != "Cruise":
+                ctk.CTkLabel(dship_frame, text=key).grid(
+                    row=index + 1, column=0
+                )
+                ctk.CTkLabel(dship_frame, textvariable=value).grid(
+                    row=index + 1, column=1
+                )
 
         return dship_frame
 
@@ -438,15 +441,11 @@ class Measurement:
 
     def set_dship_status_good(self):
         """"""
-        self.dship_label.configure(
-            text_color="green", text="DSHIP live"
-        )
+        self.dship_label.configure(text_color="green", text="DSHIP live")
 
     def set_dship_status_bad(self):
         """"""
-        self.dship_label.configure(
-            text_color="red", text="not connected"
-        )
+        self.dship_label.configure(text_color="red", text="not connected")
 
     def update_file_name(self, name):
         """"""

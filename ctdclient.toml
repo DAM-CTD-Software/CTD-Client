@@ -15,6 +15,7 @@ udp_port=5558
 fetch_intervall = 1
 
     [dship.identifier]
+    Cruise = 'SYS.DISP.ExpNumber'
     Station = 'ActionLog.PUP.DopName'
     GPS_Time = 'SYS.DISP.TimeTxt'
     GPS_Lat = 'SYS.STR.PosLat'

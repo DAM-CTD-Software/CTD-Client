@@ -15,6 +15,7 @@ udp_port=5558
 fetch_intervall = 1
 
     [dship.identifier]
+    Cruise = 'SYS.DISP.ExpNumber'
     Station = 'ActionLog.PUP.DopName'
     GPS_Time = 'SYS.DISP.TimeTxt'
     GPS_Lat = 'SYS.STR.PosLat'
@@ -43,19 +44,6 @@ last = "Jan Donath"
 number_of_bottles = 13
 
     [user.bottle_layout]
-    1 = 1
-    2 = 2
-    3 = 3
-    4 = 4
-    5 = 5
-    6 = 6
-    7 = 7
-    8 = 8
-    9 = 9
-    10 = 10
-    11 = 11
-    12 = 12
-    13 = 13
 
     [user.paths]
     xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"

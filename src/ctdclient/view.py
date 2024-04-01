@@ -42,10 +42,10 @@ class MainWindow:
             tabs.measurement, config_path, bottles, dship_info, controller
         )
         Processing(tabs.processing, config_path)
-        #Configuration(tabs.configuration, config_path)
+        # Configuration(tabs.configuration, config_path)
         tabs.measurement.grid()
         tabs.processing.grid()
-        #tabs.configuration.grid()
+        # tabs.configuration.grid()
 
 
 class NoteBookView(ttk.Notebook):
@@ -70,10 +70,10 @@ class TabView(ctk.CTkTabview):
 
         self.add("measurement")
         self.add("processing")
-        #self.add("configuration")
+        # self.add("configuration")
         self.measurement = ttk.Frame(self.tab("measurement"))
         self.processing = ttk.Frame(self.tab("processing"))
-        #self.configuration = ttk.Frame(self.tab("configuration"))
+        # self.configuration = ttk.Frame(self.tab("configuration"))
 
 
 class LabelFrames(ttk.PanedWindow):
@@ -132,12 +132,29 @@ class Measurement:
         self.padx = 5
         self.pady = 5
 
-        self.dship_frame(window)
-        self.info_frame(window)
-        if self.platform.get() != 'sfCTD':
-            self.bottle_frame(window)
-            self.stopwatch_frame(window)
-        self.run_frame(window)
+        # frame set-up
+        self.frame_dship = self.dship_frame(window)
+        self.frame_info = self.info_frame(window)
+        if self.platform.get() != "sfCTD":
+            self.frame_bottle = self.bottle_frame(window)
+            self.frame_stopwatch = self.stopwatch_frame(window)
+        self.frame_run = self.run_frame(window)
+
+        # style specifications
+        self.frame_dship.grid(column=0, row=0, padx=self.padx, pady=self.pady)
+        self.frame_info.grid(column=0, row=1, padx=self.padx, pady=self.pady)
+        self.frame_run.grid(
+            column=0, row=4, columnspan=2, padx=self.padx, pady=self.pady
+        )
+        try:
+            self.frame_stopwatch.grid(
+                column=0, row=3, columnspan=2, padx=self.padx, pady=self.pady
+            )
+            self.frame_bottle.grid(
+                column=1, row=0, rowspan=2, padx=self.padx, pady=self.pady
+            )
+        except Exception:
+            pass
         window.grid()
 
     def update_frame(self):
@@ -190,7 +207,7 @@ class Measurement:
                 row=index + 1, column=1
             )
 
-        dship_frame.grid(column=0, row=0, padx=self.padx, pady=self.pady)
+        return dship_frame
 
     def info_frame(self, window):
         """
@@ -210,10 +227,12 @@ class Measurement:
         tk.Label(info_frame, text="last filename").grid(
             row=1, column=0, sticky=tk.W
         )
-        self.last_filename = tk.StringVar(value=Path(self.config["history"]["last_filename"]).name)
-        tk.Label(
-            info_frame, textvariable=self.last_filename
-        ).grid(row=1, column=1, sticky=tk.E)
+        self.last_filename = tk.StringVar(
+            value=Path(self.config["history"]["last_filename"]).name
+        )
+        tk.Label(info_frame, textvariable=self.last_filename).grid(
+            row=1, column=1, sticky=tk.E
+        )
         # operator selection
         tk.Label(info_frame, text="Operator").grid(
             row=2, column=0, sticky=tk.W
@@ -245,7 +264,7 @@ class Measurement:
         ).grid(row=4, column=1, sticky=tk.E)
         # scanfish-specific option to override the current Pos_Alias
         self.station = tk.StringVar(value="")
-        if self.platform.get() == 'sfCTD':
+        if self.platform.get() == "sfCTD":
             tk.Label(info_frame, text="Station").grid(
                 row=5, column=0, sticky=tk.W
             )
@@ -254,7 +273,7 @@ class Measurement:
                 textvariable=self.station,
             ).grid(row=5, column=1, sticky=tk.E)
 
-        info_frame.grid(column=0, row=1, padx=self.padx, pady=self.pady)
+        return info_frame
 
     def bottle_frame(self, window):
         """
@@ -287,9 +306,7 @@ class Measurement:
             text="Save Bottle Configuration",
             variable=self.save_btl_config,
         ).grid(column=1)
-        bottle_frame.grid(
-            column=1, row=0, rowspan=2, padx=self.padx, pady=self.pady
-        )
+        return bottle_frame
 
     def run_frame(self, window):
         """
@@ -324,9 +341,7 @@ class Measurement:
             text="Start Seasave",
             command=self.start_seasave,
         ).grid()
-        run_frame.grid(
-            column=0, row=4, columnspan=2, padx=self.padx, pady=self.pady
-        )
+        return run_frame
 
     def stopwatch_frame(self, window):
         """Frame that acts as a simple stopwatch."""
@@ -362,9 +377,7 @@ class Measurement:
             func=lambda e: self.stopwatch_label.config(background="grey"),
         )
         update()
-        stopwatch_frame.grid(
-            column=0, row=3, columnspan=2, padx=self.padx, pady=self.pady
-        )
+        return stopwatch_frame
 
     def start_seasave(self):
         """
@@ -382,14 +395,16 @@ class Measurement:
                 new_bottle_dict, self.save_btl_config
             )
             self.dship_info.build_metadata_header(
-                self.platform.get(), self.cast_number.get(), self.operator.get()
+                self.platform.get(),
+                self.cast_number.get(),
+                self.operator.get(),
             )
         else:
             self.dship_info.build_metadata_header(
                 self.platform.get(),
                 self.cast_number.get(),
                 self.operator.get(),
-                self.station.get()
+                self.station.get(),
             )
 
         self.last_filename.set(self.current_filename.get())
@@ -455,7 +470,9 @@ class Processing:
             ).iterdir()
         ]
         self.steps = self.config["user"]["processing"]["modules"]
-        self.processing_type = self.config["user"]["processing"]["type"].lower()
+        self.processing_type = self.config["user"]["processing"][
+            "type"
+        ].lower()
 
         if self.processing_type != "windowsbatch":
             self.step_frame = self.step_selection_frame()
@@ -478,8 +495,12 @@ class Processing:
             single_frame.columnconfigure(0, weight=1)
             single_frame.columnconfigure(1, weight=7)
             single_frame.columnconfigure(2, weight=1)
-            tk.Label(single_frame, text=f"Path to {file_type}").grid(row=index, column=0, sticky=tk.W, padx=padx, pady=pady)
-            tk.Entry(single_frame, textvariable=variable).grid(row=index, column=1, sticky=tk.E, padx=padx, pady=pady)
+            tk.Label(single_frame, text=f"Path to {file_type}").grid(
+                row=index, column=0, sticky=tk.W, padx=padx, pady=pady
+            )
+            tk.Entry(single_frame, textvariable=variable).grid(
+                row=index, column=1, sticky=tk.E, padx=padx, pady=pady
+            )
             command_with_arguments = partial(
                 self.select_file, file_type, variable
             )
@@ -623,8 +644,8 @@ class Processing:
         elif self.processing_type == "windowsbatch":
             try:
                 windows_batch = WindowsBatch(
-                    self.config['user']['processing']['batch_path'],
-                    self.path_dict["hex"].get()
+                    self.config["user"]["processing"]["batch_path"],
+                    self.path_dict["hex"].get(),
                 )
             except TypeError:
                 pass

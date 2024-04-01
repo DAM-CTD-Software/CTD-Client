@@ -8,6 +8,7 @@ import json
 from functools import partial
 import difflib
 import datetime
+from typing import Callable
 from processing.processing import Processing as own_processing
 
 from ctdclient.batchprocessing import BatchProcessing, WindowsBatch
@@ -29,6 +30,8 @@ class MainWindow:
         default_font = tkFont.nametofont("TkDefaultFont")
         default_font.configure(size=14)
         root.option_add("*Font", default_font)
+        ctk.set_appearance_mode("dark")
+        ctk.set_default_color_theme("dark-blue")
 
         # initialize standard menu
         # MenuBar(root)
@@ -49,7 +52,7 @@ class MainWindow:
 
 
 class NoteBookView(ttk.Notebook):
-    """Basic tkinter equivalent to customtkinter's TabView."""
+    """Basic tkinter equivalent to ctk's TabView."""
 
     def __init__(self, window):
         super().__init__(window)
@@ -71,8 +74,8 @@ class TabView(ctk.CTkTabview):
         self.add("measurement")
         self.add("processing")
         # self.add("configuration")
-        self.measurement = ttk.Frame(self.tab("measurement"))
-        self.processing = ttk.Frame(self.tab("processing"))
+        self.measurement = ctk.CTkFrame(self.tab("measurement"))
+        self.processing = ctk.CTkFrame(self.tab("processing"))
         # self.configuration = ttk.Frame(self.tab("configuration"))
 
 
@@ -83,9 +86,9 @@ class LabelFrames(ttk.PanedWindow):
 
     def __init__(self, window, **kwargs):
         super().__init__(window, orient=tk.HORIZONTAL, **kwargs)
-        self.measurement = ttk.Labelframe(self, text="measurement")
-        self.processing = ttk.Labelframe(self, text="processing")
-        self.configuration = ttk.Labelframe(self, text="configuration")
+        self.measurement = ctk.CTkFrame(self, text="measurement")
+        self.processing = ctk.CTkFrame(self, text="processing")
+        self.configuration = ctk.CTkFrame(self, text="configuration")
         self.add(self.measurement)
         self.add(self.processing)
         self.add(self.configuration)
@@ -125,6 +128,7 @@ class Measurement:
         self.platform = tk.StringVar(
             value=self.config["history"]["last_platform"]
         )
+        self.platform.trace_add("write", self.update_frames)
         self.save_btl_config = tk.BooleanVar(value=False)
 
         # configure window layout
@@ -140,9 +144,9 @@ class Measurement:
         self.frame_stopwatch = self.stopwatch_frame()
         self.frame_run = self.run_frame()
 
-        self.update_frames("")
+        self.update_frames()
 
-    def update_frames(self, event):
+    def update_frames(self, *args):
         if self.platform.get() == "sfCTD":
             self.frame_dship.grid(
                 column=0, row=0, padx=self.padx, pady=self.pady
@@ -205,18 +209,18 @@ class Measurement:
 
         """
         # show live dhsip values
-        dship_frame = ttk.Labelframe(self.window, text="DSHIP")
-        self.dship_label = tk.Label(
-            dship_frame, text="waiting for connection...", background="yellow"
+        dship_frame = ctk.CTkFrame(self.window)
+        self.dship_label = ctk.CTkLabel(
+            dship_frame, text="waiting for connection..."
         )
         self.dship_label.grid(row=0, column=0)
-        tk.Button(
+        ctk.CTkButton(
             dship_frame, text="Reconnect", command=self.reconnect_dship
         ).grid(row=0, column=1)
 
         for index, (key, value) in enumerate(self.dship_vars.items()):
-            tk.Label(dship_frame, text=key).grid(row=index + 1, column=0)
-            tk.Label(dship_frame, textvariable=value).grid(
+            ctk.CTkLabel(dship_frame, text=key).grid(row=index + 1, column=0)
+            ctk.CTkLabel(dship_frame, textvariable=value).grid(
                 row=index + 1, column=1
             )
 
@@ -227,37 +231,37 @@ class Measurement:
         Frame that displays the filename, that is currently created, and allows
         cast number and operator name selection.
         """
-        info_frame = ttk.Labelframe(self.window, text="File info")
+        info_frame = ctk.CTkFrame(self.window)
         # current filename
         self.current_filename = tk.StringVar(value="")
-        tk.Label(info_frame, text="current filename").grid(
+        ctk.CTkLabel(info_frame, text="current filename").grid(
             row=0, column=0, sticky=tk.W
         )
-        tk.Label(info_frame, textvariable=self.current_filename).grid(
+        ctk.CTkLabel(info_frame, textvariable=self.current_filename).grid(
             row=0, column=1, sticky=tk.E
         )
         # last filename
-        tk.Label(info_frame, text="last filename").grid(
+        ctk.CTkLabel(info_frame, text="last filename").grid(
             row=1, column=0, sticky=tk.W
         )
         self.last_filename = tk.StringVar(
             value=Path(self.config["history"]["last_filename"]).name
         )
-        tk.Label(info_frame, textvariable=self.last_filename).grid(
+        ctk.CTkLabel(info_frame, textvariable=self.last_filename).grid(
             row=1, column=1, sticky=tk.E
         )
         # operator selection
-        tk.Label(info_frame, text="Operator").grid(
+        ctk.CTkLabel(info_frame, text="Operator").grid(
             row=2, column=0, sticky=tk.W
         )
         self.operator = tk.StringVar(value=self.config["operators"]["last"])
-        ttk.Combobox(
+        ctk.CTkComboBox(
             info_frame,
             values=list(self.config["operators"].values())[:-1],
-            textvariable=self.operator,
+            variable=self.operator,
         ).grid(row=2, column=1, sticky=tk.E)
         # cast selection/display
-        tk.Label(info_frame, text="Cast number").grid(
+        ctk.CTkLabel(info_frame, text="Cast number").grid(
             row=3, column=0, sticky=tk.W
         )
         self.cast_number = tk.StringVar(
@@ -267,20 +271,19 @@ class Measurement:
             info_frame, from_=1.0, to=1000.0, textvariable=self.cast_number
         ).grid(row=3, column=1, sticky=tk.E)
         # platform selection
-        tk.Label(info_frame, text="Platform").grid(
+        ctk.CTkLabel(info_frame, text="Platform").grid(
             row=4, column=0, sticky=tk.W
         )
-        platform_selector = ttk.Combobox(
+        platform_selector = ctk.CTkComboBox(
             info_frame,
             values=list(self.config["platforms"]),
-            textvariable=self.platform,
+            variable=self.platform,
         )
         platform_selector.grid(row=4, column=1, sticky=tk.E)
-        platform_selector.bind("<<ComboboxSelected>>", self.update_frames)
         # scanfish-specific option to override the current Pos_Alias
         self.station = tk.StringVar(value="")
         if self.platform.get() == "sfCTD":
-            tk.Label(info_frame, text="Station").grid(
+            ctk.CTkLabel(info_frame, text="Station").grid(
                 row=5, column=0, sticky=tk.W
             )
             ttk.Entry(
@@ -304,21 +307,19 @@ class Measurement:
 
         """
         # configure bottle closing times
-        bottle_frame = ttk.Labelframe(
-            self.window, text="Bottle closing depths"
-        )
+        bottle_frame = ctk.CTkFrame(self.window)
         self.bottle_values = {}
-        tk.Label(bottle_frame, text="BottleIDs").grid(column=0, row=0)
-        tk.Label(bottle_frame, text="Depth to close").grid(row=0, column=1)
+        ctk.CTkLabel(bottle_frame, text="BottleIDs").grid(column=0, row=0)
+        ctk.CTkLabel(bottle_frame, text="Depth to close").grid(row=0, column=1)
         for index, (key, value) in enumerate(self.bottles.items()):
             textvariable = tk.StringVar()
             textvariable.set(value)
             self.bottle_values[key] = textvariable
-            tk.Label(bottle_frame, text=key).grid(row=index + 1, column=0)
+            ctk.CTkLabel(bottle_frame, text=key).grid(row=index + 1, column=0)
             tk.Entry(
                 bottle_frame, textvariable=textvariable, justify="center"
             ).grid(row=index + 1, column=1)
-        ttk.Checkbutton(
+        ctk.CTkCheckBox(
             bottle_frame,
             text="Save Bottle Configuration",
             variable=self.save_btl_config,
@@ -340,20 +341,20 @@ class Measurement:
 
         """
         # start measurement
-        run_frame = ttk.Labelframe()
+        run_frame = ctk.CTkFrame(self.window)
         self.autostart = tk.BooleanVar(value=True)
-        ttk.Checkbutton(
+        ctk.CTkCheckBox(
             run_frame,
             text="autostart",
             variable=self.autostart,
         ).grid()
         self.downcast = tk.BooleanVar(value=True)
-        ttk.Checkbutton(
+        ctk.CTkCheckBox(
             run_frame,
             text="downcast",
             variable=self.downcast,
         ).grid()
-        tk.Button(
+        ctk.CTkButton(
             run_frame,
             text="Start Seasave",
             command=self.start_seasave,
@@ -362,13 +363,13 @@ class Measurement:
 
     def stopwatch_frame(self):
         """Frame that acts as a simple stopwatch."""
-        stopwatch_frame = ttk.Labelframe(text="Stopwatch")
+        stopwatch_frame = ctk.CTkFrame(self.window)
         self.timer_seconds = 0
-        self.stopwatch_label = tk.Label(
+        self.stopwatch_label = ctk.CTkLabel(
             stopwatch_frame,
-            height=5,
-            width=10,
-            background="grey",
+            height=70,
+            width=70,
+            corner_radius=20,
             text="00:00:00",
             font=("Normal", 15, "bold"),
         )
@@ -376,7 +377,7 @@ class Measurement:
 
         def update():
             self.timer_seconds += 1
-            self.stopwatch_label.config(
+            self.stopwatch_label.configure(
                 text=str(datetime.timedelta(seconds=self.timer_seconds))
             )
             self.stopwatch_label.after(1000, update)
@@ -387,11 +388,15 @@ class Measurement:
         self.stopwatch_label.bind("<Button-1>", reset)
         self.stopwatch_label.bind(
             "<Enter>",
-            func=lambda e: self.stopwatch_label.config(background="#1e7898"),
+            command=lambda e: self.stopwatch_label.configure(
+                fg_color="#1e7898"
+            ),
         )
         self.stopwatch_label.bind(
             "<Leave>",
-            func=lambda e: self.stopwatch_label.config(background="grey"),
+            command=lambda e: self.stopwatch_label.configure(
+                fg_color="transparent"
+            ),
         )
         update()
         return stopwatch_frame
@@ -438,13 +443,15 @@ class Measurement:
 
     def set_dship_status_good(self):
         """"""
-        self.dship_label["background"] = "green"
-        self.dship_label["text"] = "Live DSHIP values:"
+        self.dship_label.configure(
+            text_color="green", text="Live DSHIP values"
+        )
 
     def set_dship_status_bad(self):
         """"""
-        self.dship_label["background"] = "red"
-        self.dship_label["text"] = "No DSHIP connection"
+        self.dship_label.configure(
+            text_color="red", text="No DSHIP connection"
+        )
 
     def update_file_name(self, name):
         """"""
@@ -512,7 +519,7 @@ class Processing:
             single_frame.columnconfigure(0, weight=1)
             single_frame.columnconfigure(1, weight=7)
             single_frame.columnconfigure(2, weight=1)
-            tk.Label(single_frame, text=f"Path to {file_type}").grid(
+            ctk.CTkLabel(single_frame, text=f"Path to {file_type}").grid(
                 row=index, column=0, sticky=tk.W, padx=padx, pady=pady
             )
             tk.Entry(single_frame, textvariable=variable).grid(
@@ -521,7 +528,7 @@ class Processing:
             command_with_arguments = partial(
                 self.select_file, file_type, variable
             )
-            tk.Button(
+            ctk.CTkButton(
                 single_frame, text="Browse", command=command_with_arguments
             ).grid(row=index, column=2, padx=padx, pady=pady)
             single_frame.grid()
@@ -544,12 +551,12 @@ class Processing:
         # button frame
         button_frame = tk.Frame(frame)
         add_step = partial(self.add_processing_step, modules_frame)
-        ttk.Button(
+        ctk.CTkButton(
             button_frame, text="Add processing step", command=add_step
         ).grid(row=0, column=0)
         remove_step = partial(self.remove_processing_step, modules_frame)
         # remove step button
-        ttk.Button(
+        ctk.CTkButton(
             button_frame, text="Remove processing step", command=remove_step
         ).grid(row=0, column=1)
         button_frame.grid()
@@ -559,7 +566,7 @@ class Processing:
     def run_processing_frame(self):
         frame = tk.Frame(self.window)
         # run processing button
-        tk.Button(
+        ctk.CTkButton(
             frame, text="Run processing", command=self.run_processing
         ).grid()
         frame.grid()
@@ -614,13 +621,13 @@ class Processing:
         psa = tk.StringVar(value=psa_default_value(preset_value))
         self.step_var_dict[self.step_number] = (step, psa)
 
-        step_box = ttk.Combobox(
+        step_box = ctk.CTkComboBox(
             new_step, values=self.psa_modules, textvariable=step
         )
         step_box.set(preset_value)
         step_box.grid(row=0, column=0)
         step_box.bind("<<ComboboxSelected>>", update_psa_value)
-        psa_box = ttk.Combobox(
+        psa_box = ctk.CTkComboBox(
             new_step, values=self.psa_paths, textvariable=psa
         )
         psa_box.grid(row=0, column=1)
@@ -742,3 +749,82 @@ class Configuration:
             print("Config saved successfully.")
         except Exception as e:
             print(f"Error saving config file: {e}")
+
+
+class CTkSpinbox(ctk.CTkFrame):
+    def __init__(
+        self,
+        *args,
+        width: int = 100,
+        height: int = 32,
+        step_size: int | float = 1,
+        command: Callable | None = None,
+        **kwargs,
+    ):
+        super().__init__(*args, width=width, height=height, **kwargs)
+
+        self.step_size = step_size
+        self.command = command
+
+        self.configure(fg_color=("gray78", "gray28"))  # set frame color
+
+        self.grid_columnconfigure((0, 2), weight=0)  # buttons don't expand
+        self.grid_columnconfigure(1, weight=1)  # entry expands
+
+        self.subtract_button = ctk.CTkButton(
+            self,
+            text="-",
+            width=height - 6,
+            height=height - 6,
+            command=self.subtract_button_callback,
+        )
+        self.subtract_button.grid(row=0, column=0, padx=(3, 0), pady=3)
+
+        self.entry = ctk.CTkEntry(
+            self, width=width - (2 * height), height=height - 6, border_width=0
+        )
+        self.entry.grid(
+            row=0, column=1, columnspan=1, padx=3, pady=3, sticky="ew"
+        )
+
+        self.add_button = ctk.CTkButton(
+            self,
+            text="+",
+            width=height - 6,
+            height=height - 6,
+            command=self.add_button_callback,
+        )
+        self.add_button.grid(row=0, column=2, padx=(0, 3), pady=3)
+
+        # default value
+        self.entry.insert(0, "0.0")
+
+    def add_button_callback(self):
+        if self.command is not None:
+            self.command()
+        try:
+            value = float(self.entry.get()) + self.step_size
+            self.entry.delete(0, "end")
+            self.entry.insert(0, value)
+        except ValueError:
+            return
+
+    def subtract_button_callback(self):
+        if self.command is not None:
+            self.command()
+        try:
+            value = float(self.entry.get()) - self.step_size
+            self.entry.delete(0, "end")
+            self.entry.insert(0, value)
+        except ValueError:
+            return
+
+    def get(self) -> float | None:
+        try:
+            return float(self.entry.get())
+        except ValueError:
+            return None
+
+    def set(self, value: float):
+        self.entry.delete(0, "end")
+        self.entry.insert(0, str(float(value)))

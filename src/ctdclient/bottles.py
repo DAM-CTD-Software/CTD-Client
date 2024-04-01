@@ -10,10 +10,10 @@ class BottleClosingDepths(UserDict):
     of the following format:
 
             {BottleID: pressure value as difference from the air pressure,
-                [str]: [float],
-                    1: 4.0,
-                    2: 6.0,
-                    6: 17.5}
+                [str]: [str],
+                    1: 4,
+                    2: 6,
+                    6: Bo}
     """
 
     def __init__(self, config) -> None:
@@ -25,13 +25,13 @@ class BottleClosingDepths(UserDict):
         """Sets a default bottle layout according to the configuration file."""
         self.number_of_bottles = self.config["user"]["number_of_bottles"]
         self.data = {
-            number + 1: 0.0 for number in range(self.number_of_bottles)
+            number + 1: '' for number in range(self.number_of_bottles)
         }
         for key, value in self.config["user"]["bottle_layout"].items():
             if int(key) in self.data.keys():
                 self.data[int(key)] = value
 
-    def update_bottle_information(self, info: dict, save_info=True):
+    def update_bottle_information(self, info: dict, save_info=False):
         """
         Workhouse method that is being called from the outside to set a
         different bottle layout and to edit the psa.

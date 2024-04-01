@@ -282,14 +282,13 @@ class Measurement:
         platform_selector.grid(row=4, column=1, sticky=tk.E)
         # scanfish-specific option to override the current Pos_Alias
         self.station = tk.StringVar(value="")
-        if self.platform.get() == "sfCTD":
-            ctk.CTkLabel(info_frame, text="Station").grid(
-                row=5, column=0, sticky=tk.W
-            )
-            ttk.Entry(
-                info_frame,
-                textvariable=self.station,
-            ).grid(row=5, column=1, sticky=tk.E)
+        ctk.CTkLabel(info_frame, text="Station").grid(
+            row=5, column=0, sticky=tk.W
+        )
+        ctk.CTkEntry(
+            info_frame,
+            textvariable=self.station,
+        ).grid(row=5, column=1, sticky=tk.E)
 
         return info_frame
 
@@ -316,7 +315,7 @@ class Measurement:
             textvariable.set(value)
             self.bottle_values[key] = textvariable
             ctk.CTkLabel(bottle_frame, text=key).grid(row=index + 1, column=0)
-            tk.Entry(
+            ctk.CTkEntry(
                 bottle_frame, textvariable=textvariable, justify="center"
             ).grid(row=index + 1, column=1)
         ctk.CTkCheckBox(
@@ -409,12 +408,8 @@ class Measurement:
         # TODO: handle exceptions
         # TODO: move into controller
         if self.platform.get() != "sfCTD":
-            new_bottle_dict = {
-                key: float(value.get())
-                for key, value in self.bottle_values.items()
-            }
             self.bottles.update_bottle_information(
-                new_bottle_dict, self.save_btl_config
+                self.bottle_values.items(), self.save_btl_config
             )
             self.dship_info.build_metadata_header(
                 self.platform.get(),
@@ -444,13 +439,13 @@ class Measurement:
     def set_dship_status_good(self):
         """"""
         self.dship_label.configure(
-            text_color="green", text="Live DSHIP values"
+            text_color="green", text="DSHIP live"
         )
 
     def set_dship_status_bad(self):
         """"""
         self.dship_label.configure(
-            text_color="red", text="No DSHIP connection"
+            text_color="red", text="not connected"
         )
 
     def update_file_name(self, name):

@@ -24,9 +24,9 @@ fetch_intervall = 1
     Pos_Alias = 'Web.PUP.NextWPName'
 
 [history]
-last_cast = "9"
-last_filename = "D:\\mig\\tests\\data\\out\\EMB337_090-02_SF_0009.hex"
-last_platform = "sfCTD"
+last_cast = "12"
+last_filename = "D:\\mig\\tests\\data\\out\\EMB337_091-12_CTD_0012.hex"
+last_platform = "CTD"
 
 [operators]
 op1 = "Heene"
@@ -36,13 +36,26 @@ op4 = "Ruickoldt"
 op5 = "Michels"
 op6 = "Koehn"
 op7 = "Mars"
-last = "Mars"
+last = "Ruickoldt"
 
 # configuration that can be changed via the software interface by any operator
 [user]
-number_of_bottles = 0
+number_of_bottles = 13
 
     [user.bottle_layout]
+    1 = ""
+    2 = ""
+    3 = ""
+    4 = ""
+    5 = ""
+    6 = ""
+    7 = ""
+    8 = ""
+    9 = ""
+    10 = ""
+    11 = ""
+    12 = ""
+    13 = ""
 
     [user.paths]
     xmlcon = "D:\\mig\\tests\\data\\EMB295_003-01_CTD_0003.XMLCON"

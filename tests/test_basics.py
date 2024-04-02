@@ -11,7 +11,7 @@ import sys
 if platform.system() == "Linux":
     config_path = "linux_config.toml"
 elif platform.system() == "Windows":
-    config_path = "windows_config.toml"
+    config_path = "ctdclient.toml"
 else:
     sys.exit(1)
 
@@ -50,11 +50,11 @@ class TestBottles(unittest.TestCase):
         self.assertEqual(len(self.bottles), 13)
         self.assertEqual(list(self.bottles), [c for c in range(1, 14)])
 
-    def test_xmlcon_entry(self):
-        length_before = len(self.bottles.xml)
+    def test_psa_entry(self):
+        length_before = len(self.bottles.config.psa)
         bottle_dict = {key: key for key in range(1, 14)}
         self.bottles.update_bottle_information(bottle_dict)
-        self.assertEqual(len(self.bottles.xml), length_before)
+        self.assertEqual(len(self.bottles.config.psa), length_before)
 
     def test_bottle_instantiation(self):
         self.bottles.config["user"]["number_of_bottles"] = 17

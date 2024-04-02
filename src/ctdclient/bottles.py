@@ -18,7 +18,6 @@ class BottleClosingDepths(UserDict):
 
     def __init__(self, config) -> None:
         self.config = config
-        self.xml = config.psa
         self.instantiate_bottle_info()
 
     def instantiate_bottle_info(self):
@@ -65,4 +64,4 @@ class BottleClosingDepths(UserDict):
         Calls the psa editing method of SeasavePsa of the seabirdfilehandler
         in order to generate the XML code necessary to set the bottle layout.
         """
-        self.xml.set_bottle_fire_info(self.data)
+        self.config.psa.set_bottle_fire_info(self.data)

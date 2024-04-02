@@ -176,8 +176,6 @@ class DSHIPHeader:
         """
         header_list = []
         for name, value in self.dship_values.items():
-            if name == "Station":
-                header_list.append(f"Cruise = {value[:6]}")
             header_list.append(self.create_metadata_header_line(name, value))
         header_list.insert(
             2, self.create_metadata_header_line("Platform", platform)

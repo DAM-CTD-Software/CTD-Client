@@ -12,12 +12,12 @@ class RunSeasave:
     to XMLCON and hex file.
     """
 
-    def __init__(self, config, hex_name) -> None:
+    def __init__(self, config, hex_name, psa_output_name=None) -> None:
         self.path_to_seasave_exe = config["paths"]["seasave_exe"]
         self.path_to_psa = config["user"]["paths"]["psa"]
         self.config = config
         self.hex_name = hex_name
-        self.set_psa_run_info()
+        self.set_psa_run_info(psa_output_name)
 
     def run(self, downcast=True, autostart=True):
         """
@@ -47,11 +47,12 @@ class RunSeasave:
             raise error
         except PermissionError as error:
             logger.error(
-                f"Insufficient permissions to run the command {run_command}: {error}"
+                f"Insufficient permissions to run the command {
+                    run_command}: {error}"
             )
             raise error
 
-    def set_psa_run_info(self):
+    def set_psa_run_info(self, psa_output_name=None):
         """Sets XMLCON and hex file paths in Seasave.psa."""
         self.config["history"]["last_filename"] = str(self.hex_name)
         self.config.write()
@@ -59,7 +60,7 @@ class RunSeasave:
             self.config["user"]["paths"]["xmlcon"]
         )
         self.config.psa.set_hex_file_path(self.hex_name)
-        self.config.psa.to_xml()
+        self.config.psa.to_xml(file_name=psa_output_name)
 
     def set_seasave_command_line_parameters(self, downcast, autostart) -> list:
         """

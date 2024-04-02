@@ -1,0 +1,60 @@
+# base configuration for the software internals and system specifics which are
+# usually set only once during the software installation process
+
+platforms = ['CTD', 'pCTD', 'sfCTD']
+
+[paths]
+seasave_exe = ""
+data_archive = ""
+backup_location = ""
+
+[dship]
+ip='192.168.236.60'
+udp_port=5558
+# timeout between individual API calls in seconds
+fetch_intervall = 1
+
+    [dship.identifier]
+    Cruise = 'SYS.DISP.ExpNumber'
+    Station = 'ActionLog.PUP.DopName'
+    GPS_Time = 'SYS.DISP.TimeTxt'
+    GPS_Lat = 'SYS.STR.PosLat'
+    GPS_Lon = 'SYS.STR.PosLon'
+    Echo_Depth = 'SYS.CALC.WaterDepth'
+    Air_Pressure = 'Weatherstation_DWD.PEUMA.Air_pressure'
+    Pos_Alias = 'Web.PUP.NextWPName'
+
+[history]
+last_cast = "3"
+last_filename = "test.hex"
+last_platform = "sfCTD"
+
+[operators]
+op1 = "Heene"
+op2 = "Kolbe"
+op3 = "Faber"
+op4 = "Ruickoldt"
+op5 = "Michels"
+op6 = "Koehn"
+op7 = "Mars"
+last = "Jan Donath"
+
+# configuration that can be changed via the software interface by any operator
+[user]
+number_of_bottles = 13
+
+    [user.bottle_layout]
+
+    [user.paths]
+    xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"
+    export_location = ""
+    psa = "/home/emil/Projects/CTD-Client/tests/data/Seasave_test.psa"
+    hex = ""
+
+    [user.processing]
+    # one of Own, Canadian or WindowsBatch
+    type = "WindowsBatch"
+    batch_path = "D:\\mig\\tests\\data\\processing_batch.bat"
+    modules = ["DatCnv", "AirPressure", "WildEdit", "W_Filter", "AlignCTD", "CellTM", "Derive", "BinAvg"]
+    processing_exes = ""
+    psas = ""

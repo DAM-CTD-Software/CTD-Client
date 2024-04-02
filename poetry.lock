@@ -2841,12 +2841,12 @@ reference = "gitea"
 
 [[package]]
 name = "seabirdfilehandler"
-version = "0.1.10"
+version = "0.1.11"
 description = ""
 optional = false
 python-versions = ">=3.11.4,<3.13"
 files = [
-    {file = "seabirdfilehandler-0.1.10-py3-none-any.whl", hash = "sha256:ca2b7c6ba01c2449b9487e534b78369881f13c48b00d7cd3345dd2d2b16477f3"},
+    {file = "seabirdfilehandler-0.1.11-py3-none-any.whl", hash = "sha256:3fbffc94def335ce050603c6162aab4399c27ed603a89590c093191b7a15d6bf"},
 ]
 
 [package.dependencies]

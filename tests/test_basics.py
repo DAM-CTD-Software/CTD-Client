@@ -9,7 +9,7 @@ import platform
 import sys
 
 if platform.system() == "Linux":
-    config_path = "linux_config.toml"
+    config_path = "tests/data/linux_config.toml"
 elif platform.system() == "Windows":
     config_path = "ctdclient.toml"
 else:
@@ -62,10 +62,7 @@ class TestBottles(unittest.TestCase):
         self.assertEqual(self.bottles.number_of_bottles, 17)
         self.assertEqual(
             self.bottles.data,
-            {
-                number: 0.0 if number > 13 else number
-                for number in range(1, 18)
-            },
+            {number: "" for number in range(1, 18)},
         )
 
 
@@ -74,20 +71,22 @@ class TestMetadataHeader(unittest.TestCase):
     def setUp(self):
         self.config = ConfigurationFile(config_path)
         self.header = DSHIPHeader(self.config, dummy=True)
-        self.expected_output = """** Cruise = EMB295
-** Station = EMB295_3-1
-** Platform = CTD
-** Cast = 0003
-** Operator = Jan Donath
-** GPS_Time = 04.07.2022 07:51:16
-** Pos_Alias = Gotland"""
+        self.expected_output = """
+                                Cruise = EMB295
+                                Station = EMB295_3-1
+                                Platform = CTD
+                                Cast = 0003
+                                Operator = Jan Donath
+                                GPS_Time = 04.07.2022 07:51:16
+                                Pos_Alias = Gotland
+                               """
 
     def tearDown(self):
         self.header.end_listener()
 
     @parameterized.expand(
         [
-            ("Station", "EMB295_3-1", "EMB295_003-01"),
+            ("Station", "EMB295_3-1", "003-01"),
             ("GPS_Lat", "57 18.9919367281", "57 18.992 N"),
             ("GPS_Lon", "20  7.9643222314", "20  7.964 E"),
             ("Echo_Depth", "248.023438423", " 248.0 m"),
@@ -102,6 +101,7 @@ class TestMetadataHeader(unittest.TestCase):
 
     def test_full_header(self):
         self.header.dship_values = {
+            "Cruise": "EMB295",
             "Station": "EMB295_3-1",
             "GPS_Time": "04.07.2022 07:51:16",
             "Pos_Alias": "Gotland",
@@ -119,7 +119,7 @@ class TestSeasaveRun(unittest.TestCase):
         self.seasave = RunSeasave(self.config, "")
 
     def test_psa_set_run_infos(self):
-        self.seasave.set_psa_run_info()
+        self.seasave.set_psa_run_info("unittest_seasave")
         psa_position = self.config.psa["SeasaveProgramSetup"]["Settings"]
         self.assertEqual(
             psa_position["ConfigurationFilePath"]["@value"],
@@ -165,3 +165,27 @@ class DSHIP(unittest.TestCase):
 
     def test_dummy(self):
         self.assertTrue(self.dship.alive)
+
+
+class IntegrationTests(unittest.TestCase):
+
+    def setUp(self):
+        self.config = ConfigurationFile(config_path)
+        # self.dship = DSHIPHeader(self.config, dummy=True)
+        self.bottles = BottleClosingDepths(self.config)
+
+    def test_simulate_start_seasave_in_view(self):
+        self.bottles.update_bottle_information({1: -1, 2: 32, 3: "Bo"})
+        self.config.psa.set_metadata_header(["test = bums", "test2 = bums2"])
+        self.seasave = RunSeasave(
+            self.config, "test.hex", "integration_test_seasave"
+        )
+        output = []
+        with open("tests/data/integration_test_seasave.psa") as file:
+            for line in file:
+                output.append(line)
+        expected_output = []
+        with open("tests/data/expected_integration_test.psa") as file:
+            for line in file:
+                expected_output.append(line)
+        self.assertEqual(output, expected_output)

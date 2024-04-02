@@ -28,14 +28,8 @@
 			<Parity value="78"></Parity>
 		</InstrumentPortConfiguration>
 		<HeaderForm HeaderChoice="1">
-			<Prompt index="0" value="** Station = None"></Prompt>
-			<Prompt index="1" value="** Platform = Sassnitz"></Prompt>
-			<Prompt index="2" value="** GPS_Time = 11.02.2024 14:56:33"></Prompt>
-			<Prompt index="3" value="** GPS_Lat = 54.51013666666667"></Prompt>
-			<Prompt index="4" value="** Operator = Michels"></Prompt>
-			<Prompt index="5" value="** GPS_Lon = 13.636106666666667"></Prompt>
-			<Prompt index="6" value="** Echo_Depth = 9.0"></Prompt>
-			<Prompt index="7" value="** Air_Pressure = 993.3"></Prompt>
+			<Prompt index="0" value="test = bums"></Prompt>
+			<Prompt index="1" value="test2 = bums2"></Prompt>
 		</HeaderForm>
 		<ArchivedDataPlaybackSettings>
 			<PlaybackFilePath value="C:\Geraete\Seabird\SeasaveV7-Demo\Demo.hex"></PlaybackFilePath>
@@ -76,8 +70,8 @@
 			</PotentialTempAnomaly>
 		</MiscellaneousCalcData>
 		<ConfigurationFilePath value="/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"></ConfigurationFilePath>
-		<DataFilePath value=""></DataFilePath>
-		<WaterSamplerConfiguration Type="5" Port="1" NumberOfWaterBottles="12" FiringSequence="3" EnableRemoteFiring="0" BeepUsesInternalSpeakers="1" GO1016ArmOffset="0">
+		<DataFilePath value="test.hex"></DataFilePath>
+		<WaterSamplerConfiguration Type="5" Port="1" NumberOfWaterBottles="13" FiringSequence="3" EnableRemoteFiring="0" BeepUsesInternalSpeakers="1" GO1016ArmOffset="0">
 			<PositionsForTableDrivenFiring>
 				<TableEntry BottleNumber="0" Position="1"></TableEntry>
 				<TableEntry BottleNumber="1" Position="2"></TableEntry>
@@ -118,24 +112,24 @@
 			</PositionsForTableDrivenFiring>
 			<AutoFireData UsePressure="1" DepthType="0" MaxPressureOrDepth="1000.000000" MinPressureDepth="0.000000" AllowManualFiring="1">
 				<DataTable>
-					<Row index="0" BottleNumber="10" FireAt="10.000000"></Row>
-					<Row index="1" BottleNumber="6" FireAt="6.000000"></Row>
-					<Row index="2" BottleNumber="2" FireAt="2.000000"></Row>
+					<Row index="0" BottleNumber="10" FireAt="0.0"></Row>
+					<Row index="1" BottleNumber="6" FireAt="0.0"></Row>
+					<Row index="2" BottleNumber="2" FireAt="32.0"></Row>
 					<Row index="3" BottleNumber="15" FireAt="400.000000"></Row>
-					<Row index="4" BottleNumber="11" FireAt="11.000000"></Row>
-					<Row index="5" BottleNumber="7" FireAt="7.000000"></Row>
-					<Row index="6" BottleNumber="3" FireAt="3.000000"></Row>
+					<Row index="4" BottleNumber="11" FireAt="0.0"></Row>
+					<Row index="5" BottleNumber="7" FireAt="0.0"></Row>
+					<Row index="6" BottleNumber="3" FireAt="0.0"></Row>
 					<Row index="7" BottleNumber="17" FireAt="560.000000"></Row>
-					<Row index="8" BottleNumber="13" FireAt="600.000000"></Row>
+					<Row index="8" BottleNumber="13" FireAt="0.0"></Row>
 					<Row index="9" BottleNumber="18" FireAt="700.000000"></Row>
-					<Row index="10" BottleNumber="5" FireAt="5.000000"></Row>
-					<Row index="11" BottleNumber="1" FireAt="1.000000"></Row>
+					<Row index="10" BottleNumber="5" FireAt="0.0"></Row>
+					<Row index="11" BottleNumber="1" FireAt="-1.0"></Row>
 					<Row index="12" BottleNumber="14" FireAt="240.000000"></Row>
-					<Row index="13" BottleNumber="4" FireAt="4.000000"></Row>
-					<Row index="14" BottleNumber="8" FireAt="8.000000"></Row>
-					<Row index="15" BottleNumber="12" FireAt="12.000000"></Row>
+					<Row index="13" BottleNumber="4" FireAt="0.0"></Row>
+					<Row index="14" BottleNumber="8" FireAt="0.0"></Row>
+					<Row index="15" BottleNumber="12" FireAt="0.0"></Row>
 					<Row index="16" BottleNumber="16" FireAt="80.000000"></Row>
-					<Row index="17" BottleNumber="9" FireAt="9.000000"></Row>
+					<Row index="17" BottleNumber="9" FireAt="0.0"></Row>
 					<Row index="18" BottleNumber="19" FireAt="0.000000"></Row>
 					<Row index="19" BottleNumber="20" FireAt="0.000000"></Row>
 					<Row index="20" BottleNumber="21" FireAt="0.000000"></Row>

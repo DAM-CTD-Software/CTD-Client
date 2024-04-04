@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SeasaveProgramSetup>
-	<SoftwareVersion value="7.23.2"></SoftwareVersion>
+	<SoftwareVersion value="7.26.7.121"></SoftwareVersion>
 	<Settings>
 		<StatusWindowIsVisible value="1"></StatusWindowIsVisible>
 		<MaximizedPlotMayCoverSeasave value="0"></MaximizedPlotMayCoverSeasave>
@@ -69,7 +69,7 @@
 				<A1Multiplier value="0"></A1Multiplier>
 			</PotentialTempAnomaly>
 		</MiscellaneousCalcData>
-		<ConfigurationFilePath value="/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"></ConfigurationFilePath>
+		<ConfigurationFilePath value="D:\mig\tests\data\EMB295_003-01_CTD_0003.XMLCON"></ConfigurationFilePath>
 		<DataFilePath value="test.hex"></DataFilePath>
 		<WaterSamplerConfiguration Type="5" Port="1" NumberOfWaterBottles="13" FiringSequence="3" EnableRemoteFiring="0" BeepUsesInternalSpeakers="1" GO1016ArmOffset="0">
 			<PositionsForTableDrivenFiring>
@@ -115,16 +115,16 @@
 					<Row index="0" BottleNumber="10" FireAt="0.0"></Row>
 					<Row index="1" BottleNumber="6" FireAt="0.0"></Row>
 					<Row index="2" BottleNumber="2" FireAt="32.0"></Row>
-					<Row index="3" BottleNumber="15" FireAt="400.000000"></Row>
-					<Row index="4" BottleNumber="11" FireAt="0.0"></Row>
-					<Row index="5" BottleNumber="7" FireAt="0.0"></Row>
-					<Row index="6" BottleNumber="3" FireAt="0.0"></Row>
-					<Row index="7" BottleNumber="17" FireAt="560.000000"></Row>
-					<Row index="8" BottleNumber="13" FireAt="0.0"></Row>
-					<Row index="9" BottleNumber="18" FireAt="700.000000"></Row>
-					<Row index="10" BottleNumber="5" FireAt="0.0"></Row>
-					<Row index="11" BottleNumber="1" FireAt="-1.0"></Row>
-					<Row index="12" BottleNumber="14" FireAt="240.000000"></Row>
+					<Row index="3" BottleNumber="11" FireAt="0.0"></Row>
+					<Row index="4" BottleNumber="7" FireAt="0.0"></Row>
+					<Row index="5" BottleNumber="3" FireAt="0.0"></Row>
+					<Row index="6" BottleNumber="13" FireAt="0.0"></Row>
+					<Row index="7" BottleNumber="5" FireAt="0.0"></Row>
+					<Row index="8" BottleNumber="1" FireAt="-1.0"></Row>
+					<Row index="9" BottleNumber="14" FireAt="240.000000"></Row>
+					<Row index="10" BottleNumber="15" FireAt="400.000000"></Row>
+					<Row index="11" BottleNumber="17" FireAt="560.000000"></Row>
+					<Row index="12" BottleNumber="18" FireAt="700.000000"></Row>
 					<Row index="13" BottleNumber="4" FireAt="0.0"></Row>
 					<Row index="14" BottleNumber="8" FireAt="0.0"></Row>
 					<Row index="15" BottleNumber="12" FireAt="0.0"></Row>
@@ -151,11 +151,11 @@
 				</DataTable>
 			</AutoFireData>
 		</WaterSamplerConfiguration>
-		<NMEAConfiguration AppendToEveryScan="0" AddToNavFileWhenCtrlF7IsPressed="0"></NMEAConfiguration>
+		<NMEAConfiguration AppendToEveryScan="1" AddToNavFileWhenCtrlF7IsPressed="1"></NMEAConfiguration>
 		<TimeoutParameters SecondsAtStartup="60" SecondsBetweenScans="10"></TimeoutParameters>
 		<SeasaveAcqCommunications DataPort="49163" StatusPort="49165" CommandPort="49164"></SeasaveAcqCommunications>
 		<MainWindowPosition left="227" top="67" right="1189" bottom="199"></MainWindowPosition>
-		<SetupFilePath value="f:\Delphi\CTD-Client\test.psa"></SetupFilePath>
+		<SetupFilePath value="D:\mig\tests\data\Seasave_test.psa"></SetupFilePath>
 	</Settings>
 	<Clients>
 		<DisplaySettings Size="3">
@@ -203,7 +203,7 @@
 						<showCmd value="1"></showCmd>
 						<ptMinPosition x="-1" y="-1"></ptMinPosition>
 						<ptMaxPosition x="-1" y="-1"></ptMaxPosition>
-						<rcNormalPosition left="456" top="213" right="1015" bottom="738"></rcNormalPosition>
+						<rcNormalPosition left="456" top="214" right="1015" bottom="739"></rcNormalPosition>
 					</WindowPlacement>
 					<Axes>
 						<Axis index="0">
@@ -228,7 +228,7 @@
 							<DowncastLineColor value="0"></DowncastLineColor>
 						</Axis>
 						<Axis index="1">
-							<CalcID value="97"></CalcID>
+							<CalcID value="81"></CalcID>
 							<Calc UnitID="6" Ordinal="0">
 								<FullName value="Temperature [ITS-90, deg C]"></FullName>
 							</Calc>
@@ -300,7 +300,7 @@
 							<DowncastLineColor value="0"></DowncastLineColor>
 						</Axis>
 					</Axes>
-					<WindowRectangle left="456" top="213" right="1015" bottom="738"></WindowRectangle>
+					<WindowRectangle left="456" top="214" right="1015" bottom="739"></WindowRectangle>
 					<GraphicsOutputOptions>
 						<PrintSizeFrom value="0"></PrintSizeFrom>
 						<PrintOptionsView>
@@ -379,9 +379,9 @@
 							<Back value="16744448"></Back>
 						</SelCalcRow>
 						<SelCalcRow index="1">
-							<CalcID value="95"></CalcID>
+							<CalcID value="65"></CalcID>
 							<Calc UnitID="3" Ordinal="0">
-								<FullName value="Pressure, Strain Gauge [db]"></FullName>
+								<FullName value="Pressure, Digiquartz [db]"></FullName>
 							</Calc>
 							<DecimalDigits value="4"></DecimalDigits>
 							<Fore value="0"></Fore>
@@ -398,7 +398,7 @@
 							<Back value="16744448"></Back>
 						</SelCalcRow>
 						<SelCalcRow index="3">
-							<CalcID value="97"></CalcID>
+							<CalcID value="81"></CalcID>
 							<Calc UnitID="6" Ordinal="0">
 								<FullName value="Temperature [ITS-90, deg C]"></FullName>
 							</Calc>
@@ -472,14 +472,14 @@
 							<Fore value="0"></Fore>
 							<Back value="16744448"></Back>
 						</SelCalcRow>
-						<Position left="542" top="203" right="869" bottom="446"></Position>
+						<Position left="542" top="214" right="869" bottom="457"></Position>
 						<WindowPlacement>
 							<length value="44"></length>
 							<flags value="0"></flags>
 							<showCmd value="1"></showCmd>
 							<ptMinPosition x="-1" y="-1"></ptMinPosition>
 							<ptMaxPosition x="-1" y="-1"></ptMaxPosition>
-							<rcNormalPosition left="542" top="203" right="869" bottom="446"></rcNormalPosition>
+							<rcNormalPosition left="542" top="214" right="869" bottom="457"></rcNormalPosition>
 						</WindowPlacement>
 						<SecBetweenUpdate value="1.000000"></SecBetweenUpdate>
 						<PixelX value="6"></PixelX>
@@ -523,9 +523,9 @@
 							<ColumnWidth value="72"></ColumnWidth>
 						</SelCalcRow>
 						<SelCalcRow index="2">
-							<CalcID value="95"></CalcID>
+							<CalcID value="65"></CalcID>
 							<Calc UnitID="3" Ordinal="0">
-								<FullName value="Pressure, Strain Gauge [db]"></FullName>
+								<FullName value="Pressure, Digiquartz [db]"></FullName>
 							</Calc>
 							<DecimalDigits value="4"></DecimalDigits>
 							<Fore value="0"></Fore>
@@ -533,7 +533,7 @@
 							<ColumnWidth value="72"></ColumnWidth>
 						</SelCalcRow>
 						<SelCalcRow index="3">
-							<CalcID value="97"></CalcID>
+							<CalcID value="81"></CalcID>
 							<Calc UnitID="6" Ordinal="0">
 								<FullName value="Temperature [ITS-90, deg C]"></FullName>
 							</Calc>
@@ -542,14 +542,14 @@
 							<Back value="8421376"></Back>
 							<ColumnWidth value="72"></ColumnWidth>
 						</SelCalcRow>
-						<Position left="240" top="197" right="549" bottom="978"></Position>
+						<Position left="240" top="214" right="549" bottom="995"></Position>
 						<WindowPlacement>
 							<length value="44"></length>
 							<flags value="0"></flags>
 							<showCmd value="1"></showCmd>
 							<ptMinPosition x="-1" y="-1"></ptMinPosition>
 							<ptMaxPosition x="-1" y="-1"></ptMaxPosition>
-							<rcNormalPosition left="240" top="197" right="549" bottom="978"></rcNormalPosition>
+							<rcNormalPosition left="240" top="214" right="549" bottom="995"></rcNormalPosition>
 						</WindowPlacement>
 						<SecBetweenUpdate value="1.000000"></SecBetweenUpdate>
 						<PixelX value="6"></PixelX>
@@ -632,7 +632,7 @@
 				<OutputConvertedDataToSocket value="0"></OutputConvertedDataToSocket>
 				<FormatXML value="0"></FormatXML>
 				<SecondsBetweenUpdates value="0.000000"></SecondsBetweenUpdates>
-				<ArrayOfVariables Size="13">
+				<ArrayOfVariables Size="10">
 					<Variable index="0">
 						<CalcID value="72"></CalcID>
 						<Calc UnitID="-1" Ordinal="0">
@@ -648,16 +648,16 @@
 						<DecimalDigits value="7"></DecimalDigits>
 					</Variable>
 					<Variable index="2">
-						<CalcID value="97"></CalcID>
+						<CalcID value="81"></CalcID>
 						<Calc UnitID="6" Ordinal="0">
 							<FullName value="Temperature [ITS-90, deg C]"></FullName>
 						</Calc>
 						<DecimalDigits value="5"></DecimalDigits>
 					</Variable>
 					<Variable index="3">
-						<CalcID value="95"></CalcID>
+						<CalcID value="65"></CalcID>
 						<Calc UnitID="3" Ordinal="0">
-							<FullName value="Pressure, Strain Gauge [db]"></FullName>
+							<FullName value="Pressure, Digiquartz [db]"></FullName>
 						</Calc>
 						<DecimalDigits value="4"></DecimalDigits>
 					</Variable>
@@ -690,41 +690,20 @@
 						<DecimalDigits value="6"></DecimalDigits>
 					</Variable>
 					<Variable index="7">
-						<CalcID value="49"></CalcID>
-						<Calc UnitID="21" Ordinal="0">
-							<FullName value="Turbidity, Seapoint [FTU]"></FullName>
-						</Calc>
-						<DecimalDigits value="4"></DecimalDigits>
-					</Variable>
-					<Variable index="8">
-						<CalcID value="35"></CalcID>
-						<Calc UnitID="38" Ordinal="0">
-							<FullName value="Fluorescence, WET Labs WETstar [mg/m^3]"></FullName>
-						</Calc>
-						<DecimalDigits value="5"></DecimalDigits>
-					</Variable>
-					<Variable index="9">
 						<CalcID value="70"></CalcID>
 						<Calc UnitID="49" Ordinal="0">
 							<FullName value="Salinity, Practical [PSU]"></FullName>
 						</Calc>
 						<DecimalDigits value="5"></DecimalDigits>
 					</Variable>
-					<Variable index="10">
-						<CalcID value="60"></CalcID>
-						<Calc UnitID="-1" Ordinal="0">
-							<FullName value="pH"></FullName>
-						</Calc>
-						<DecimalDigits value="4"></DecimalDigits>
-					</Variable>
-					<Variable index="11">
+					<Variable index="8">
 						<CalcID value="84"></CalcID>
 						<Calc UnitID="52" Ordinal="0">
 							<FullName value="Time, Elapsed [seconds]"></FullName>
 						</Calc>
 						<DecimalDigits value="4"></DecimalDigits>
 					</Variable>
-					<Variable index="12">
+					<Variable index="9">
 						<CalcID value="54"></CalcID>
 						<Calc UnitID="40" Ordinal="0">
 							<FullName value="Oxygen Saturation, Weiss [ml/l]"></FullName>
@@ -738,7 +717,7 @@
 				<EnableSharedFileOutput value="0"></EnableSharedFileOutput>
 				<FormatXML value="0"></FormatXML>
 				<SecondsBetweenUpdates value="0.000000"></SecondsBetweenUpdates>
-				<ArrayOfVariables Size="13">
+				<ArrayOfVariables Size="9">
 					<Variable index="0">
 						<CalcID value="72"></CalcID>
 						<Calc UnitID="-1" Ordinal="0">
@@ -747,7 +726,7 @@
 						<DecimalDigits value="0"></DecimalDigits>
 					</Variable>
 					<Variable index="1">
-						<CalcID value="97"></CalcID>
+						<CalcID value="81"></CalcID>
 						<Calc UnitID="6" Ordinal="0">
 							<FullName value="Temperature [ITS-90, deg C]"></FullName>
 						</Calc>
@@ -761,9 +740,9 @@
 						<DecimalDigits value="7"></DecimalDigits>
 					</Variable>
 					<Variable index="3">
-						<CalcID value="95"></CalcID>
+						<CalcID value="65"></CalcID>
 						<Calc UnitID="3" Ordinal="0">
-							<FullName value="Pressure, Strain Gauge [db]"></FullName>
+							<FullName value="Pressure, Digiquartz [db]"></FullName>
 						</Calc>
 						<DecimalDigits value="4"></DecimalDigits>
 					</Variable>
@@ -796,41 +775,13 @@
 						<DecimalDigits value="6"></DecimalDigits>
 					</Variable>
 					<Variable index="7">
-						<CalcID value="60"></CalcID>
-						<Calc UnitID="-1" Ordinal="0">
-							<FullName value="pH"></FullName>
-						</Calc>
-						<DecimalDigits value="4"></DecimalDigits>
-					</Variable>
-					<Variable index="8">
-						<CalcID value="35"></CalcID>
-						<Calc UnitID="38" Ordinal="0">
-							<FullName value="Fluorescence, WET Labs WETstar [mg/m^3]"></FullName>
-						</Calc>
-						<DecimalDigits value="5"></DecimalDigits>
-					</Variable>
-					<Variable index="9">
-						<CalcID value="49"></CalcID>
-						<Calc UnitID="21" Ordinal="0">
-							<FullName value="Turbidity, Seapoint [FTU]"></FullName>
-						</Calc>
-						<DecimalDigits value="4"></DecimalDigits>
-					</Variable>
-					<Variable index="10">
-						<CalcID value="60"></CalcID>
-						<Calc UnitID="-1" Ordinal="0">
-							<FullName value="pH"></FullName>
-						</Calc>
-						<DecimalDigits value="4"></DecimalDigits>
-					</Variable>
-					<Variable index="11">
 						<CalcID value="54"></CalcID>
 						<Calc UnitID="40" Ordinal="0">
 							<FullName value="Oxygen Saturation, Weiss [ml/l]"></FullName>
 						</Calc>
 						<DecimalDigits value="6"></DecimalDigits>
 					</Variable>
-					<Variable index="12">
+					<Variable index="8">
 						<CalcID value="70"></CalcID>
 						<Calc UnitID="49" Ordinal="0">
 							<FullName value="Salinity, Practical [PSU]"></FullName>
@@ -906,7 +857,7 @@
 			</BottomContactSwitchAlarm>
 		</PC_AlarmSettings>
 		<AlarmDisplayDialogPosition>
-			<Rectangle left="91" top="154" right="217" bottom="273"></Rectangle>
+			<Rectangle left="91" top="154" right="232" bottom="299"></Rectangle>
 			<Visible value="0"></Visible>
 		</AlarmDisplayDialogPosition>
 		<FireBottleDialogPosition>

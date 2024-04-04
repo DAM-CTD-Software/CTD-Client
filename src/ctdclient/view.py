@@ -412,7 +412,7 @@ class Measurement:
         # TODO: move into controller
         if self.platform.get() != "sfCTD":
             self.bottles.update_bottle_information(
-                self.bottle_values.items()# , self.save_btl_config.get()
+                {key: value.get() for key, value in self.bottle_values.items()}
             )
             self.dship_info.build_metadata_header(
                 self.platform.get(),
@@ -431,9 +431,9 @@ class Measurement:
         self.cast_number.set(str(int(self.cast_number.get()) + 1))
         output_dir = Path(self.config["paths"]["data_archive"])
         full_file_path = output_dir.joinpath(self.current_filename.get())
-        RunSeasave(self.config, full_file_path)# .run(
-        # self.downcast.get(), self.autostart.get()
-        # )
+        RunSeasave(self.config, full_file_path).run(
+        self.downcast.get(), self.autostart.get()
+        )
 
     def reconnect_dship(self):
         """"""

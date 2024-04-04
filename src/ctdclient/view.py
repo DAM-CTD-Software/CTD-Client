@@ -478,7 +478,7 @@ class Processing:
         self.config = config
         self.path_dict = {
             "xmlcon": tk.StringVar(value=config["user"]["paths"]["xmlcon"]),
-            "hex": tk.StringVar(value=config["user"]["paths"]["hex"]),
+            "hex": tk.StringVar(value=config["history"]["last_filename"]),
             "psas": tk.StringVar(value=config["user"]["processing"]["psas"]),
         }
         self.psa_paths = [
@@ -492,12 +492,15 @@ class Processing:
             "type"
         ].lower()
 
+        # layout
+        self.window.columnconfigure(0, weight=1)
+        self.window.columnconfigure(1, weight=1)
+        self.padx = 5
+        self.pady = 5
+
         if self.processing_type != "windowsbatch":
             self.step_frame = self.step_selection_frame()
-        else:
-            self.path_dict.pop("xmlcon")
-            self.path_dict.pop("psas")
-        self.path_frame = self.path_selection_frame()
+            self.path_frame = self.path_selection_frame()
         self.run_processing_frame()
         self.window.grid()
 
@@ -563,7 +566,7 @@ class Processing:
         ctk.CTkButton(
             frame, text="Run processing", command=self.run_processing
         ).grid()
-        frame.grid()
+        frame.grid(column=0, columnspan=2, padx=self.padx, pady=self.pady)
         return frame
 
     def update_psa_selection(self, directory):
@@ -660,13 +663,19 @@ class Processing:
             )
             proc.run()
         elif self.processing_type == "windowsbatch":
-            try:
-                windows_batch = WindowsBatch(
-                    self.config["user"]["processing"]["batch_path"],
-                    self.path_dict["hex"].get(),
-                )
-            except TypeError:
-                pass
+            self.config.reload()
+            self.path_dict["hex"] = tk.StringVar(
+                value=self.config["history"]["last_filename"]
+            )
+            selected_file = self.select_file("hex", self.path_dict["hex"])
+            if selected_file:
+                try:
+                    windows_batch = WindowsBatch(
+                        self.config["user"]["processing"]["batch_path"],
+                        self.path_dict["hex"].get(),
+                    )
+                except TypeError:
+                    pass
 
     def select_file(self, file_type, variable):
         """
@@ -689,10 +698,15 @@ class Processing:
         else:
             file = fd.askopenfilename(
                 title=f"Path to {file_type}",
-                initialdir=path,
+                initialdir=path.parent,
+                initialfile=path.name,
                 filetypes=filetypes,
             )
-            variable.set(file)
+            if file:
+                variable.set(file)
+                return True
+            else:
+                return False
 
 
 class Configuration:
@@ -823,4 +837,5 @@ class CTkSpinbox(ctk.CTkFrame):
 
     def set(self, value: float):
         self.entry.delete(0, "end")
+        self.entry.insert(0, str(float(value)))
         self.entry.insert(0, str(float(value)))

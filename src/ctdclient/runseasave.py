@@ -62,7 +62,11 @@ class RunSeasave:
         self.config.psa.set_hex_file_path(self.hex_name)
         self.config.psa.to_xml(file_name=psa_output_name)
 
-    def set_seasave_command_line_parameters(self, downcast, autostart) -> list:
+    def set_seasave_command_line_parameters(
+        self,
+        autostart=False,
+        downcast=True
+    ) -> list:
         """
         Builds command line argument list for usage in the run method.
 

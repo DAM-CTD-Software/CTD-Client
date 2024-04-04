@@ -145,7 +145,11 @@ class DSHIPHeader:
         """
         try:
             response = requests.get(url, timeout=1)
-        except requests.exceptions.ConnectTimeout:
+        except (
+            requests.exceptions.ConnectTimeout,
+            requests.exceptions.ConnectionError,
+            OSError,
+        ):
             return None
         # handle response
         if response.status_code in ["200", 200]:
@@ -160,7 +164,14 @@ class DSHIPHeader:
         else:
             return None
 
-    def build_metadata_header(self, platform, cast, operator, pos_alias=False):
+    def build_metadata_header(
+        self,
+        platform: str,
+        cast: str,
+        operator: str,
+        pos_alias: bool = False,
+        autostart: bool = False,
+    ):
         """
         Generates the metadata header in the needed format and saves the last
         operator.
@@ -186,11 +197,17 @@ class DSHIPHeader:
         header_list.insert(
             4, self.create_metadata_header_line("Operator", operator)
         )
+        header_list.insert(
+            10,
+            self.create_metadata_header_line(
+                "WsStartID", f"{int(cast)*25 + 1}"
+            ),
+        )
         if pos_alias:
             header_list[-1] = self.create_metadata_header_line(
                 "Pos_Alias", pos_alias
             )
-        self.config.psa.set_metadata_header(header_list)
+        self.config.psa.set_metadata_header(header_list, autostart)
         self.config["operators"]["last"] = operator
         self.config["history"]["last_cast"] = cast
         self.config.write()

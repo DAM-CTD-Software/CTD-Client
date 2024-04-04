@@ -350,12 +350,12 @@ class Measurement:
             text="autostart",
             variable=self.autostart,
         ).grid()
-        self.downcast = tk.BooleanVar(value=True)
-        ctk.CTkCheckBox(
-            run_frame,
-            text="downcast",
-            variable=self.downcast,
-        ).grid()
+        # self.downcast = tk.BooleanVar(value=True)
+        # ctk.CTkCheckBox(
+        #     run_frame,
+        #     text="downcast",
+        #     variable=self.downcast,
+        # ).grid()
         ctk.CTkButton(
             run_frame,
             text="Start Seasave",
@@ -418,22 +418,22 @@ class Measurement:
                 self.platform.get(),
                 self.cast_number.get(),
                 self.operator.get(),
+                autostart=self.autostart.get(),
             )
         else:
             self.dship_info.build_metadata_header(
                 self.platform.get(),
                 self.cast_number.get(),
                 self.operator.get(),
-                self.station.get(),
+                pos_alias=self.station.get(),
+                autostart=self.autostart.get(),
             )
 
         self.last_filename.set(self.current_filename.get())
         self.cast_number.set(str(int(self.cast_number.get()) + 1))
         output_dir = Path(self.config["paths"]["data_archive"])
         full_file_path = output_dir.joinpath(self.current_filename.get())
-        RunSeasave(self.config, full_file_path).run(
-        self.downcast.get(), self.autostart.get()
-        )
+        RunSeasave(self.config, full_file_path).run(self.autostart.get())
 
     def reconnect_dship(self):
         """"""

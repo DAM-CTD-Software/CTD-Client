@@ -327,8 +327,8 @@ requests==2.31.0 ; python_full_version >= "3.11.4" and python_version < "3.13" \
     --hash=sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1
 seabird-processing==0.1.0 ; python_full_version >= "3.11.4" and python_version < "3.13" \
     --hash=sha256:0d729998bc8e0845b3eb2480ba72eeefaf4361659c214d69c0d500b799f5269b
-seabirdfilehandler==0.1.11 ; python_full_version >= "3.11.4" and python_version < "3.13" \
-    --hash=sha256:3fbffc94def335ce050603c6162aab4399c27ed603a89590c093191b7a15d6bf
+seabirdfilehandler==0.1.12 ; python_full_version >= "3.11.4" and python_version < "3.13" \
+    --hash=sha256:2699ea6d95872590264067fa4b856b8441bb00fa844968b48109208cae283d9e
 six==1.16.0 ; python_full_version >= "3.11.4" and python_version < "3.13" \
     --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \
     --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254

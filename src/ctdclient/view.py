@@ -270,9 +270,9 @@ class Measurement:
         self.cast_number = tk.StringVar(
             value=int(self.config["history"]["last_cast"]) + 1
         )
-        ttk.Spinbox(
-            info_frame, from_=1.0, to=1000.0, textvariable=self.cast_number
-        ).grid(row=3, column=1, sticky=tk.E)
+        CTkSpinbox(info_frame, variable=self.cast_number).grid(
+            row=3, column=1, sticky=tk.E
+        )
         # platform selection
         ctk.CTkLabel(info_frame, text="Platform").grid(
             row=4, column=0, sticky=tk.W
@@ -749,6 +749,7 @@ class CTkSpinbox(ctk.CTkFrame):
     def __init__(
         self,
         *args,
+        variable: tk.StringVar,
         width: int = 100,
         height: int = 32,
         step_size: int | float = 1,
@@ -775,7 +776,11 @@ class CTkSpinbox(ctk.CTkFrame):
         self.subtract_button.grid(row=0, column=0, padx=(3, 0), pady=3)
 
         self.entry = ctk.CTkEntry(
-            self, width=width - (2 * height), height=height - 6, border_width=0
+            self,
+            textvariable=variable,
+            width=width - (2 * height),
+            height=height - 6,
+            border_width=0,
         )
         self.entry.grid(
             row=0, column=1, columnspan=1, padx=3, pady=3, sticky="ew"
@@ -790,14 +795,11 @@ class CTkSpinbox(ctk.CTkFrame):
         )
         self.add_button.grid(row=0, column=2, padx=(0, 3), pady=3)
 
-        # default value
-        self.entry.insert(0, "0.0")
-
     def add_button_callback(self):
         if self.command is not None:
             self.command()
         try:
-            value = float(self.entry.get()) + self.step_size
+            value = int(self.entry.get()) + self.step_size
             self.entry.delete(0, "end")
             self.entry.insert(0, value)
         except ValueError:
@@ -807,7 +809,7 @@ class CTkSpinbox(ctk.CTkFrame):
         if self.command is not None:
             self.command()
         try:
-            value = float(self.entry.get()) - self.step_size
+            value = int(self.entry.get()) - self.step_size
             self.entry.delete(0, "end")
             self.entry.insert(0, value)
         except ValueError:

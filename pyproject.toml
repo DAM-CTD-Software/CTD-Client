@@ -1,19 +1,19 @@
 [tool.poetry]
 name = "ctdclient"
-version = "0.1.35"
+version = "0.2.0"
 description = ""
 authors = ["Emil Michels <emil.michels@io-warnemuende.de>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.11.4, <3.13"
+python = ">=3.12, <3.13"
 tomlkit = "^0.12.3"
 pyyaml = "^6.0.1"
 requests = "^2.31.0"
 customtkinter = "^5.2.2"
 xmltodict = "^0.13.0"
 code-tools = {version = "^0.1.0", source = "gitea"}
-seabirdfilehandler = {version = "^0.1.12", source = "gitea"}
+seabirdfilehandler = {version = "^0.2.3", source = "gitea"}
 seabird-processing = {version = "^0.1.0", source = "gitea"}
 processing = {version = "^0.1.0", source = "gitea"}
 

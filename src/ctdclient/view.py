@@ -418,7 +418,6 @@ class Measurement:
                 self.platform.get(),
                 self.cast_number.get(),
                 self.operator.get(),
-                autostart=self.autostart.get(),
             )
         else:
             self.dship_info.build_metadata_header(

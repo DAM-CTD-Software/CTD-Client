@@ -123,7 +123,8 @@ class WindowsBatch:
         ):
         try:
             self.batch = Path(batch)
-            self.hex_file = str(hex_file)[:-4]
+            hex_file = Path(hex_file)
+            self.hex_file = hex_file.parent.joinpath(hex_file.stem)
         except TypeError as error:
             logger.error(f"Wrong input type: {error}")
         else:
@@ -131,7 +132,7 @@ class WindowsBatch:
 
     def run(self, hex_file):
         try:
-            ps = subprocess.Popen([self.batch, hex_file]) #, cwd=self.batch.parent)
+            ps = subprocess.Popen([self.batch, hex_file], shell=False)
             if ps.stdout:
                 logger.debug(ps.stdout)
         except subprocess.CalledProcessError as error:

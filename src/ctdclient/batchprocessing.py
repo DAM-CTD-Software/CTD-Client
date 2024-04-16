@@ -59,10 +59,10 @@ class BatchProcessing:
         config,
         processing_steps: dict,
     ):
-        self.raw_hex = config["user"]["paths"]["hex"]
-        self.xmlcon = config["user"]["paths"]["xmlcon"]
-        self.psa_folder = config["user"]["processing"]["psas"]
-        self.outdir_path = config["user"]["paths"]["export_location"]
+        self.raw_hex = config.last_filename
+        self.xmlcon = config.xmlcon
+        self.psa_folder = config.psa_directory
+        self.outdir_path = config.output_directory
         self.processing_steps = processing_steps
         self.final_steps = {}
 
@@ -116,11 +116,7 @@ class WindowsBatch:
     """Simple class to only run the old windows batch we actually want to
     replace"""
 
-    def __init__(
-            self,
-            batch: Path | str,
-            hex_file: Path | str
-        ):
+    def __init__(self, batch: Path | str, hex_file: Path | str):
         try:
             self.batch = Path(batch)
             hex_file = Path(hex_file)

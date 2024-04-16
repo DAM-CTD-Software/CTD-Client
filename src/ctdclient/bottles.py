@@ -22,15 +22,12 @@ class BottleClosingDepths(UserDict):
 
     def instantiate_bottle_info(self):
         """Sets a default bottle layout according to the configuration file."""
-        self.number_of_bottles = self.config["user"]["number_of_bottles"]
+        self.number_of_bottles = self.config.number_of_bottles
         self.data = {
-            number + 1: '' for number in range(self.number_of_bottles)
+            number + 1: "" for number in range(self.number_of_bottles)
         }
-        for key, value in self.config["user"]["bottle_layout"].items():
-            if int(key) in self.data.keys():
-                self.data[int(key)] = value
 
-    def update_bottle_information(self, info: dict, save_info=False):
+    def update_bottle_information(self, info: dict):
         """
         Workhouse method that is being called from the outside to set a
         different bottle layout and to edit the psa.
@@ -49,15 +46,7 @@ class BottleClosingDepths(UserDict):
         # assert len(self.data) == len(info)
         if isinstance(info, dict):
             self.data = info
-        if save_info:
-            self.write_new_config()
         self.update_psa()
-
-    def write_new_config(self):
-        """Writes the current bottle layout to the configuration file"""
-        for key, value in self.data.items():
-            self.config.modify(["user", "bottle_layout", str(key)], value)
-        self.config.write()
 
     def update_psa(self):
         """

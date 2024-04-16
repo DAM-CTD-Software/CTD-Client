@@ -1,3 +1,4 @@
+from pathlib import Path
 import platform
 import sys
 import customtkinter as ctk
@@ -18,13 +19,10 @@ class Controller:
     """
 
     def __init__(self):
-        # root = tk.Tk()
         self.root = ctk.CTk()
         if platform.system() == "Linux":
             config_path = "linux_config.toml"
         elif platform.system() == "Windows":
-            from pathlib import Path
-
             # check position of config_file
             file_location = Path(__file__).parents[1]
             config_path = file_location.joinpath("ctdclient.toml")
@@ -34,7 +32,7 @@ class Controller:
         else:
             sys.exit(1)
         self.config = ConfigurationFile(config_path)
-        self.dship_info = DSHIPHeader(self.config, dummy=False)
+        self.dship_info = DSHIPHeader(self.config, dummy=True)
         self.bottles = BottleClosingDepths(self.config)
         self.main_window = MainWindow(
             self, self.root, self.config, self.dship_info, self.bottles
@@ -51,7 +49,7 @@ class Controller:
         Activates the listener to periodically check for new dship values.
         """
         self.listener = RepeatedTimer(
-            float(self.config["dship"]["fetch_intervall"]),
+            self.config.dhsip_fetch_intervall,
             self.update_dship_values,
         )
 
@@ -74,7 +72,7 @@ class Controller:
         self.main_window.measurement.update_file_name(
             self.dship_info.build_file_name(
                 self.main_window.measurement.cast_number,
-                self.main_window.measurement.platform.get()
+                self.main_window.measurement.platform.get(),
             )
         )
 

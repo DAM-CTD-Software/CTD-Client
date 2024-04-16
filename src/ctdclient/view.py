@@ -125,9 +125,7 @@ class Measurement:
             key: tk.StringVar(value=value)
             for key, value in self.dship_values.items()
         }
-        self.platform = tk.StringVar(
-            value=self.config["history"]["last_platform"]
-        )
+        self.platform = tk.StringVar(value=self.config.last_platform)
         self.platform.trace_add("write", self.update_frames)
         self.save_btl_config = tk.BooleanVar(value=False)
 
@@ -247,9 +245,7 @@ class Measurement:
         ctk.CTkLabel(info_frame, text="last filename").grid(
             row=1, column=0, sticky=tk.W
         )
-        self.last_filename = tk.StringVar(
-            value=Path(self.config["history"]["last_filename"]).name
-        )
+        self.last_filename = tk.StringVar(value=self.config.last_filename.name)
         ctk.CTkLabel(info_frame, textvariable=self.last_filename).grid(
             row=1, column=1, sticky=tk.E
         )
@@ -257,19 +253,17 @@ class Measurement:
         ctk.CTkLabel(info_frame, text="Operator").grid(
             row=2, column=0, sticky=tk.W
         )
-        self.operator = tk.StringVar(value=self.config["operators"]["last"])
+        self.operator = tk.StringVar(value=self.config.operators["last"])
         ctk.CTkComboBox(
             info_frame,
-            values=list(self.config["operators"].values())[:-1],
+            values=list(self.config.operators.values())[:-1],
             variable=self.operator,
         ).grid(row=2, column=1, sticky=tk.E)
         # cast selection/display
         ctk.CTkLabel(info_frame, text="Cast number").grid(
             row=3, column=0, sticky=tk.W
         )
-        self.cast_number = tk.StringVar(
-            value=int(self.config["history"]["last_cast"]) + 1
-        )
+        self.cast_number = tk.StringVar(value=self.config.last_cast + 1)
         CTkSpinbox(info_frame, variable=self.cast_number).grid(
             row=3, column=1, sticky=tk.E
         )
@@ -279,7 +273,7 @@ class Measurement:
         )
         platform_selector = ctk.CTkComboBox(
             info_frame,
-            values=list(self.config["platforms"]),
+            values=self.config.platforms,
             variable=self.platform,
         )
         platform_selector.grid(row=4, column=1, sticky=tk.E)
@@ -430,7 +424,7 @@ class Measurement:
 
         self.last_filename.set(self.current_filename.get())
         self.cast_number.set(str(int(self.cast_number.get()) + 1))
-        output_dir = Path(self.config["paths"]["data_archive"])
+        output_dir = self.config.output_directory
         full_file_path = output_dir.joinpath(self.current_filename.get())
         RunSeasave(self.config, full_file_path).run(self.autostart.get())
 
@@ -476,20 +470,15 @@ class Processing:
         ]
         self.config = config
         self.path_dict = {
-            "xmlcon": tk.StringVar(value=config["user"]["paths"]["xmlcon"]),
-            "hex": tk.StringVar(value=config["history"]["last_filename"]),
-            "psas": tk.StringVar(value=config["user"]["processing"]["psas"]),
+            "xmlcon": tk.StringVar(value=config.xmlcon),
+            "hex": tk.StringVar(value=config.last_filename),
+            "psas": tk.StringVar(value=config.psa_directory),
         }
         self.psa_paths = [
-            path.name
-            for path in Path(
-                self.config["user"]["processing"]["psas"]
-            ).iterdir()
+            path.name for path in self.config.psa_directory.iterdir()
         ]
-        self.steps = self.config["user"]["processing"]["modules"]
-        self.processing_type = self.config["user"]["processing"][
-            "type"
-        ].lower()
+        self.steps = self.config.processing_modules
+        self.processing_type = self.config.processing_type
 
         # layout
         self.window.columnconfigure(0, weight=1)
@@ -658,19 +647,19 @@ class Processing:
             proc = own_processing(
                 config_path=self.config.path_to_config,
                 steps=info_dict,
-                input_file=self.config["user"]["paths"]["hex"],
+                input_file=self.config.last_filename,
             )
             proc.run()
         elif self.processing_type == "windowsbatch":
             self.config.reload()
             self.path_dict["hex"] = tk.StringVar(
-                value=self.config["history"]["last_filename"]
+                value=self.config.last_filename
             )
             selected_file = self.select_file("hex", self.path_dict["hex"])
             if selected_file:
                 try:
-                    windows_batch = WindowsBatch(
-                        self.config["user"]["processing"]["batch_path"],
+                    WindowsBatch(
+                        self.config.path_to_batch,
                         self.path_dict["hex"].get(),
                     )
                 except TypeError:

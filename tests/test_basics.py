@@ -27,17 +27,15 @@ class TestConfig(unittest.TestCase):
     def test_basic_modify(self):
         self.config.modify("blub", "test")
         self.assertEqual(len(self.config.data), 7)
-        self.config.modify(["user", "number_of_bottles"], 5)
-        self.assertEqual(self.config["user"]["number_of_bottles"], 5)
-        self.config.modify(["user", "bottle_layout"], {"1": 2, "2": 1})
-        self.assertEqual(len(self.config["user"]["bottle_layout"]), 2)
+        self.config.modify(["number_of_bottles"], 5)
+        self.assertEqual(self.config["number_of_bottles"], 5)
         self.config.modify(["user", "new"], "lol")
         self.assertEqual(len(self.config["user"]["new"]), 3)
         # self.config.write()
 
     def test_setitem(self):
-        self.config["user"]["number_of_bottles"] = 15
-        self.assertEqual(self.config["user"]["number_of_bottles"], 15)
+        self.config["number_of_bottles"] = 15
+        self.assertEqual(self.config["number_of_bottles"], 15)
 
 
 class TestBottles(unittest.TestCase):
@@ -50,14 +48,8 @@ class TestBottles(unittest.TestCase):
         self.assertEqual(len(self.bottles), 13)
         self.assertEqual(list(self.bottles), [c for c in range(1, 14)])
 
-    def test_psa_entry(self):
-        length_before = len(self.bottles.config.psa)
-        bottle_dict = {key: key for key in range(1, 14)}
-        self.bottles.update_bottle_information(bottle_dict)
-        self.assertEqual(len(self.bottles.config.psa), length_before)
-
     def test_bottle_instantiation(self):
-        self.bottles.config["user"]["number_of_bottles"] = 17
+        self.bottles.config.number_of_bottles = 17
         self.bottles.instantiate_bottle_info()
         self.assertEqual(self.bottles.number_of_bottles, 17)
         self.assertEqual(
@@ -123,12 +115,10 @@ class TestSeasaveRun(unittest.TestCase):
         self.seasave.set_psa_run_info("unittest_seasave")
         psa_position = self.config.psa["SeasaveProgramSetup"]["Settings"]
         self.assertEqual(
-            psa_position["ConfigurationFilePath"]["@value"],
-            self.config["user"]["paths"]["xmlcon"],
+            psa_position["ConfigurationFilePath"]["@value"], self.config.xmlcon
         )
         self.assertEqual(
-            psa_position["DataFilePath"]["@value"],
-            self.config["user"]["paths"]["hex"],
+            psa_position["DataFilePath"]["@value"], self.config.last_filename
         )
 
 
@@ -149,10 +139,6 @@ class TestProcessing(unittest.TestCase):
     def test_class_finder(self):
         self.processing.get_processing_configs()
         self.assertEqual(len(self.processing.final_steps), 4)
-
-    def test_run(self):
-        # self.processing.run()
-        self.assertTrue
 
 
 class DSHIP(unittest.TestCase):

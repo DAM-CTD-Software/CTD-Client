@@ -1,3 +1,4 @@
+from pathlib import Path
 import subprocess
 from code_tools.logging import configure_logging, get_logger
 
@@ -13,9 +14,9 @@ class RunSeasave:
     """
 
     def __init__(self, config, hex_name, psa_output_name=None) -> None:
-        self.path_to_seasave_exe = config["paths"]["seasave_exe"]
-        self.path_to_psa = config["user"]["paths"]["psa"]
         self.config = config
+        self.path_to_seasave_exe = self.config.path_to_seasave
+        self.path_to_psa = self.config.seasave_psa
         self.hex_name = hex_name
         self.set_psa_run_info(psa_output_name)
 
@@ -54,11 +55,9 @@ class RunSeasave:
 
     def set_psa_run_info(self, psa_output_name=None):
         """Sets XMLCON and hex file paths in Seasave.psa."""
-        self.config["history"]["last_filename"] = str(self.hex_name)
+        self.config.last_filename = Path(self.hex_name)
         self.config.write()
-        self.config.psa.set_xmlcon_file_path(
-            self.config["user"]["paths"]["xmlcon"]
-        )
+        self.config.psa.set_xmlcon_file_path(self.config.xmlcon)
         self.config.psa.set_hex_file_path(self.hex_name)
         self.config.psa.to_xml(file_name=psa_output_name)
 

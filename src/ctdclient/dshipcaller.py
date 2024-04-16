@@ -26,15 +26,15 @@ class DSHIPHeader:
         # will hold the dhsip info
         self.data: dict
         # loads the key values we want to fetch from DSHIP
-        self.dict_of_samples = config["dship"]["identifier"]
+        self.dict_of_samples = config.dship_api_target_names
         # vessel-specific IP, where DSHIP can be reached
-        self.ip = config["dship"]["ip"]
+        self.ip = config.dship_ip
         # the values fetched from dship with corresponding header names
         self.dship_values = {}
         # the URL of the API
         self.source = f"http://{self.ip}{dship_url_part}"
         # waiting time between two rounds of API calls
-        self.fetch_timeout = config["dship"]["fetch_intervall"]
+        self.fetch_timeout = config.dhsip_fetch_intervall
         # configuration file representation
         self.config = config
         self.last_call = "unsucessfull"
@@ -208,8 +208,8 @@ class DSHIPHeader:
                 "Pos_Alias", pos_alias
             )
         self.config.psa.set_metadata_header(header_list, autostart)
-        self.config["operators"]["last"] = operator
-        self.config["history"]["last_cast"] = cast
+        self.config.operators["last"] = operator
+        self.config.last_cast = int(cast)
         self.config.write()
         return "\n".join(header_list)
 

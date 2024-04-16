@@ -4,7 +4,6 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 import tkinter.font as tkFont
 import customtkinter as ctk
-import json
 from functools import partial
 import difflib
 import datetime
@@ -23,9 +22,8 @@ class MainWindow:
         # avoids old 'tear-off' menus
         root.option_add("*tearOff", tk.FALSE)
 
-        # allow window resizing
-        root.columnconfigure(0, weight=1)
-        root.rowconfigure(0, weight=1)
+        root.geometry("700x800")
+        root.resizable(width=0, height=0)
 
         default_font = tkFont.nametofont("TkDefaultFont")
         default_font.configure(size=14)
@@ -45,10 +43,10 @@ class MainWindow:
             tabs.measurement, config_path, bottles, dship_info, controller
         )
         Processing(tabs.processing, config_path)
-        # Configuration(tabs.configuration, config_path)
+        Configuration(tabs.configuration, config_path)
         tabs.measurement.grid()
         tabs.processing.grid()
-        # tabs.configuration.grid()
+        tabs.configuration.grid()
 
 
 class NoteBookView(ttk.Notebook):
@@ -73,10 +71,10 @@ class TabView(ctk.CTkTabview):
 
         self.add("measurement")
         self.add("processing")
-        # self.add("configuration")
+        self.add("configuration")
         self.measurement = ctk.CTkFrame(self.tab("measurement"))
         self.processing = ctk.CTkFrame(self.tab("processing"))
-        # self.configuration = ttk.Frame(self.tab("configuration"))
+        self.configuration = ctk.CTkFrame(self.tab("configuration"))
 
 
 class LabelFrames(ttk.PanedWindow):
@@ -700,51 +698,97 @@ class Processing:
 class Configuration:
     """ """
 
-    # TODO: implement
+    def __init__(self, window, config) -> None:
+        self.window = window
+        self.config = config
+        self.values_to_set = {
+            "output directory": tk.StringVar(
+                value=self.config.output_directory
+            ),
+            "xmlcon": tk.StringVar(value=self.config.xmlcon),
+            "Seasave Psa": tk.StringVar(value=self.config.seasave_psa),
+            "vCTD-Batch": tk.StringVar(value=self.config.path_to_batch),
+            "psa directory": tk.StringVar(value=self.config.psa_directory),
+        }
+        self.padx = 5
+        self.pady = 5
+        setting_frame = self.setting_frame()
+        setting_frame.grid()
+        self.window.grid()
 
-    def __init__(self, window, master_config) -> None:
-        self.master_config = master_config
+    def setting_frame(self):
+        frame = ctk.CTkFrame(self.window)
+        for index, (key, value) in enumerate(self.values_to_set.items()):
+            ctk.CTkLabel(frame, text=f"{key}: ").grid(
+                row=index,
+                column=0,
+                sticky=tk.W,
+                padx=self.padx,
+                pady=self.pady,
+            )
+            ctk.CTkLabel(
+                frame,
+                textvariable=value,
+                font=(tkFont.nametofont("TkDefaultFont"), 10),
+            ).grid(
+                row=index,
+                column=1,
+                sticky=tk.E,
+                padx=self.padx,
+                pady=self.pady,
+            )
+            command_with_arguments = partial(self.select_file, key, value)
+            ctk.CTkButton(
+                frame, text="Browse", command=command_with_arguments
+            ).grid(row=index, column=2, padx=self.padx, pady=self.pady)
+        return frame
 
-    def read_config(self, file_path):
+    def add_value_frame(self, window, index, key, value):
+        frame = ctk.CTkFrame(window)
+        frame.columnconfigure(0, weight=2)
+        frame.columnconfigure(1, weight=5)
+        frame.columnconfigure(2, weight=1)
+        ctk.CTkLabel(frame, text=f"{key}: ").grid(
+            row=0, column=0, sticky=tk.W, padx=self.padx, pady=self.pady
+        )
+        ctk.CTkLabel(frame, textvariable=value).grid(
+            row=0, column=1, sticky=tk.E, padx=self.padx, pady=self.pady
+        )
+        command_with_arguments = partial(self.select_file, key, value)
+        ctk.CTkButton(
+            frame, text="Browse", command=command_with_arguments
+        ).grid(row=0, column=2, padx=self.padx, pady=self.pady)
+        frame.grid(row=index, column=0)
+
+    def select_file(self, name, variable):
         """
-
-        Parameters
-        ----------
-        file_path :
-
-
-        Returns
-        -------
-
+        Generic file selection method, that opens a file browsing pop-up.
         """
-        try:
-            with open(file_path, "r") as file:
-                config_data = json.load(file)
-            return config_data
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error reading config file: {e}")
-            return {}
+        if name in ["xmlcon", "Seasave Psa", "vCTD-Batch"]:
+            if name == "Seasave Psa":
+                name = "psa"
+            elif name == "vCTD-Batch":
+                name = "bat"
+            path = Path(variable.get())
+            filetypes = (
+                (f"{name} files", f"*.{name}"),
+                ("All files", "*.*"),
+            )
 
-    def save_config(self, file_path, config_data):
-        """
-
-        Parameters
-        ----------
-        file_path :
-
-        config_data :
-
-
-        Returns
-        -------
-
-        """
-        try:
-            with open(file_path, "w") as file:
-                json.dump(config_data, file, indent=4)
-            print("Config saved successfully.")
-        except Exception as e:
-            print(f"Error saving config file: {e}")
+            file = fd.askopenfilename(
+                title=f"Path to {name}",
+                initialdir=path.parent,
+                initialfile=path.name,
+                filetypes=filetypes,
+            )
+        else:
+            file = fd.askdirectory(
+                title=f"{name}",
+                initialdir=variable.get(),
+            )
+        if file:
+            variable.set(file)
+            self.config.write()
 
 
 class CTkSpinbox(ctk.CTkFrame):

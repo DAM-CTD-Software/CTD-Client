@@ -2,9 +2,8 @@ from pathlib import Path
 import tomlkit
 from tomlkit.toml_file import TOMLFile
 from seabirdfilehandler import SeasavePsa
-from code_tools.logging import configure_logging, get_logger
+from code_tools.logging import get_logger
 
-configure_logging(f"{__name__}.log")
 logger = get_logger(__name__)
 
 
@@ -115,8 +114,6 @@ class ConfigurationFile:
                 file.write(out_str)
         except IOError as error:
             logger.error(f"Could not write configuration file: {error}")
-        else:
-            logger.info(f"Wrote new configuration {output_path} to disk.")
 
     def modify(self, key, value):
         """

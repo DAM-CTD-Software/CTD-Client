@@ -24,22 +24,22 @@ fetch_intervall = 1
 
 [history]
 last_cast = 3
-last_filename = "/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.hex"
+last_filename = "test.hex"
 last_platform = "sfCTD"
 
 # configuration that can be changed via the software interface by any operator
 [user]
 
     [user.paths]
-    output_directory = ""
+    output_directory = "."
     xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"
     seasave_psa = "/home/emil/Projects/CTD-Client/tests/data/Seasave_test.psa"
 
     [user.processing]
     # one of Own, Canadian or WindowsBatch
-    type = "WindowsBatch"
+    type = "windowsbatch"
     batch_path = "/home/emil/scripts/echo"
-    psa_directory = ""
+    psa_directory = "."
     modules = ["DatCnv", "AirPressure", "WildEdit", "W_Filter", "AlignCTD", "CellTM", "Derive", "BinAvg"]
 
     [user.operators]

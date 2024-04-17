@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ctdclient"
-version = "0.2.3"
+version = "0.2.4"
 description = ""
 authors = ["Emil Michels <emil.michels@io-warnemuende.de>"]
 readme = "README.md"
@@ -12,8 +12,8 @@ pyyaml = "^6.0.1"
 requests = "^2.31.0"
 customtkinter = "^5.2.2"
 xmltodict = "^0.13.0"
-code-tools = {version = "^0.1.0", source = "gitea"}
-seabirdfilehandler = {version = "^0.2.3", source = "gitea"}
+code-tools = {version = ">=0.2.6", source = "gitea"}
+seabirdfilehandler = {version = ">=0.2.6", source = "gitea"}
 seabird-processing = {version = "^0.1.0", source = "gitea"}
 processing = {version = "^0.1.0", source = "gitea"}
 

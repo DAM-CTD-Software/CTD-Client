@@ -1,8 +1,7 @@
 from pathlib import Path
 import subprocess
-from code_tools.logging import configure_logging, get_logger
+from code_tools.logging import get_logger
 
-configure_logging(f"{__name__}.log")
 logger = get_logger(__name__)
 
 
@@ -52,6 +51,9 @@ class RunSeasave:
                     run_command}: {error}"
             )
             raise error
+        else:
+            logger.info(f"Ran Seasave : {run_command}\nwith this psa: {
+                        self.path_to_psa}\nand this file name: {self.hex_name}")
 
     def set_psa_run_info(self, psa_output_name=None):
         """Sets XMLCON and hex file paths in Seasave.psa."""

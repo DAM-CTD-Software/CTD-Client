@@ -1,7 +1,7 @@
 import seabird_processing as sp
 from pathlib import Path
 import subprocess
-from code_tools.logging import configure_logging, get_logger
+from code_tools.logging import get_logger
 
 from seabird_processing.configs import (
     AirPressureConfig,
@@ -38,7 +38,6 @@ config_classes = {
     "WildEdit": WildEditConfig,
 }
 
-configure_logging(f"{__name__}.log")
 logger = get_logger(__name__)
 
 
@@ -135,3 +134,5 @@ class WindowsBatch:
             if error.stderr:
                 logger.error(error.stderr)
             raise error
+        else:
+            logger.info(f"Ran processing: {self.batch} {hex_file}")

@@ -1,7 +1,6 @@
-version = "0.2.0"
 # base configuration for the software internals and system specifics which are
 # usually set only once during the software installation process
-platforms = ['CTD', 'pCTD', 'sfCTD']
+platforms = ['CTD', 'sfCTD']
 number_of_bottles = 13
 
 [paths]
@@ -13,6 +12,7 @@ ip='192.168.236.60'
 # timeout between individual API calls in seconds
 fetch_intervall = 1
 
+    # the internal dship names of the different parameters
     [dship.identifier]
     Cruise = 'SYS.DISP.ExpNumber'
     Station = 'ActionLog.PUP.DopName'
@@ -24,8 +24,8 @@ fetch_intervall = 1
     Pos_Alias = 'Web.PUP.NextWPName'
 
 [history]
-last_cast = 10
-last_filename = "/home/emil/Projects/CTD-Client/tests/data/72_71_CTD_0010.hex"
+last_cast = 52
+last_filename = "/home/emil/Projects/CTD-Client/tests/data/78_82_SF_0052.hex"
 last_platform = "sfCTD"
 
 # configuration that can be changed via the software interface by any operator
@@ -52,4 +52,4 @@ last_platform = "sfCTD"
     op5 = "Michels"
     op6 = "Koehn"
     op7 = "Mars"
-    last = "Heene"
+    last = "Michels"

@@ -3,11 +3,15 @@ import platform
 import sys
 import customtkinter as ctk
 from code_tools.repeating import RepeatedTimer
+from code_tools.logging import configure_logging
 
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.dshipcaller import DSHIPHeader
 from ctdclient.bottles import BottleClosingDepths
 from ctdclient.view import MainWindow
+
+
+configure_logging("ctdclient.log")
 
 
 class Controller:

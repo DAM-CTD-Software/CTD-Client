@@ -97,8 +97,8 @@ charset-normalizer==3.3.2 ; python_version >= "3.12" and python_version < "3.13"
     --hash=sha256:fb69256e180cb6c8a894fee62b3afebae785babc1ee98b81cdf68bbca1987f33 \
     --hash=sha256:fd1abc0d89e30cc4e02e4064dc67fcc51bd941eb395c502aac3ec19fab46b519 \
     --hash=sha256:ff8fa367d09b717b2a17a052544193ad76cd49979c805768879cb63d9ca50561
-code-tools==0.1.0 ; python_version >= "3.12" and python_version < "3.13" \
-    --hash=sha256:c47bcbd54c606e8454677d33e865512ba648d32d44bab813e9e0f81fbdc3dde1
+code-tools==0.2.6 ; python_version >= "3.12" and python_version < "3.13" \
+    --hash=sha256:e8d79955a4fada7d16999cfa43eef99030f0fae8526d4d72aeca18024a0c44f3
 customtkinter==5.2.2 ; python_version >= "3.12" and python_version < "3.13" \
     --hash=sha256:14ad3e7cd3cb3b9eb642b9d4e8711ae80d3f79fb82545ad11258eeffb2e6b37c \
     --hash=sha256:fd8db3bafa961c982ee6030dba80b4c2e25858630756b513986db19113d8d207
@@ -327,8 +327,8 @@ requests==2.31.0 ; python_version >= "3.12" and python_version < "3.13" \
     --hash=sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1
 seabird-processing==0.1.0 ; python_version >= "3.12" and python_version < "3.13" \
     --hash=sha256:0d729998bc8e0845b3eb2480ba72eeefaf4361659c214d69c0d500b799f5269b
-seabirdfilehandler==0.2.3 ; python_version >= "3.12" and python_version < "3.13" \
-    --hash=sha256:5ace3f28b4a0c9c5d7606b81607fdfee5b744b7ce157c3c8f24253d08e3e7df7
+seabirdfilehandler==0.2.6 ; python_version >= "3.12" and python_version < "3.13" \
+    --hash=sha256:8a486cd973d8950bda736b857f1e8cdef800d8f5b4900e2752be299aa109a3ac
 six==1.16.0 ; python_version >= "3.12" and python_version < "3.13" \
     --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \
     --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254

@@ -1,6 +1,6 @@
 # base configuration for the software internals and system specifics which are
 # usually set only once during the software installation process
-platforms = ['CTD', 'pCTD', 'sfCTD']
+platforms = ['CTD', 'sfCTD']
 number_of_bottles = 13
 
 [paths]
@@ -12,6 +12,7 @@ ip='192.168.236.60'
 # timeout between individual API calls in seconds
 fetch_intervall = 1
 
+    # the internal dship names of the different parameters
     [dship.identifier]
     Cruise = 'SYS.DISP.ExpNumber'
     Station = 'ActionLog.PUP.DopName'
@@ -40,6 +41,7 @@ last_platform = "CTD"
     type = "WindowsBatch"
     batch_path = "D:\\mig\\tests\\data\\processing_batch.bat"
     psa_directory = "D:\\mig\\tests\\data\\psas"
+    # the processing modules that were used in the last run
     modules = ["DatCnv", "AirPressure", "WildEdit", "W_Filter", "AlignCTD", "CellTM", "Derive", "BinAvg"]
 
     [user.operators]

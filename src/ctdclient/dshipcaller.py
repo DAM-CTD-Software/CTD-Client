@@ -3,10 +3,9 @@ import requests
 import xmltodict
 import random
 from functools import partial
-from code_tools.logging import configure_logging, get_logger
+from code_tools.logging import get_logger
 from code_tools.repeating import RepeatedTimer
 
-configure_logging(f"{__name__}.log")
 logger = get_logger(__name__)
 
 
@@ -211,7 +210,9 @@ class DSHIPHeader:
         self.config.operators["last"] = operator
         self.config.last_cast = int(cast)
         self.config.write()
-        return "\n".join(header_list)
+        header_print = "\n".join(header_list)
+        logger.info(f"Wrote the following metadata header:\n{header_print}")
+        return header_print
 
     def create_metadata_header_line(self, name, value):
         return f"{name} = {value}"

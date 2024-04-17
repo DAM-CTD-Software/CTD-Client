@@ -424,6 +424,7 @@ class Measurement:
         self.cast_number.set(str(int(self.cast_number.get()) + 1))
         output_dir = self.config.output_directory
         full_file_path = output_dir.joinpath(self.current_filename.get())
+        self.config.last_platform = self.platform.get()
         RunSeasave(self.config, full_file_path).run(self.autostart.get())
 
     def reconnect_dship(self):

@@ -9,6 +9,7 @@ from functools import partial
 import difflib
 import datetime
 from typing import Callable
+import importlib.metadata
 from processing.processing import Processing as own_processing
 
 from ctdclient.batchprocessing import BatchProcessing, WindowsBatch
@@ -20,7 +21,8 @@ class MainWindow:
 
     def __init__(self, controller, root, config, dship_info, bottles):
         self.config = config
-        root.title("DAM CTD Software")
+        root.title(f"DAM CTD Software v{
+                   importlib.metadata.version('ctdclient')}")
         # avoids old 'tear-off' menus
         root.option_add("*tearOff", tk.FALSE)
 
@@ -433,7 +435,8 @@ class Measurement:
         if self.current_filename.get() == self.last_filename.get():
             msg = CTkMessagebox(
                 title="Warning",
-                message=f"Caution! Do you really want to override the last filename {self.last_filename.get()}?",
+                message=f"Caution! Do you really want to override the last filename {
+                    self.last_filename.get()}?",
                 icon="warning",
                 option_1="Cancel",
                 option_2="Go on",

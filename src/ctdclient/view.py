@@ -430,6 +430,16 @@ class Measurement:
         """
         # TODO: handle exceptions
         # TODO: move into controller
+        if self.current_filename.get() == self.last_filename.get():
+            msg = CTkMessagebox(
+                title="Warning",
+                message=f"Caution! Do you really want to override the last filename {self.last_filename.get()}?",
+                icon="warning",
+                option_1="Cancel",
+                option_2="Go on",
+            )
+            if msg.get() == "Cancel":
+                return
         if self.platform.get() != "Scanfish":
             self.bottles.update_bottle_information(
                 {key: value.get() for key, value in self.bottle_values.items()}

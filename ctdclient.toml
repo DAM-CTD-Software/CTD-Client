@@ -2,8 +2,6 @@
 # usually set only once during the software installation process
 platforms = ['CTD', 'sfCTD']
 number_of_bottles = 13
-
-[paths]
 seasave_exe = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\Seasave.exe"
 processing_exes = "C:\\Program Files (x86)\\Sea-Bird\\SBEDataProcessing-Win32"
 
@@ -23,33 +21,38 @@ fetch_intervall = 1
     Air_Pressure = 'Weatherstation_DWD.PEUMA.Air_pressure'
     Pos_Alias = 'Web.PUP.NextWPName'
 
-[history]
-last_cast = 12
-last_filename = "D:\\mig\\tests\\data\\out\\EMB337_091-12_CTD_0012.hex"
-last_platform = "CTD"
+[operators]
+op1 = "Martin Sass"
+op2 = "Sebastian Neubert"
+op3 = "Julia Wickenhäuser"
+op4 = ""
+op5 = ""
+last = "Martin Sass"
 
-# configuration that can be changed via the software interface by any operator
-[user]
+[ctd]
+number_of_bottles = 13
 
-    [user.paths]
+    [ctd.paths]
+    seasave_psa = "D:\\mig\\tests\\data\\Seasave_test.psa"
     output_directory = "D:\\mig\\tests\\data\\out"
     xmlcon = "D:\\mig\\tests\\data\\EMB295_003-01_CTD_0003.XMLCON"
-    seasave_psa = "D:\\mig\\tests\\data\\Seasave_test.psa"
-
-    [user.processing]
-    # one of Own, Canadian or WindowsBatch
-    type = "WindowsBatch"
     batch_path = "D:\\mig\\tests\\data\\processing_batch.bat"
     psa_directory = "D:\\mig\\tests\\data\\psas"
-    # the processing modules that were used in the last run
-    modules = ["DatCnv", "AirPressure", "WildEdit", "W_Filter", "AlignCTD", "CellTM", "Derive", "BinAvg"]
 
-    [user.operators]
-    op1 = "Heene"
-    op2 = "Kolbe"
-    op3 = "Faber"
-    op4 = "Ruickoldt"
-    op5 = "Michels"
-    op6 = "Koehn"
-    op7 = "Mars"
-    last = "Ruickoldt"
+    [ctd.memory]
+    last_cast = 12
+    last_filename = "D:\\mig\\tests\\data\\out\\EMB337_091-12_CTD_0012.hex"
+
+[scanfish]
+number_of_bottles = 0
+
+    [scanfish.paths]
+    seasave_psa = "D:\\mig\\tests\\data\\Seasave_test.psa"
+    output_directory = "D:\\mig\\tests\\data\\out"
+    xmlcon = "D:\\mig\\tests\\data\\EMB295_003-01_CTD_0003.XMLCON"
+    batch_path = "D:\\mig\\tests\\data\\processing_batch.bat"
+    psa_directory = "D:\\mig\\tests\\data\\psas"
+
+    [scanfish.memory]
+    last_cast = 0
+    last_filename = "D:\\mig\\tests\\data\\out\\EMB337_091-12_CTD_0012.hex"

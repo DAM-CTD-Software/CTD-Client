@@ -184,6 +184,11 @@ class DSHIPHeader:
         -------
 
         """
+        self.config.operators["last"] = operator
+        self.config.last_cast = int(cast)
+        self.config.write(platform)
+        if platform == "Scanfish":
+            platform = "sfCTD"
         header_list = []
         for name, value in self.dship_values.items():
             header_list.append(self.create_metadata_header_line(name, value))
@@ -207,9 +212,6 @@ class DSHIPHeader:
                 "Pos_Alias", pos_alias
             )
         self.config.psa.set_metadata_header(header_list, autostart)
-        self.config.operators["last"] = operator
-        self.config.last_cast = int(cast)
-        self.config.write()
         header_print = "\n".join(header_list)
         logger.info(f"Wrote the following metadata header:\n{header_print}")
         return header_print
@@ -244,7 +246,7 @@ class DSHIPHeader:
         platform_name_mapper = {
             "CTD": "CTD",
             "vCTD": "CTD",
-            "sfCTD": "SF",
+            "Scanfish": "SF",
             "pCTD": "pCTD",
         }
         return f"{cruise}_{station}_{platform_name_mapper[platform]}_{cast_number:04d}.hex"

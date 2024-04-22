@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 import tkinter.font as tkFont
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 from functools import partial
 import difflib
 import datetime
@@ -17,7 +18,8 @@ from ctdclient.runseasave import RunSeasave
 class MainWindow:
     """Top window that encapsulates all other frames."""
 
-    def __init__(self, controller, root, config_path, dship_info, bottles):
+    def __init__(self, controller, root, config, dship_info, bottles):
+        self.config = config
         root.title("DAM CTD Software")
         # avoids old 'tear-off' menus
         root.option_add("*tearOff", tk.FALSE)
@@ -36,17 +38,27 @@ class MainWindow:
 
         # creating tab organisation
         # select one out of NoteBookView, TabView and LabelFrames
-        tabs = TabView(root)
+        tabs = TabView(root, command=self.update_config_values)
         tabs.grid()
         # building individual pages in their own classes
         self.measurement = Measurement(
-            tabs.measurement, config_path, bottles, dship_info, controller
+            tabs.measurement, config, bottles, dship_info, controller
         )
-        Processing(tabs.processing, config_path)
-        Configuration(tabs.configuration, config_path)
+        Processing(tabs.processing, config)
+        Configuration(tabs.configuration, config)
         tabs.measurement.grid()
         tabs.processing.grid()
         tabs.configuration.grid()
+
+    def update_config_values(self):
+        self.config.read_config(self.measurement.platform.get().lower())
+        self.measurement.select_operator.configure(
+            values=[
+                item
+                for item in list(self.config.operators.values())[:-1]
+                if item != ""
+            ]
+        )
 
 
 class NoteBookView(ttk.Notebook):
@@ -123,8 +135,7 @@ class Measurement:
             key: tk.StringVar(value=value)
             for key, value in self.dship_values.items()
         }
-        self.platform = tk.StringVar(value=self.config.last_platform)
-        self.platform.trace_add("write", self.update_frames)
+        self.all_platforms = self.config.platforms
         self.save_btl_config = tk.BooleanVar(value=False)
 
         # configure window layout
@@ -143,10 +154,15 @@ class Measurement:
         self.update_frames()
 
     def update_frames(self, *args):
-        if self.platform.get() == "sfCTD":
+        self.bottles.instantiate_bottle_info()
+        if self.platform.get() == "Scanfish":
+            self.config.read_ctd_config("scanfish")
             self.frame_dship.grid(
                 column=0, row=0, padx=self.padx, pady=self.pady
             )
+            self.last_filename.set(self.config.last_filename.name)
+            self.cast_number.set(self.config.last_cast + 1)
+
             self.frame_info.grid(
                 column=0, row=1, padx=self.padx, pady=self.pady
             )
@@ -156,9 +172,12 @@ class Measurement:
             self.frame_stopwatch.grid_remove()
             self.frame_bottle.grid_remove()
         else:
+            self.config.read_ctd_config(self.platform.get().lower())
             self.frame_dship.grid(
                 column=0, row=0, padx=self.padx, pady=self.pady
             )
+            self.last_filename.set(self.config.last_filename.name)
+            self.cast_number.set(self.config.last_cast + 1)
             self.frame_info.grid(
                 column=0, row=1, padx=self.padx, pady=self.pady
             )
@@ -252,11 +271,16 @@ class Measurement:
             row=2, column=0, sticky=tk.W
         )
         self.operator = tk.StringVar(value=self.config.operators["last"])
-        ctk.CTkComboBox(
+        self.select_operator = ctk.CTkComboBox(
             info_frame,
-            values=list(self.config.operators.values())[:-1],
+            values=[
+                item
+                for item in list(self.config.operators.values())[:-1]
+                if item != ""
+            ],
             variable=self.operator,
-        ).grid(row=2, column=1, sticky=tk.E)
+        )
+        self.select_operator.grid(row=2, column=1, sticky=tk.E)
         # cast selection/display
         ctk.CTkLabel(info_frame, text="Cast number").grid(
             row=3, column=0, sticky=tk.W
@@ -269,12 +293,16 @@ class Measurement:
         ctk.CTkLabel(info_frame, text="Platform").grid(
             row=4, column=0, sticky=tk.W
         )
-        platform_selector = ctk.CTkComboBox(
+        # platform_selector = ctk.CTkComboBox(
+        self.platform = ctk.CTkComboBox(
             info_frame,
-            values=self.config.platforms,
-            variable=self.platform,
+            values=self.all_platforms,
+            # variable=self.platform,
+            command=self.update_frames,
         )
-        platform_selector.grid(row=4, column=1, sticky=tk.E)
+        self.platform.set(self.config.last_platform)
+        # platform_selector.grid(row=4, column=1, sticky=tk.E)
+        self.platform.grid(row=4, column=1, sticky=tk.E)
         # scanfish-specific option to override the current Pos_Alias
         self.station = tk.StringVar(value="")
         ctk.CTkLabel(info_frame, text="Station").grid(
@@ -402,7 +430,7 @@ class Measurement:
         """
         # TODO: handle exceptions
         # TODO: move into controller
-        if self.platform.get() != "sfCTD":
+        if self.platform.get() != "Scanfish":
             self.bottles.update_bottle_information(
                 {key: value.get() for key, value in self.bottle_values.items()}
             )
@@ -476,8 +504,8 @@ class Processing:
         self.psa_paths = [
             path.name for path in self.config.psa_directory.iterdir()
         ]
-        self.steps = self.config.processing_modules
-        self.processing_type = self.config.processing_type
+        self.steps = []
+        self.processing_type = "windowsbatch"
 
         # layout
         self.window.columnconfigure(0, weight=1)
@@ -702,77 +730,129 @@ class Configuration:
     def __init__(self, window, config) -> None:
         self.window = window
         self.config = config
-        self.values_to_set = {
-            "output directory": tk.StringVar(
-                value=self.config.output_directory
-            ),
-            "xmlcon": tk.StringVar(value=self.config.xmlcon),
-            "Seasave Psa": tk.StringVar(value=self.config.seasave_psa),
-            "vCTD-Batch": tk.StringVar(value=self.config.path_to_batch),
-            "psa directory": tk.StringVar(value=self.config.psa_directory),
-        }
+        # self.values_to_set = {
+        #     "output directory": tk.StringVar(
+        #         value=self.config.output_directory
+        #     ),
+        #     "xmlcon": tk.StringVar(value=self.config.xmlcon),
+        #     "Seasave Psa": tk.StringVar(value=self.config.seasave_psa),
+        #     "vCTD-Batch": tk.StringVar(value=self.config.path_to_batch),
+        #     "psa directory": tk.StringVar(value=self.config.psa_directory),
+        # }
+        self.values_to_set = self.get_values_to_set()
         self.padx = 5
         self.pady = 5
         setting_frame = self.setting_frame()
         setting_frame.grid()
         self.window.grid()
 
+    def get_values_to_set(self):
+        value_dict = {}
+        for instrument in self.config.platforms:
+            value_dict.update(
+                {
+                    instrument: {
+                        key: tk.StringVar(value=value)
+                        for key, value in self.config[instrument.lower()][
+                            "paths"
+                        ].items()
+                    }
+                }
+            )
+        value_dict.update(
+            {
+                "operators": {
+                    key: tk.StringVar(value=value)
+                    for key, value in self.config.operators.items()
+                }
+            }
+        )
+        return value_dict
+
     def setting_frame(self):
         frame = ctk.CTkFrame(self.window)
-        for index, (key, value) in enumerate(self.values_to_set.items()):
-            ctk.CTkLabel(frame, text=f"{key}: ").grid(
+        for index, (instrument, inner_dict) in enumerate(
+            self.values_to_set.items()
+        ):
+            index *= len(inner_dict) + 2
+            ctk.CTkLabel(
+                frame,
+                text=f"{instrument}",
+                font=(tkFont.nametofont("TkDefaultFont"), 20),
+            ).grid(
                 row=index,
                 column=0,
                 sticky=tk.W,
                 padx=self.padx,
                 pady=self.pady,
             )
-            ctk.CTkLabel(
-                frame,
-                textvariable=value,
-                font=(tkFont.nametofont("TkDefaultFont"), 10),
-            ).grid(
-                row=index,
-                column=1,
-                sticky=tk.E,
-                padx=self.padx,
-                pady=self.pady,
+            ttk.Separator(frame, orient="horizontal").grid(
+                row=index + 1, sticky=tk.E + tk.W
             )
-            command_with_arguments = partial(self.select_file, key, value)
-            ctk.CTkButton(
-                frame, text="Browse", command=command_with_arguments
-            ).grid(row=index, column=2, padx=self.padx, pady=self.pady)
+            for inner_index, (name, variable) in enumerate(inner_dict.items()):
+                row = index + inner_index + 2
+                ctk.CTkLabel(frame, text=f"{name.replace('_', ' ')}: ").grid(
+                    row=row,
+                    column=0,
+                    sticky=tk.W,
+                    padx=self.padx,
+                    pady=self.pady,
+                )
+                if instrument == "operators":
+                    ctk.CTkEntry(frame, textvariable=variable).grid(
+                        row=row,
+                        column=1,
+                        sticky=tk.E,
+                        padx=self.padx,
+                        pady=self.pady,
+                    )
+                else:
+                    ctk.CTkLabel(
+                        frame,
+                        textvariable=variable,
+                        font=(tkFont.nametofont("TkDefaultFont"), 10),
+                    ).grid(
+                        row=row,
+                        column=1,
+                        sticky=tk.E,
+                        padx=self.padx,
+                        pady=self.pady,
+                    )
+                    command_with_arguments = partial(
+                        self.select_file, instrument, name, variable
+                    )
+                    ctk.CTkButton(
+                        frame,
+                        text="Browse",
+                        command=command_with_arguments,
+                        width=28,
+                    ).grid(row=row, column=2, padx=self.padx, pady=self.pady)
+        ctk.CTkButton(
+            frame, text="Set operators", command=self.write_config, width=600
+        ).grid(row=row, column=0, columnspan=3, padx=self.padx, pady=self.pady)
         return frame
 
-    def add_value_frame(self, window, index, key, value):
-        frame = ctk.CTkFrame(window)
-        frame.columnconfigure(0, weight=2)
-        frame.columnconfigure(1, weight=5)
-        frame.columnconfigure(2, weight=1)
-        ctk.CTkLabel(frame, text=f"{key}: ").grid(
-            row=0, column=0, sticky=tk.W, padx=self.padx, pady=self.pady
-        )
-        ctk.CTkLabel(frame, textvariable=value).grid(
-            row=0, column=1, sticky=tk.E, padx=self.padx, pady=self.pady
-        )
-        command_with_arguments = partial(self.select_file, key, value)
-        ctk.CTkButton(
-            frame, text="Browse", command=command_with_arguments
-        ).grid(row=0, column=2, padx=self.padx, pady=self.pady)
-        frame.grid(row=index, column=0)
+    def write_config(self):
+        self.config["operators"] = {
+            key: value.get()
+            for key, value in self.values_to_set["operators"].items()
+        }
+        self.config.write(use_internal_values=False)
 
-    def select_file(self, name, variable):
+    def select_file(self, instrument, name, variable):
         """
         Generic file selection method, that opens a file browsing pop-up.
         """
-        if name in ["xmlcon", "Seasave Psa", "vCTD-Batch"]:
-            if name == "Seasave Psa":
-                name = "psa"
-            elif name == "vCTD-Batch":
-                name = "bat"
+        if not name.endswith("directory"):
+            if name.endswith("psa"):
+                file_type = "psa"
+            elif name.endswith("batch"):
+                file_type = "bat"
+            else:
+                file_type = name
             path = Path(variable.get())
             filetypes = (
-                (f"{name} files", f"*.{name}"),
+                (f"{file_type} files", f"*.{file_type}"),
                 ("All files", "*.*"),
             )
 
@@ -789,7 +869,8 @@ class Configuration:
             )
         if file:
             variable.set(file)
-            self.config.write()
+            self.config[instrument.lower()]["paths"][name] = file
+            self.config.write(use_internal_values=False)
 
 
 class CTkSpinbox(ctk.CTkFrame):

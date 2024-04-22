@@ -1,6 +1,8 @@
 from pathlib import Path
 import tomlkit
 from tomlkit.toml_file import TOMLFile
+from tomlkit.exceptions import NonExistentKey, KeyAlreadyPresent, EmptyKeyError
+import sys
 from seabirdfilehandler import SeasavePsa
 from code_tools.logging import get_logger
 
@@ -17,7 +19,6 @@ class ConfigurationFile:
     def __init__(self, path_to_config: Path | str):
         self.path_to_config = Path(path_to_config)
         self.data = TOMLFile(self.path_to_config).read()
-        self.psa = SeasavePsa(self.data["user"]["paths"]["seasave_psa"])
         self.read_config()
 
     def __str__(self):
@@ -29,68 +30,84 @@ class ConfigurationFile:
     def __setitem__(self, keys, value):
         self.modify([keys], value)
 
-    def read_config(self):
+    def read_config(self, ctd_type=None):
         self.data = TOMLFile(self.path_to_config).read()
-        self.platforms: list = self.data["platforms"]
-        assert isinstance(self.platforms, list)
-        self.number_of_bottles: int = self.data["number_of_bottles"]
-        self.path_to_seasave: Path = Path(self.data["paths"]["seasave_exe"])
-        self.path_to_processing_exes: Path = Path(
-            self.data["paths"]["processing_exes"]
-        )
-        self.dship_ip: str = self.data["dship"]["ip"]
-        self.dhsip_fetch_intervall: float = float(
-            self.data["dship"]["fetch_intervall"]
-        )
-        self.dship_api_target_names: dict = self.data["dship"]["identifier"]
-        assert isinstance(self.dship_api_target_names, dict)
-        self.last_cast: int = self.data["history"]["last_cast"]
-        self.last_filename: Path = Path(self.data["history"]["last_filename"])
-        self.last_platform: str = self.data["history"]["last_platform"]
-        self.read_user_config()
+        try:
+            self.platforms: list = self.data["platforms"]
+            assert isinstance(self.platforms, list)
+            self.last_platform: str = self.data["last_platform"]
+            assert isinstance(self.last_platform, str)
+            self.path_to_seasave: Path = Path(self.data["seasave_exe"])
+            self.path_to_processing_exes: Path = Path(
+                self.data["processing_exes"]
+            )
+            self.dship_ip: str = self.data["dship"]["ip"]
+            self.dhsip_fetch_intervall: float = float(
+                self.data["dship"]["fetch_intervall"]
+            )
+            self.dship_api_target_names: dict = self.data["dship"][
+                "identifier"
+            ]
+            assert isinstance(self.dship_api_target_names, dict)
+            self.operators: dict = self.data["operators"]
+            assert isinstance(self.operators, dict)
+            if not ctd_type:
+                ctd_type = self.last_platform.lower()
+            self.read_ctd_config(ctd_type)
+        except (NonExistentKey, EmptyKeyError, KeyAlreadyPresent) as error:
+            logger.error(f"Invalid configuration file: {error}")
+            sys.exit(1)
 
-    def read_user_config(self):
-        self.output_directory: Path = Path(
-            self.data["user"]["paths"]["output_directory"]
-        )
-        self.xmlcon: Path = Path(self.data["user"]["paths"]["xmlcon"])
-        self.seasave_psa: Path = Path(
-            self.data["user"]["paths"]["seasave_psa"]
-        )
-        self.processing_type: str = self.data["user"]["processing"][
-            "type"
-        ].lower()
-        self.path_to_batch: Path = Path(
-            self.data["user"]["processing"]["batch_path"]
-        )
-        self.psa_directory: Path = Path(
-            self.data["user"]["processing"]["psa_directory"]
-        )
-        self.processing_modules: list = self.data["user"]["processing"][
-            "modules"
-        ]
-        assert isinstance(self.processing_modules, list)
-        self.operators: dict = self.data["user"]["operators"]
-        assert isinstance(self.operators, dict)
+    def read_ctd_config(self, ctd_type: str):
+        try:
+            self.ctd_info: dict = self.data[ctd_type]
+            self.psa = SeasavePsa(self.data[ctd_type]["paths"]["seasave_psa"])
+            assert isinstance(self.ctd_info, dict)
+            self.number_of_bottles: int = self.data[ctd_type][
+                "number_of_bottles"
+            ]
+            self.seasave_psa: Path = Path(
+                self.data[ctd_type]["paths"]["seasave_psa"]
+            )
+            self.output_directory: Path = Path(
+                self.data[ctd_type]["paths"]["output_directory"]
+            )
+            self.xmlcon: Path = Path(self.data[ctd_type]["paths"]["xmlcon"])
+            self.path_to_batch: Path = Path(
+                self.data[ctd_type]["paths"]["batch_path"]
+            )
+            self.psa_directory: Path = Path(
+                self.data[ctd_type]["paths"]["psa_directory"]
+            )
+            self.last_cast: int = self.data[ctd_type]["memory"]["last_cast"]
+            self.last_filename: Path = Path(
+                self.data[ctd_type]["memory"]["last_filename"]
+            )
+        except (NonExistentKey, EmptyKeyError, KeyAlreadyPresent) as error:
+            logger.error(f"Mistake in update: {error}")
+            sys.exit(1)
 
-    def set_config(self):
-        self.data["history"]["last_cast"] = self.last_cast
-        self.data["history"]["last_filename"] = str(self.last_filename)
-        self.data["history"]["last_platform"] = self.last_platform
-        self.data["user"]["paths"]["output_directory"] = str(
+    def set_config(self, ctd_type: str):
+        self.data["last_platform"] = self.last_platform
+        self.data["operators"] = self.operators
+        self.data[ctd_type]["paths"]["seasave_psa"] = str(self.seasave_psa)
+        self.data[ctd_type]["paths"]["output_directory"] = str(
             self.output_directory
         )
-        self.data["user"]["paths"]["xmlcon"] = str(self.xmlcon)
-        self.data["user"]["paths"]["seasave_psa"] = str(self.seasave_psa)
-        self.data["user"]["processing"]["type"] = self.processing_type
-        self.data["user"]["processing"]["batch_path"] = str(self.path_to_batch)
-        self.data["user"]["processing"]["psa_directory"] = str(
-            self.psa_directory
+        self.data[ctd_type]["paths"]["xmlcon"] = str(self.xmlcon)
+        self.data[ctd_type]["paths"]["batch_path"] = str(self.path_to_batch)
+        self.data[ctd_type]["paths"]["psa_directory"] = str(self.psa_directory)
+        self.data[ctd_type]["memory"]["last_cast"] = self.last_cast
+        self.data[ctd_type]["memory"]["last_filename"] = str(
+            self.last_filename
         )
-        self.data["user"]["processing"]["modules"] = self.processing_modules
-        self.data["user"]["operators"] = self.operators
 
-    def write(self, path_to_write=None):
+    def write(
+        self,
+        current_platform=None,
+        use_internal_values=True,
+        path_to_write=None,
+    ):
         """
         Writes changes to the configuration file to the disk.
 
@@ -103,7 +120,13 @@ class ConfigurationFile:
         -------
 
         """
-        self.set_config()
+        if use_internal_values:
+            current_platform = (
+                self.last_platform.lower()
+                if current_platform is None
+                else current_platform.lower()
+            )
+            self.set_config(current_platform)
         output_path = self.path_to_config
         if path_to_write:
             output_path = path_to_write

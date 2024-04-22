@@ -1,9 +1,7 @@
 # base configuration for the software internals and system specifics which are
 # usually set only once during the software installation process
-platforms = ['CTD', 'sfCTD']
-number_of_bottles = 13
-
-[paths]
+platforms = ['CTD', 'Scanfish']
+last_platform = "Scanfish"
 seasave_exe = "/home/emil/scripts/echo"
 processing_exes = ""
 
@@ -23,33 +21,38 @@ fetch_intervall = 1
     Air_Pressure = 'Weatherstation_DWD.PEUMA.Air_pressure'
     Pos_Alias = 'Web.PUP.NextWPName'
 
-[history]
-last_cast = 52
-last_filename = "/home/emil/Projects/CTD-Client/tests/data/78_82_SF_0052.hex"
-last_platform = "sfCTD"
+[operators]
+op1 = "Martin Sass"
+op2 = "Sebastian Neubert"
+op3 = "Julia Wickenhäuser"
+op4 = ""
+op5 = ""
+last = "Martin Sass"
 
-# configuration that can be changed via the software interface by any operator
-[user]
+[ctd]
+number_of_bottles = 13
 
-    [user.paths]
-    output_directory = "/home/emil/Projects/CTD-Client/tests/data"
-    xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"
+    [ctd.paths]
     seasave_psa = "/home/emil/Projects/CTD-Client/tests/data/Seasave_test.psa"
-
-    [user.processing]
-    # one of Own, Canadian or WindowsBatch
-    type = "windowsbatch"
+    output_directory = "/home/emil/Projects/CTD-Client/tests"
+    xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"
     batch_path = "/home/emil/scripts/echo"
     psa_directory = "."
-    # the processing modules that were used in the last run
-    modules = ["DatCnv", "AirPressure", "WildEdit", "W_Filter", "AlignCTD", "CellTM", "Derive", "BinAvg"]
 
-    [user.operators]
-    op1 = "Heene"
-    op2 = "Kolbe"
-    op3 = "Faber"
-    op4 = "Ruickoldt"
-    op5 = "Michels"
-    op6 = "Koehn"
-    op7 = "Mars"
-    last = "Michels"
+    [ctd.memory]
+    last_cast = 100
+    last_filename = "/home/emil/Projects/CTD-Client/tests/data/48_62_CTD_0100.hex"
+
+[scanfish]
+number_of_bottles = 0
+
+    [scanfish.paths]
+    seasave_psa = "/home/emil/Projects/CTD-Client/tests/data/scanfish.psa"
+    output_directory = "/home/emil/Projects/CTD-Client/tests/data/out"
+    xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB356_011-01_CTD_0010.XMLCON"
+    batch_path = "/home/emil/scripts/weather"
+    psa_directory = "."
+
+    [scanfish.memory]
+    last_cast = 11
+    last_filename = "/home/emil/Projects/CTD-Client/tests/data/out/61_96_SF_0011.hex"

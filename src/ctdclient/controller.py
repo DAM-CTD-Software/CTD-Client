@@ -1,3 +1,6 @@
+# setting for pyinstaller to allow clean stopage of all threads
+import multiprocessing
+multiprocessing.freeze_support()
 from pathlib import Path
 import platform
 import sys
@@ -31,7 +34,7 @@ class Controller:
             file_location = Path(__file__).parents[1]
             config_path = file_location.joinpath("ctdclient.toml")
             if not config_path.is_file():
-                file_location = Path(__file__).parents[2]
+                file_location = Path(__file__).parents[3]
                 config_path = file_location.joinpath("ctdclient.toml")
         else:
             sys.exit(1)

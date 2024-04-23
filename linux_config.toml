@@ -4,6 +4,7 @@ platforms = ['CTD', 'Scanfish']
 last_platform = "Scanfish"
 seasave_exe = "/home/emil/scripts/echo"
 processing_exes = ""
+number_of_bottles = 13
 
 [dship]
 ip='192.168.236.60'
@@ -24,13 +25,12 @@ fetch_intervall = 1
 [operators]
 op1 = "Martin Sass"
 op2 = "Sebastian Neubert"
-op3 = "Julia Wickenhäuser"
+op3 = "Julia Wickenhaeuser"
 op4 = ""
 op5 = ""
 last = "Martin Sass"
 
 [ctd]
-number_of_bottles = 13
 
     [ctd.paths]
     seasave_psa = "/home/emil/Projects/CTD-Client/tests/data/Seasave_test.psa"
@@ -44,7 +44,6 @@ number_of_bottles = 13
     last_filename = "/home/emil/Projects/CTD-Client/tests/data/48_62_CTD_0100.hex"
 
 [scanfish]
-number_of_bottles = 0
 
     [scanfish.paths]
     seasave_psa = "/home/emil/Projects/CTD-Client/tests/data/scanfish.psa"

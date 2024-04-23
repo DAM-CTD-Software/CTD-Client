@@ -41,6 +41,8 @@ class ConfigurationFile:
             self.path_to_processing_exes: Path = Path(
                 self.data["processing_exes"]
             )
+            self.number_of_bottles: int = self.data["number_of_bottles"]
+            assert isinstance(self.number_of_bottles, int)
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dhsip_fetch_intervall: float = float(
                 self.data["dship"]["fetch_intervall"]
@@ -63,9 +65,6 @@ class ConfigurationFile:
             self.ctd_info: dict = self.data[ctd_type]
             self.psa = SeasavePsa(self.data[ctd_type]["paths"]["seasave_psa"])
             assert isinstance(self.ctd_info, dict)
-            self.number_of_bottles: int = self.data[ctd_type][
-                "number_of_bottles"
-            ]
             self.seasave_psa: Path = Path(
                 self.data[ctd_type]["paths"]["seasave_psa"]
             )

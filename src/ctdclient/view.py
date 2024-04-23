@@ -10,6 +10,7 @@ import difflib
 import datetime
 from typing import Callable
 import importlib.metadata
+from sys import platform
 from processing.processing import Processing as own_processing
 
 from ctdclient.batchprocessing import BatchProcessing, WindowsBatch
@@ -23,24 +24,24 @@ class MainWindow:
         self.config = config
         root.title(f"DAM CTD Software v{
                    importlib.metadata.version('ctdclient')}")
-        # avoids old 'tear-off' menus
-        root.option_add("*tearOff", tk.FALSE)
-
-        root.geometry("700x800")
-        root.resizable(width=0, height=0)
+        # Because CTkToplevel currently is bugged on windows
+        # and doesn't check if a user specified icon is set
+        # we need to set the icon again after 200ms
+        if platform.startswith("win"):
+            root.after(200, lambda: root.iconbitmap("icon.ico"))
 
         default_font = tkFont.nametofont("TkDefaultFont")
         default_font.configure(size=14)
         root.option_add("*Font", default_font)
         ctk.set_appearance_mode("dark")
         ctk.set_default_color_theme("dark-blue")
+        root.geometry("620x780")
 
-        # initialize standard menu
-        # MenuBar(root)
-
+        root_frame = ctk.CTkFrame(root)
+        root_frame.grid(row=0, column=0)
+        
         # creating tab organisation
-        # select one out of NoteBookView, TabView and LabelFrames
-        tabs = TabView(root, command=self.update_config_values)
+        tabs = TabView(root_frame, width=600, height=700, command=self.update_config_values)
         tabs.grid()
         # building individual pages in their own classes
         self.measurement = Measurement(
@@ -52,6 +53,8 @@ class MainWindow:
         tabs.processing.grid()
         tabs.configuration.grid()
 
+        root_frame.update_idletasks()
+
     def update_config_values(self):
         self.config.read_config(self.measurement.platform.get().lower())
         self.measurement.select_operator.configure(
@@ -61,20 +64,6 @@ class MainWindow:
                 if item != ""
             ]
         )
-
-
-class NoteBookView(ttk.Notebook):
-    """Basic tkinter equivalent to ctk's TabView."""
-
-    def __init__(self, window):
-        super().__init__(window)
-
-        self.measurement = ctk.CTkFrame(self)
-        self.processing = ctk.CTkFrame(self)
-        self.configuration = ctk.CTkFrame(self)
-        self.add(self.measurement, text="measurement")
-        self.add(self.processing, text="processing")
-        self.add(self.configuration, text="configuration")
 
 
 class TabView(ctk.CTkTabview):
@@ -89,34 +78,6 @@ class TabView(ctk.CTkTabview):
         self.measurement = ctk.CTkFrame(self.tab("measurement"))
         self.processing = ctk.CTkFrame(self.tab("processing"))
         self.configuration = ctk.CTkFrame(self.tab("configuration"))
-
-
-class LabelFrames(ttk.PanedWindow):
-    """
-    Displaying multiple windows next to each other, separated inside boxes.
-    """
-
-    def __init__(self, window, **kwargs):
-        super().__init__(window, orient=tk.HORIZONTAL, **kwargs)
-        self.measurement = ctk.CTkFrame(self, text="measurement")
-        self.processing = ctk.CTkFrame(self, text="processing")
-        self.configuration = ctk.CTkFrame(self, text="configuration")
-        self.add(self.measurement)
-        self.add(self.processing)
-        self.add(self.configuration)
-
-
-class MenuBar:
-    """Menu bar that allows some basic configuration."""
-
-    def __init__(self, window) -> None:
-        # TODO: implement
-        menubar = tk.Menu(window)
-        window["menu"] = menubar
-        menu_file = tk.Menu(menubar)
-        menu_edit = tk.Menu(menubar)
-        menubar.add_cascade(menu=menu_file, label="File")
-        menubar.add_cascade(menu=menu_edit, label="Edit")
 
 
 class Measurement:
@@ -859,7 +820,7 @@ class Configuration:
         if not name.endswith("directory"):
             if name.endswith("psa"):
                 file_type = "psa"
-            elif name.endswith("batch"):
+            elif name.startswith("batch"):
                 file_type = "bat"
             else:
                 file_type = name

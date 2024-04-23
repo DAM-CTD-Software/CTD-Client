@@ -1,9 +1,10 @@
 # base configuration for the software internals and system specifics which are
 # usually set only once during the software installation process
-platforms = ['CTD', 'sfCTD']
-number_of_bottles = 13
+platforms = ['CTD', 'Scanfish']
+last_platform = "CTD"
 seasave_exe = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\Seasave.exe"
 processing_exes = "C:\\Program Files (x86)\\Sea-Bird\\SBEDataProcessing-Win32"
+number_of_bottles = 13
 
 [dship]
 ip='192.168.236.60'
@@ -24,13 +25,12 @@ fetch_intervall = 1
 [operators]
 op1 = "Martin Sass"
 op2 = "Sebastian Neubert"
-op3 = "Julia Wickenhäuser"
+op3 = "Julia Wickenhaeuser"
 op4 = ""
 op5 = ""
-last = "Martin Sass"
+last = "Julia Wickenhaeuser"
 
 [ctd]
-number_of_bottles = 13
 
     [ctd.paths]
     seasave_psa = "D:\\mig\\tests\\data\\Seasave_test.psa"
@@ -40,19 +40,18 @@ number_of_bottles = 13
     psa_directory = "D:\\mig\\tests\\data\\psas"
 
     [ctd.memory]
-    last_cast = 12
-    last_filename = "D:\\mig\\tests\\data\\out\\EMB337_091-12_CTD_0012.hex"
+    last_cast = 13
+    last_filename = "D:\\mig\\tests\\data\\out\\48_2_CTD_0013.hex"
 
 [scanfish]
-number_of_bottles = 0
 
     [scanfish.paths]
-    seasave_psa = "D:\\mig\\tests\\data\\Seasave_test.psa"
-    output_directory = "D:\\mig\\tests\\data\\out"
+    seasave_psa = "D:\\mig\\tests\\data\\scanfish.psa"
+    output_directory = "D:\\mig\\tests\\data"
     xmlcon = "D:\\mig\\tests\\data\\EMB295_003-01_CTD_0003.XMLCON"
     batch_path = "D:\\mig\\tests\\data\\processing_batch.bat"
     psa_directory = "D:\\mig\\tests\\data\\psas"
 
     [scanfish.memory]
-    last_cast = 0
-    last_filename = "D:\\mig\\tests\\data\\out\\EMB337_091-12_CTD_0012.hex"
+    last_cast = 11
+    last_filename = "D:\\mig\\tests\\data\\83_7_SF_0011.hex"

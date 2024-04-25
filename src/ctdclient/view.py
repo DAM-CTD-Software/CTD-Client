@@ -39,7 +39,7 @@ class MainWindow:
 
         root_frame = ctk.CTkFrame(root)
         root_frame.grid(row=0, column=0)
-        
+
         # creating tab organisation
         tabs = TabView(root_frame, width=600, height=700, command=self.update_config_values)
         tabs.grid()
@@ -216,14 +216,14 @@ class Measurement:
         # current filename
         self.current_filename = tk.StringVar(value="")
         ctk.CTkLabel(info_frame, text="current filename").grid(
-            row=0, column=0, sticky=tk.W
+            row=0, column=0, sticky=tk.W, padx=self.padx
         )
         ctk.CTkLabel(info_frame, textvariable=self.current_filename).grid(
             row=0, column=1, sticky=tk.E
         )
         # last filename
         ctk.CTkLabel(info_frame, text="last filename").grid(
-            row=1, column=0, sticky=tk.W
+            row=1, column=0, sticky=tk.W, padx=self.padx
         )
         self.last_filename = tk.StringVar(value=self.config.last_filename.name)
         ctk.CTkLabel(info_frame, textvariable=self.last_filename).grid(
@@ -231,7 +231,7 @@ class Measurement:
         )
         # operator selection
         ctk.CTkLabel(info_frame, text="Operator").grid(
-            row=2, column=0, sticky=tk.W
+            row=2, column=0, sticky=tk.W, padx=self.padx
         )
         self.operator = tk.StringVar(value=self.config.operators["last"])
         self.select_operator = ctk.CTkComboBox(
@@ -246,7 +246,7 @@ class Measurement:
         self.select_operator.grid(row=2, column=1, sticky=tk.E)
         # cast selection/display
         ctk.CTkLabel(info_frame, text="Cast number").grid(
-            row=3, column=0, sticky=tk.W
+            row=3, column=0, sticky=tk.W, padx=self.padx
         )
         self.cast_number = tk.StringVar(value=self.config.last_cast + 1)
         CTkSpinbox(info_frame, variable=self.cast_number).grid(
@@ -254,7 +254,7 @@ class Measurement:
         )
         # platform selection
         ctk.CTkLabel(info_frame, text="Platform").grid(
-            row=4, column=0, sticky=tk.W
+            row=4, column=0, sticky=tk.W, padx=self.padx
         )
         # platform_selector = ctk.CTkComboBox(
         self.platform = ctk.CTkComboBox(
@@ -268,8 +268,8 @@ class Measurement:
         self.platform.grid(row=4, column=1, sticky=tk.E)
         # scanfish-specific option to override the current Pos_Alias
         self.station = tk.StringVar(value="")
-        ctk.CTkLabel(info_frame, text="Station").grid(
-            row=5, column=0, sticky=tk.W
+        ctk.CTkLabel(info_frame, text="Override Pos_Alias").grid(
+            row=5, column=0, sticky=tk.W, padx=self.padx
         )
         ctk.CTkEntry(
             info_frame,
@@ -408,19 +408,12 @@ class Measurement:
             self.bottles.update_bottle_information(
                 {key: value.get() for key, value in self.bottle_values.items()}
             )
-            self.dship_info.build_metadata_header(
-                self.platform.get(),
-                self.cast_number.get(),
-                self.operator.get(),
-            )
-        else:
-            self.dship_info.build_metadata_header(
-                self.platform.get(),
-                self.cast_number.get(),
-                self.operator.get(),
-                pos_alias=self.station.get(),
-                autostart=self.autostart.get(),
-            )
+        self.dship_info.build_metadata_header(
+            self.platform.get(),
+            self.cast_number.get(),
+            self.operator.get(),
+            pos_alias=self.station.get(),
+        )
 
         self.last_filename.set(self.current_filename.get())
         self.cast_number.set(str(int(self.cast_number.get()) + 1))

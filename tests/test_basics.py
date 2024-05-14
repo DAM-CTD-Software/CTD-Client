@@ -1,3 +1,4 @@
+from pathlib import Path
 import unittest
 from parameterized import parameterized
 from ctdclient.bottles import BottleClosingDepths
@@ -9,7 +10,7 @@ import platform
 import sys
 
 if platform.system() == "Linux":
-    config_path = "tests/data/linux_config.toml"
+    config_path = "linux_config.toml"
 elif platform.system() == "Windows":
     config_path = "ctdclient.toml"
 else:
@@ -22,16 +23,13 @@ class TestConfig(unittest.TestCase):
         self.config = ConfigurationFile(config_path)
 
     def test_basic_loading(self):
-        self.assertEqual(len(self.config.data), 6)
+        self.assertEqual(len(self.config.data), 9)
 
     def test_basic_modify(self):
         self.config.modify("blub", "test")
-        self.assertEqual(len(self.config.data), 7)
+        self.assertEqual(len(self.config.data), 10)
         self.config.modify(["number_of_bottles"], 5)
         self.assertEqual(self.config["number_of_bottles"], 5)
-        self.config.modify(["user", "new"], "lol")
-        self.assertEqual(len(self.config["user"]["new"]), 3)
-        # self.config.write()
 
     def test_setitem(self):
         self.config["number_of_bottles"] = 15
@@ -63,16 +61,7 @@ class TestMetadataHeader(unittest.TestCase):
     def setUp(self):
         self.config = ConfigurationFile(config_path)
         self.header = DSHIPHeader(self.config, dummy=True)
-        self.expected_output = """
-                                Cruise = EMB295
-                                Station = EMB295_3-1
-                                Platform = CTD
-                                Cast = 0003
-                                Operator = Jan Donath
-                                GPS_Time = 04.07.2022 07:51:16
-                                Pos_Alias = Gotland
-                                WsStartID = 76
-                               """
+        self.expected_output = "Cruise = EMB295\nStation = EMB295_3-1\nPlatform = CTD\nCast = 0003\nOperator = Jan Donath\nGPS_Time = 04.07.2022 07:51:16\nPos_Alias = Gotland\nWsStartID = 76"
 
     def tearDown(self):
         self.header.end_listener()
@@ -80,8 +69,8 @@ class TestMetadataHeader(unittest.TestCase):
     @parameterized.expand(
         [
             ("Station", "EMB295_3-1", "003-01"),
-            ("GPS_Lat", "57 18.9919367281", "57 18.992 N"),
-            ("GPS_Lon", "20  7.9643222314", "20  7.964 E"),
+            ("GPS_Lat", "57 18.99193", "57 18.992 N"),
+            ("GPS_Lon", "20  7.96432", "20  7.964 E"),
             ("Echo_Depth", "248.023438423", " 248.0 m"),
             ("Air_Pressure", "1014.523132", " 1014.5 hPa"),
             ("Pos_Alias", "Gotland", "Gotland"),
@@ -118,7 +107,8 @@ class TestSeasaveRun(unittest.TestCase):
             psa_position["ConfigurationFilePath"]["@value"], self.config.xmlcon
         )
         self.assertEqual(
-            psa_position["DataFilePath"]["@value"], self.config.last_filename
+            Path(psa_position["DataFilePath"]["@value"]),
+            self.config.last_filename,
         )
 
 

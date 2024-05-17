@@ -1,0 +1,10 @@
+exe_directory = "/home/emil/.wine/drive_c/Program Files (x86)/Sea-Bird/SBEDataProcessing-Win32/"
+psa_directory = "tests/data/psas"
+file_list = ["/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.cnv"]
+xmlcons = ""
+output_directory = "tests/data/out"
+new_file_name = ""
+file_suffix = ""
+
+[modules.alignctd]
+psa = "AlignCTD.psa"

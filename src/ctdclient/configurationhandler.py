@@ -82,6 +82,9 @@ class ConfigurationFile:
             self.last_filename: Path = Path(
                 self.data[ctd_type]["memory"]["last_filename"]
             )
+            self.last_processing_file: Path = Path(
+                self.data[ctd_type]["memory"]["last_processing_file"]
+            )
         except (NonExistentKey, EmptyKeyError, KeyAlreadyPresent) as error:
             logger.error(f"Mistake in update: {error}")
             sys.exit(1)
@@ -99,6 +102,9 @@ class ConfigurationFile:
         self.data[ctd_type]["memory"]["last_cast"] = self.last_cast
         self.data[ctd_type]["memory"]["last_filename"] = str(
             self.last_filename
+        )
+        self.data[ctd_type]["memory"]["last_processing_file"] = str(
+            self.last_processing_file
         )
 
     def write(

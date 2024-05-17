@@ -11,19 +11,22 @@ import datetime
 from typing import Callable
 import importlib.metadata
 from sys import platform
-from processing.processing import Processing as own_processing
 
-from ctdclient.batchprocessing import BatchProcessing, WindowsBatch
+from ctdclient.batchprocessing import MyProcessing, WindowsBatch
 from ctdclient.runseasave import RunSeasave
 
 
 class MainWindow:
     """Top window that encapsulates all other frames."""
 
-    def __init__(self, controller, root, config, dship_info, bottles):
+    def __init__(
+        self, controller, root, config, dship_info, bottles, processing
+    ):
         self.config = config
-        root.title(f"DAM CTD Software v{
-                   importlib.metadata.version('ctdclient')}")
+        root.title(
+            f"DAM CTD Software v{
+                   importlib.metadata.version('ctdclient')}"
+        )
         # Because CTkToplevel currently is bugged on windows
         # and doesn't check if a user specified icon is set
         # we need to set the icon again after 200ms
@@ -41,13 +44,23 @@ class MainWindow:
         root_frame.grid(row=0, column=0)
 
         # creating tab organisation
-        tabs = TabView(root_frame, width=600, height=700, command=self.update_config_values)
+        tabs = TabView(
+            root_frame,
+            width=600,
+            height=700,
+            command=self.update_config_values,
+        )
         tabs.grid()
         # building individual pages in their own classes
         self.measurement = Measurement(
-            tabs.measurement, config, bottles, dship_info, controller
+            tabs.measurement,
+            config,
+            bottles,
+            dship_info,
+            controller,
+            processing,
         )
-        Processing(tabs.processing, config)
+        Processing(tabs.processing, config, processing)
         Configuration(tabs.configuration, config)
         tabs.measurement.grid()
         tabs.processing.grid()
@@ -87,12 +100,15 @@ class Measurement:
     the Seasave software with command line arguments.
     """
 
-    def __init__(self, window, config, bottles, dship_info, controller):
+    def __init__(
+        self, window, config, bottles, dship_info, controller, processing
+    ):
         self.window = window
         self.config = config
         self.bottles = bottles
         self.dship_info = dship_info
         self.controller = controller
+        self.processing = processing
         self.dship_values = dship_info.dship_values
         self.dship_vars = {
             key: tk.StringVar(value=value)
@@ -327,9 +343,10 @@ class Measurement:
         """
         # start measurement
         run_frame = ctk.CTkFrame(self.window)
+        seasave_frame = ctk.CTkFrame(run_frame)
         self.autostart = tk.BooleanVar(value=True)
         ctk.CTkCheckBox(
-            run_frame,
+            seasave_frame,
             text="autostart",
             variable=self.autostart,
         ).grid()
@@ -340,10 +357,18 @@ class Measurement:
         #     variable=self.downcast,
         # ).grid()
         ctk.CTkButton(
-            run_frame,
+            seasave_frame,
             text="Start Seasave",
             command=self.start_seasave,
         ).grid()
+        processing_frame = ctk.CTkFrame(run_frame)
+        ctk.CTkButton(
+            processing_frame,
+            text="Run Processing",
+            command=self.run_processing,
+        ).grid()
+        seasave_frame.grid()
+        processing_frame.grid()
         return run_frame
 
     def stopwatch_frame(self):
@@ -422,6 +447,43 @@ class Measurement:
         self.config.last_platform = self.platform.get()
         RunSeasave(self.config, full_file_path).run(self.autostart.get())
 
+    def run_processing(self):
+        """Collects the processing step information and feeds it into the
+        batch processing routine."""
+        self.config.reload()
+        hex_file = tk.StringVar(value=self.config.last_filename)
+        selected_file = self.select_file("hex", hex_file)
+        if selected_file:
+            try:
+                self.processing.input_file = hex_file.get()
+                self.processing.run()
+            except TypeError:
+                pass
+            else:
+                self.config.last_processing_file = self.processing.file_path
+                self.config.write()
+
+    def select_file(self, file_type, variable):
+        """
+        Generic file selection method, that opens a file browsing pop-up.
+        """
+        path = Path(variable.get())
+        filetypes = (
+            (f"{file_type} files", f"*.{file_type}"),
+            ("All files", "*.*"),
+        )
+        file = fd.askopenfilename(
+            title=f"Path to {file_type}",
+            initialdir=path.parent,
+            initialfile=path.name,
+            filetypes=filetypes,
+        )
+        if file:
+            variable.set(file)
+            return True
+        else:
+            return False
+
     def reconnect_dship(self):
         """"""
         self.controller.reconnect_dship()
@@ -447,69 +509,101 @@ class Processing:
     respective psas.
     """
 
-    def __init__(self, window, config) -> None:
+    def __init__(self, window, config, processing) -> None:
         self.window = window
-        self.psa_modules = [
-            "AlignCTD",
-            "AirPressure",
-            "BinAvg",
-            "BottleSum",
-            "CellTM",
-            "DatCnv",
-            "Derive",
-            "Filter",
-            "LoopEdit",
-            "WildEdit",
-            "W_Filter",
-        ]
         self.config = config
-        self.path_dict = {
-            "xmlcon": tk.StringVar(value=config.xmlcon),
-            "hex": tk.StringVar(value=config.last_filename),
-            "psas": tk.StringVar(value=config.psa_directory),
-        }
-        self.psa_paths = [
-            path.name for path in self.config.psa_directory.iterdir()
+        self.processing = processing
+        # TODO: extend these or handle differently
+        self.psa_modules = [
+            "alignctd",
+            "airpressure",
+            "binavg",
+            "bottlesum",
+            "celltm",
+            "datcnv",
+            "derive",
+            "filter",
+            "iow_btl_id",
+            "loopedit",
+            "wildedit",
+            "w_filter",
         ]
-        self.steps = []
-        self.processing_type = "windowsbatch"
 
         # layout
         self.window.columnconfigure(0, weight=1)
         self.window.columnconfigure(1, weight=1)
         self.padx = 5
         self.pady = 5
+        self.update_values()
 
-        if self.processing_type != "windowsbatch":
-            self.step_frame = self.step_selection_frame()
-            self.path_frame = self.path_selection_frame()
-        self.run_processing_frame()
+    def update_values(self):
+        self.psa_dir = tk.StringVar(
+            value=self.processing.processing_info["psa_directory"]
+        )
+        try:
+            self.psa_paths = [
+                path.name for path in Path(self.psa_dir.get()).iterdir()
+            ]
+        except FileNotFoundError as error:
+            # TODO: open window with message
+            pass
+
+        self.steps = []
+        self.path_dict = self.get_values_to_set()
+
+        self.path_frame = self.path_selection_frame()
+        self.step_frame = self.step_selection_frame()
+        self.button_frame = self.config_save_load_frame()
         self.window.grid()
+
+    def get_values_to_set(self):
+        value_dict = {
+            key: tk.StringVar(value=value)
+            for key, value in self.processing.processing_info.items()
+            if key not in ("modules", "file_list")
+        }
+        value_dict = {
+            "file_path": tk.StringVar(value=self.processing.file_path),
+            **value_dict,
+        }
+        for value in value_dict.values():
+            value.trace_add("write", self.update_processing_info)
+        return value_dict
 
     def path_selection_frame(self, padx=5, pady=5):
         """
         Frame that encapsulates the selection of the three paths needed in
         order to run the processing.
         """
-        frame = tk.Frame(self.window)
-        for index, (file_type, variable) in enumerate(self.path_dict.items()):
+        frame = ctk.CTkFrame(self.window)
+        for index, (parameter_name, variable) in enumerate(
+            self.path_dict.items()
+        ):
             # individual frame construction
-            single_frame = tk.Frame(frame)
+            single_frame = ctk.CTkFrame(frame)
             single_frame.columnconfigure(0, weight=1)
             single_frame.columnconfigure(1, weight=7)
             single_frame.columnconfigure(2, weight=1)
-            ctk.CTkLabel(single_frame, text=f"Path to {file_type}").grid(
-                row=index, column=0, sticky=tk.W, padx=padx, pady=pady
-            )
-            tk.Entry(single_frame, textvariable=variable).grid(
-                row=index, column=1, sticky=tk.E, padx=padx, pady=pady
-            )
-            command_with_arguments = partial(
-                self.select_file, file_type, variable
-            )
-            ctk.CTkButton(
-                single_frame, text="Browse", command=command_with_arguments
-            ).grid(row=index, column=2, padx=padx, pady=pady)
+            if parameter_name not in ("new_file_name", "file_suffix"):
+                ctk.CTkLabel(
+                    single_frame, text=f"Path to {parameter_name}"
+                ).grid(row=index, column=0, sticky=tk.W, padx=padx, pady=pady)
+                ctk.CTkEntry(single_frame, textvariable=variable).grid(
+                    row=index, column=1, sticky=tk.E, padx=padx, pady=pady
+                )
+                command_with_arguments = partial(
+                    self.select_file, parameter_name, variable
+                )
+                ctk.CTkButton(
+                    single_frame, text="Browse", command=command_with_arguments
+                ).grid(row=index, column=2, padx=padx, pady=pady)
+            else:
+                ctk.CTkLabel(single_frame, text=f"{parameter_name}").grid(
+                    row=index, column=0, sticky=tk.W, padx=padx, pady=pady
+                )
+                ctk.CTkEntry(single_frame, textvariable=variable).grid(
+                    row=index, column=1, sticky=tk.E, padx=padx, pady=pady
+                )
             single_frame.grid()
         frame.grid()
         return frame
@@ -519,47 +613,51 @@ class Processing:
         Frame to hold the dynamic drop-downs for processing step and psa
         selection.
         """
-        frame = tk.Frame(self.window)
+        frame = ctk.CTkFrame(self.window)
         self.step_number = 1
         self.step_var_dict = {}
         # steps and psas frame
-        modules_frame = tk.Frame(frame)
-        for user_defined_step in self.steps:
-            self.add_processing_step(modules_frame, user_defined_step)
+        modules_frame = ctk.CTkFrame(frame)
+        for user_defined_step, psa_dict in self.processing.modules.items():
+            if len(psa_dict) > 0:
+                psa_value = psa_dict["psa"]
+            else:
+                psa_value = None
+            self.add_processing_step(
+                modules_frame, self.step_number, user_defined_step, psa_value
+            )
         modules_frame.grid()
-        # button frame
-        button_frame = tk.Frame(frame)
-        add_step = partial(self.add_processing_step, modules_frame)
-        ctk.CTkButton(
-            button_frame, text="Add processing step", command=add_step
-        ).grid(row=0, column=0)
-        remove_step = partial(self.remove_processing_step, modules_frame)
-        # remove step button
-        ctk.CTkButton(
-            button_frame, text="Remove processing step", command=remove_step
-        ).grid(row=0, column=1)
-        button_frame.grid()
         frame.grid()
         return frame
 
-    def run_processing_frame(self):
-        frame = tk.Frame(self.window)
-        # run processing button
+    def config_save_load_frame(self):
+        button_frame = ctk.CTkFrame(self.window)
         ctk.CTkButton(
-            frame, text="Run processing", command=self.run_processing
-        ).grid()
-        frame.grid(column=0, columnspan=2, padx=self.padx, pady=self.pady)
-        return frame
+            button_frame,
+            text="Save current configuration",
+            command=self.save_current_configuration,
+        ).grid(row=0, column=0)
+        load_config = partial(
+            self.load_configuration, self.path_dict["file_path"]
+        )
+        ctk.CTkButton(
+            button_frame, text="Load configuration", command=load_config
+        ).grid(row=0, column=1)
+        button_frame.grid()
+        return button_frame
 
     def update_psa_selection(self, directory):
         """"""
         self.psa_paths = [path.name for path in Path(directory).iterdir()]
+        self.psa_paths = sorted(self.psa_paths, key=str.lower)
         self.step_frame.grid_forget()
         self.step_frame.destroy()
         self.step_frame = self.step_selection_frame()
         self.window.grid()
 
-    def add_processing_step(self, window, preset_value=""):
+    def add_processing_step(
+        self, window, step_number=0, preset_value="", psa_value=None
+    ):
         """
         Handles the processing step selection procedure.
         Automatically selects the closest named psa inside of the psa folder.
@@ -575,8 +673,9 @@ class Processing:
         -------
 
         """
-        new_step = tk.Frame(window)
+        new_step = ctk.CTkFrame(window)
         step = tk.StringVar(value=preset_value)
+        step.trace_add("write", self.update_processing_info)
 
         def psa_default_value(step_value):
             """
@@ -584,7 +683,7 @@ class Processing:
             """
             try:
                 psa_default_value = difflib.get_close_matches(
-                    step_value, self.psa_paths, n=1
+                    f"{step_value}.psa", self.psa_paths, n=1, cutoff=0.5
                 )[0]
             except IndexError:
                 psa_default_value = ""
@@ -593,73 +692,59 @@ class Processing:
         def update_psa_value(comboboxObject):
             """Automatically updates the corresponding psa value upon selecting
             a processing step."""
-            frame = comboboxObject.widget.master
-            psa_box_object = frame.winfo_children()[-1]
-            psa_box_object.set(psa_default_value(comboboxObject.widget.get()))
+            frame = new_step
+            psa_box_object = frame.winfo_children()[1]
+            psa_box_object.set(psa_default_value(comboboxObject))
 
-        psa = tk.StringVar(value=psa_default_value(preset_value))
+        if not psa_value:
+            psa_value = psa_default_value(preset_value)
+        psa = tk.StringVar(value=psa_value)
+        psa.trace_add("write", self.update_processing_info)
         self.step_var_dict[self.step_number] = (step, psa)
 
         step_box = ctk.CTkComboBox(
-            new_step, values=self.psa_modules, textvariable=step
+            new_step,
+            values=self.psa_modules,
+            variable=step,
+            command=update_psa_value,
         )
         step_box.set(preset_value)
         step_box.grid(row=0, column=0)
-        step_box.bind("<<ComboboxSelected>>", update_psa_value)
         psa_box = ctk.CTkComboBox(
-            new_step, values=self.psa_paths, textvariable=psa
+            new_step, values=self.psa_paths, variable=psa
         )
         psa_box.grid(row=0, column=1)
+        # TODO: handle recursive case correctly to allow new step below current
+        add_step = partial(self.new_processing_step, window, self.step_number)
+        ctk.CTkButton(
+            new_step, width=20, height=20, text="+", command=add_step
+        ).grid(row=0, column=2)
+        remove_step = partial(
+            self.remove_processing_step, new_step, step_number
+        )
+        ctk.CTkButton(
+            new_step, width=20, height=20, text="-", command=remove_step
+        ).grid(row=0, column=3)
         new_step.grid()
         self.step_number += 1
 
-    def remove_processing_step(self, frame):
+    def new_processing_step(self, frame, step_number):
+        self.add_processing_step(frame, step_number)
+        self.step_frame.grid()
+
+    def remove_processing_step(self, frame, step_number):
         """
         Handles all the steps needed to remove a processing step from the
         selection frame without leaving any code artifacts behind.
         """
-        last_element = frame.winfo_children()[-1]
-        last_element.grid_forget()
-        last_element.destroy()
-        self.step_var_dict.pop(self.step_number - 1)
-        self.step_number -= 1
+        frame.grid_forget()
+        frame.destroy()
+        self.step_var_dict.pop(step_number)
+        print(self.step_var_dict)
+        self.step_frame.grid()
+        self.window.grid()
 
-    def run_processing(self):
-        """Collects the processing step information and feeds it into the
-        batch processing routine."""
-        try:
-            info_dict = {
-                key.get(): value.get()
-                for _, (key, value) in self.step_var_dict.items()
-            }
-        except AttributeError:
-            pass
-        if self.processing_type == "canadian":
-            batch_processing = BatchProcessing(self.config, info_dict)
-            batch_processing.run()
-        elif self.processing_type == "own":
-            proc = own_processing(
-                config_path=self.config.path_to_config,
-                steps=info_dict,
-                input_file=self.config.last_filename,
-            )
-            proc.run()
-        elif self.processing_type == "windowsbatch":
-            self.config.reload()
-            self.path_dict["hex"] = tk.StringVar(
-                value=self.config.last_filename
-            )
-            selected_file = self.select_file("hex", self.path_dict["hex"])
-            if selected_file:
-                try:
-                    WindowsBatch(
-                        self.config.path_to_batch,
-                        self.path_dict["hex"].get(),
-                    )
-                except TypeError:
-                    pass
-
-    def select_file(self, file_type, variable):
+    def select_file(self, file_type: str, variable: tk.StringVar):
         """
         Generic file selection method, that opens a file browsing pop-up.
         """
@@ -669,13 +754,14 @@ class Processing:
             ("All files", "*.*"),
         )
 
-        if file_type == "psas":
+        if file_type in ("psas", "xmlcons") or file_type.endswith("directory"):
             directory = fd.askdirectory(
                 title=f"Path to {file_type}",
                 initialdir=path,
             )
             variable.set(directory)
-            self.update_psa_selection(directory)
+            if file_type == "psas":
+                self.update_psa_selection(directory)
 
         else:
             file = fd.askopenfilename(
@@ -690,6 +776,60 @@ class Processing:
             else:
                 return False
 
+    def update_processing_info(self, *args, **kwargs):
+        processing_dict = {
+            key: value.get() for key, value in self.path_dict.items()
+        }
+        processing_dict = {
+            **processing_dict,
+            "modules": self.export_module_and_psa_info(),
+        }
+        self.processing.processing_info = processing_dict
+
+    def export_module_and_psa_info(self) -> dict:
+        try:
+            info_dict = {
+                key.get(): ({"psa": value.get()} if value.get() != "" else {})
+                for _, (key, value) in self.step_var_dict.items()
+            }
+        except AttributeError:
+            info_dict = {}
+        return info_dict
+
+    def save_current_configuration(self):
+        current_file = Path(self.path_dict["file_path"].get())
+        new_file_name = fd.asksaveasfilename(
+            title="Save new config as",
+            initialdir=current_file.parent,
+            initialfile=current_file.name,
+        )
+        if new_file_name:
+            self.path_dict["file_path"].set(new_file_name)
+            processing_dict = {
+                key: value.get() for key, value in self.path_dict.items()
+            }
+            processing_dict = {
+                **processing_dict,
+                "modules": self.export_module_and_psa_info(),
+            }
+            self.processing.save(processing_dict)
+
+    def load_configuration(self, file_var: tk.StringVar):
+        if self.select_file("toml", file_var):
+            path_to_file = file_var.get()
+            if self.processing.load(path_to_file=path_to_file):
+                for frame in [
+                    self.path_frame,
+                    self.step_frame,
+                    self.button_frame,
+                ]:
+                    frame.grid_forget()
+                    frame.destroy()
+                self.update_values()
+            else:
+                # TODO: open a message window
+                pass
+
 
 class Configuration:
     """ """
@@ -697,15 +837,6 @@ class Configuration:
     def __init__(self, window, config) -> None:
         self.window = window
         self.config = config
-        # self.values_to_set = {
-        #     "output directory": tk.StringVar(
-        #         value=self.config.output_directory
-        #     ),
-        #     "xmlcon": tk.StringVar(value=self.config.xmlcon),
-        #     "Seasave Psa": tk.StringVar(value=self.config.seasave_psa),
-        #     "vCTD-Batch": tk.StringVar(value=self.config.path_to_batch),
-        #     "psa directory": tk.StringVar(value=self.config.psa_directory),
-        # }
         self.values_to_set = self.get_values_to_set()
         self.padx = 5
         self.pady = 5

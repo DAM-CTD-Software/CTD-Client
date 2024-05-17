@@ -3,7 +3,7 @@
 platforms = ['CTD', 'Scanfish']
 last_platform = "Scanfish"
 seasave_exe = "/home/emil/scripts/echo"
-processing_exes = ""
+processing_exes = '/home/emil/.wine/drive_c/Program Files (x86)/Sea-Bird/SBEDataProcessing-Win32/'
 number_of_bottles = 13
 
 [dship]
@@ -42,6 +42,7 @@ last = "Martin Sass"
     [ctd.memory]
     last_cast = 100
     last_filename = "/home/emil/Projects/CTD-Client/tests/data/48_62_CTD_0100.hex"
+    last_processing_file = ""
 
 [scanfish]
 
@@ -55,3 +56,4 @@ last = "Martin Sass"
     [scanfish.memory]
     last_cast = 11
     last_filename = "/home/emil/Projects/CTD-Client/tests/data/out/61_96_SF_0011.hex"
+    last_processing_file = "/home/emil/Projects/CTD-Client/templates/emb_basic.toml"

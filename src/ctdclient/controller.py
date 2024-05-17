@@ -1,17 +1,19 @@
 # setting for pyinstaller to allow clean stopage of all threads
-import multiprocessing
-multiprocessing.freeze_support()
-from pathlib import Path
-import platform
-import sys
-import customtkinter as ctk
-from code_tools.repeating import RepeatedTimer
-from code_tools.logging import configure_logging
-
-from ctdclient.configurationhandler import ConfigurationFile
-from ctdclient.dshipcaller import DSHIPHeader
-from ctdclient.bottles import BottleClosingDepths
 from ctdclient.view import MainWindow
+from ctdclient.bottles import BottleClosingDepths
+from ctdclient.dshipcaller import DSHIPHeader
+from ctdclient.configurationhandler import ConfigurationFile
+from code_tools.logging import configure_logging
+from code_tools.repeating import RepeatedTimer
+import customtkinter as ctk
+import sys
+import platform
+from pathlib import Path
+import multiprocessing
+
+from ctdclient.batchprocessing import MyProcessing
+
+multiprocessing.freeze_support()
 
 
 configure_logging("ctdclient.log")
@@ -41,8 +43,16 @@ class Controller:
         self.config = ConfigurationFile(config_path)
         self.dship_info = DSHIPHeader(self.config, dummy=True)
         self.bottles = BottleClosingDepths(self.config)
+        self.processing = MyProcessing(
+            processing_config=self.config.last_processing_file
+        )
         self.main_window = MainWindow(
-            self, self.root, self.config, self.dship_info, self.bottles
+            self,
+            self.root,
+            self.config,
+            self.dship_info,
+            self.bottles,
+            self.processing,
         )
         # fullscreen option:
         # root.after(0, lambda: root.state('zoomed'))

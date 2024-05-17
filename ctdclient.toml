@@ -42,6 +42,7 @@ last = "Julia Wickenhaeuser"
     [ctd.memory]
     last_cast = 13
     last_filename = "D:\\mig\\tests\\data\\out\\48_2_CTD_0013.hex"
+    last_processing_file = ""
 
 [scanfish]
 
@@ -55,3 +56,4 @@ last = "Julia Wickenhaeuser"
     [scanfish.memory]
     last_cast = 11
     last_filename = "D:\\mig\\tests\\data\\83_7_SF_0011.hex"
+    last_processing_file = ""

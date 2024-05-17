@@ -1,114 +1,90 @@
-import seabird_processing as sp
 from pathlib import Path
 import subprocess
 from code_tools.logging import get_logger
-
-from seabird_processing.configs import (
-    AirPressureConfig,
-    AlignCTDConfig,
-    BinAvgConfig,
-    BottleSumConfig,
-    CellTMConfig,
-    DatCnvConfig,
-    DeriveConfig,
-    DeriveTEOS10Config,
-    FilterConfig,
-    LoopEditConfig,
-    SeaPlotConfig,
-    SectionConfig,
-    W_FilterConfig,
-    WildEditConfig,
-)
-
-# maps processing step name to Class name inside of seabird_processing
-config_classes = {
-    "AirPressure": AirPressureConfig,
-    "AlignCTD": AlignCTDConfig,
-    "BinAvg": BinAvgConfig,
-    "BottleSum": BottleSumConfig,
-    "CellTM": CellTMConfig,
-    "DatCnv": DatCnvConfig,
-    "Derive": DeriveConfig,
-    "DeriveTEOS10": DeriveTEOS10Config,
-    "Filter": FilterConfig,
-    "LoopEdit": LoopEditConfig,
-    "SeaPlot": SeaPlotConfig,
-    "Section": SectionConfig,
-    "W_Filter": W_FilterConfig,
-    "WildEdit": WildEditConfig,
-}
+from processing import IncompleteConfigFile, ProcessingRoutine, Configuration
+from tomlkit.exceptions import NonExistentKey
 
 logger = get_logger(__name__)
 
+# TODO: rename file
 
-class BatchProcessing:
-    """
-    Handles the collection of parameters and preparation needed to use the
-    seabird_processing module of Hakai Institute.
-    The individual processing steps are collected inside of a dictionary that
-    holds the names and psas of the respective module. To this information,
-    the Class heavily relies on paths that are set inside of the configuration
-    file. The current setup needs an additional dictionary that maps the names
-    of the procssing step to their respective class equivalents inside of the
-    seabird_processing module, which is not able to handle these names itself.
-    """
+
+class MyProcessing:
+    """"""
 
     def __init__(
         self,
-        config,
-        processing_steps: dict,
+        processing_info: dict | None = None,
+        processing_config: Path | str | None = None,
+        template: Path | str = Path("templates/processing_template.toml"),
     ):
-        self.raw_hex = config.last_filename
-        self.xmlcon = config.xmlcon
-        self.psa_folder = config.psa_directory
-        self.outdir_path = config.output_directory
-        self.processing_steps = processing_steps
-        self.final_steps = {}
-
-    def get_processing_configs(self):
-        """Maps processing names inside the processing_steps dictionary to
-        classes of the seabird_processing module. Constructs a new dictionary
-        that fits those classes to the psas."""
-        for step, psa in self.processing_steps.items():
-            for step_name, proc_config in config_classes.items():
-                if step.lower() == step_name.lower():
-                    self.final_steps[proc_config] = psa
-        assert len(self.processing_steps) == len(self.final_steps)
-
-    def clean_psa_paths(self):
-        """Makes sure that all the paths inside the dictionaries are absolute,
-        by using the psa folder inside the config file as prefix."""
-        for step, psa_string in self.processing_steps.items():
-            psa = Path(psa_string)
-            if psa.is_absolute():
-                self.processing_steps[step] = psa
+        self.template = Configuration(template)
+        if processing_info:
+            self.processing_info = processing_info
+            # TODO: think about good default path here
+            self.file_path = Path("")
+        else:
+            if processing_config:
+                self.config_file = Configuration(Path(processing_config))
+                self.processing_info = self.config_file.data
+                self.file_path = self.config_file.path
             else:
-                self.processing_steps[step] = Path(self.psa_folder).joinpath(
-                    psa
+                self.config_file = self.template
+                self.processing_info = self.config_file.data
+                self.file_path = self.config_file.path
+                logger.warning(
+                    "Processing information is needed to run processing. Defaulting to template."
                 )
-
-    def create_config_objects(self) -> list:
-        """Produces the config objects needed by the seabird_processing batch
-        module. Brings all the needed information together and instantiates
-        the processing objects. These are kept inside of a list which can
-        directly be fed into the Batch class of seabird_processing."""
-        self.clean_psa_paths()
-        self.get_processing_configs()
-        config_objects = []
-        for step, psa in self.final_steps.items():
-            processing_object = step(
-                xmlcon=self.xmlcon, psa=psa, output_dir=self.outdir_path
-            )
-            config_objects.append(processing_object)
-        return config_objects
+        self.modules = self.processing_info["modules"]
+        self.input_file: Path | str
 
     def run(self):
-        """The main method of this Class, calls all the other methods and runs
-        the processing steps as batch process, using Seabirds own batch
-        processing routine."""
-        config_objects = self.create_config_objects()
-        batch_process = sp.Batch(config_objects)
-        batch_process.run(str(self.raw_hex))
+        """Runs a processing routine according to the preset values."""
+        # cheap hack to allow 'file_list' at specific position
+        pre_files = {}
+        for keys in ["exe_directory", "psa_directory"]:
+            try:
+                pre_files[keys] = self.processing_info.pop(keys)
+            except NonExistentKey:
+                pass
+        for keys in ["file_path", "file_list"]:
+            try:
+                del self.processing_info[keys]
+            except KeyError:
+                pass
+        self.processing_info = {
+            **pre_files,
+            "file_list": [self.input_file],
+            **self.processing_info,
+        }
+        ProcessingRoutine(self.processing_info).run()
+        self.save({"file_path": self.file_path, **self.processing_info})
+
+    def save(self, info_dict: dict):
+        new_file_path = info_dict["file_path"]
+        del info_dict["file_path"]
+        try:
+            # check config file values
+            ProcessingRoutine(info_dict)
+        except IncompleteConfigFile:
+            pass
+        finally:
+            new_file = Configuration(path=self.file_path)
+            new_file.data = info_dict
+            new_file.write(new_file_path)
+
+    def load(self, path_to_file: Path | str) -> bool:
+        try:
+            config_file = Configuration(path_to_file)
+            ProcessingRoutine(config_file.data)
+        except IncompleteConfigFile as error:
+            pass
+        finally:
+            self.config_file = config_file
+            self.processing_info = config_file.data
+            self.file_path = Path(path_to_file)
+            self.modules = self.processing_info["modules"]
+            return True
 
 
 class WindowsBatch:

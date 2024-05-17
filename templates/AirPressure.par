@@ -1,0 +1,17 @@
+[files]
+infile=d:\ctd_processing\tmp\input.cnv
+outfile=d:\ctd_processing\tmp\output.cnv
+
+[keys]
+key_pcol=prDM:
+key_apr=Luftdruck
+key_sens=t090C:,c0mS/cm:,sbeox0ML/L:
+key_ccol=c0mS/cm:
+key_sens=
+
+[press]
+pr_stda=1
+pr_user=900
+pr_uthresh=0.5
+pbl_time=13
+pr_lthresh=0.5

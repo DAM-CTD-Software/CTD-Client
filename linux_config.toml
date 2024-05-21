@@ -4,6 +4,7 @@ platforms = ['CTD', 'Scanfish']
 last_platform = "Scanfish"
 seasave_exe = "/home/emil/scripts/echo"
 number_of_bottles = 13
+downcast_option = false
 
 [dship]
 ip='192.168.236.60'

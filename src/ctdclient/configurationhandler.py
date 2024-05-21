@@ -40,6 +40,7 @@ class ConfigurationFile:
             self.path_to_seasave: Path = Path(self.data["seasave_exe"])
             self.number_of_bottles: int = self.data["number_of_bottles"]
             assert isinstance(self.number_of_bottles, int)
+            self.downcast_option: bool = self.data["downcast_option"]
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dhsip_fetch_intervall: float = float(
                 self.data["dship"]["fetch_intervall"]

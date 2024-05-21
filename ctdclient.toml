@@ -4,6 +4,7 @@ platforms = ['CTD', 'Scanfish']
 last_platform = "CTD"
 seasave_exe = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\Seasave.exe"
 number_of_bottles = 13
+downcast_option = false
 
 [dship]
 ip='192.168.236.60'

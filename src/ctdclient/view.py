@@ -115,6 +115,7 @@ class Measurement:
         }
         self.all_platforms = self.config.platforms
         self.save_btl_config = tk.BooleanVar(value=False)
+        self.downcast_option = self.config.downcast_option
 
         # configure window layout
         self.window.columnconfigure(0, weight=1)
@@ -319,12 +320,17 @@ class Measurement:
             ctk.CTkEntry(
                 bottle_frame, textvariable=textvariable, justify="center"
             ).grid(row=index + 1, column=1)
-        # ctk.CTkCheckBox(
-        #     bottle_frame,
-        #     text="Save Bottle Configuration",
-        #     variable=self.save_btl_config,
-        # ).grid(column=1)
+        row = len(bottle_frame.winfo_children())
+        ctk.CTkButton(
+            bottle_frame, text="Reset bottles", command=self.reset_bottles
+        ).grid(row=row + 1, column=0, columnspan=2, pady=5)
         return bottle_frame
+
+    def reset_bottles(self):
+        for variable in self.bottle_values.values():
+            variable.set("")
+        self.frame_bottle.grid()
+        self.window.grid()
 
     def run_frame(self):
         """
@@ -342,32 +348,32 @@ class Measurement:
         """
         # start measurement
         run_frame = ctk.CTkFrame(self.window)
-        seasave_frame = ctk.CTkFrame(run_frame)
         self.autostart = tk.BooleanVar(value=True)
         ctk.CTkCheckBox(
-            seasave_frame,
+            run_frame,
             text="autostart",
             variable=self.autostart,
-        ).grid()
-        # self.downcast = tk.BooleanVar(value=True)
-        # ctk.CTkCheckBox(
-        #     run_frame,
-        #     text="downcast",
-        #     variable=self.downcast,
-        # ).grid()
+        ).grid(row=0, pady=2)
+        row = 1
+        if self.downcast_option:
+            self.downcast = tk.BooleanVar(value=True)
+            ctk.CTkCheckBox(
+                run_frame,
+                text="downcast",
+                variable=self.downcast,
+            ).grid(row=row)
+            row += 1
         ctk.CTkButton(
-            seasave_frame,
+            run_frame,
             text="Start Seasave",
             command=self.start_seasave,
-        ).grid()
-        processing_frame = ctk.CTkFrame(run_frame)
+        ).grid(row=row, column=0, sticky=tk.W, padx=20, pady=5)
         ctk.CTkButton(
-            processing_frame,
+            run_frame,
             text="Run Processing",
             command=self.run_processing,
-        ).grid()
-        seasave_frame.grid()
-        processing_frame.grid()
+        ).grid(row=row, column=1, sticky=tk.E, padx=20, pady=5)
+        run_frame.grid()
         return run_frame
 
     def stopwatch_frame(self):
@@ -552,8 +558,6 @@ class Processing:
         self.path_dict = self.get_values_to_set()
 
         self.path_frame = self.path_selection_frame()
-        # self.step_frame = self.step_selection_frame()
-        # self.button_frame = self.config_save_load_frame()
         self.window.grid()
 
     def get_values_to_set(self):
@@ -635,7 +639,6 @@ class Processing:
         Frame to hold the dynamic drop-downs for processing step and psa
         selection.
         """
-        # frame = ctk.CTkFrame(self.window)
         ctk.CTkLabel(
             frame,
             text="Processing steps",
@@ -667,7 +670,6 @@ class Processing:
         return frame
 
     def config_save_load_frame(self, frame):
-        # button_frame = ctk.CTkFrame(self.window)
         row = len(frame.winfo_children())
         ctk.CTkButton(
             frame,
@@ -767,7 +769,6 @@ class Processing:
 
     def new_processing_step(self, frame, step_number):
         self.add_processing_step(frame, step_number)
-        # self.step_frame.grid()
 
     def remove_processing_step(self, frame, step_number):
         """
@@ -777,8 +778,6 @@ class Processing:
         frame.grid_forget()
         frame.destroy()
         self.step_var_dict.pop(step_number)
-        print(self.step_var_dict)
-        # self.step_frame.grid()
         self.window.grid()
 
     def select_file(self, file_type: str, variable: tk.StringVar):
@@ -857,8 +856,6 @@ class Processing:
             if self.processing.load(path_to_file=path_to_file):
                 for frame in [
                     self.path_frame,
-                    # self.step_frame,
-                    # self.button_frame,
                 ]:
                     frame.grid_forget()
                     frame.destroy()

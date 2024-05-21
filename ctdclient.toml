@@ -3,7 +3,6 @@
 platforms = ['CTD', 'Scanfish']
 last_platform = "CTD"
 seasave_exe = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\Seasave.exe"
-processing_exes = "C:\\Program Files (x86)\\Sea-Bird\\SBEDataProcessing-Win32"
 number_of_bottles = 13
 
 [dship]
@@ -36,8 +35,6 @@ last = "Julia Wickenhaeuser"
     seasave_psa = "D:\\mig\\tests\\data\\Seasave_test.psa"
     output_directory = "D:\\mig\\tests\\data\\out"
     xmlcon = "D:\\mig\\tests\\data\\EMB295_003-01_CTD_0003.XMLCON"
-    batch_path = "D:\\mig\\tests\\data\\processing_batch.bat"
-    psa_directory = "D:\\mig\\tests\\data\\psas"
 
     [ctd.memory]
     last_cast = 13
@@ -50,8 +47,6 @@ last = "Julia Wickenhaeuser"
     seasave_psa = "D:\\mig\\tests\\data\\scanfish.psa"
     output_directory = "D:\\mig\\tests\\data"
     xmlcon = "D:\\mig\\tests\\data\\EMB295_003-01_CTD_0003.XMLCON"
-    batch_path = "D:\\mig\\tests\\data\\processing_batch.bat"
-    psa_directory = "D:\\mig\\tests\\data\\psas"
 
     [scanfish.memory]
     last_cast = 11

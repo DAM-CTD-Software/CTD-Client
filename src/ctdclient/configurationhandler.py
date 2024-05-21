@@ -38,9 +38,6 @@ class ConfigurationFile:
             self.last_platform: str = self.data["last_platform"]
             assert isinstance(self.last_platform, str)
             self.path_to_seasave: Path = Path(self.data["seasave_exe"])
-            self.path_to_processing_exes: Path = Path(
-                self.data["processing_exes"]
-            )
             self.number_of_bottles: int = self.data["number_of_bottles"]
             assert isinstance(self.number_of_bottles, int)
             self.dship_ip: str = self.data["dship"]["ip"]
@@ -72,12 +69,6 @@ class ConfigurationFile:
                 self.data[ctd_type]["paths"]["output_directory"]
             )
             self.xmlcon: Path = Path(self.data[ctd_type]["paths"]["xmlcon"])
-            self.path_to_batch: Path = Path(
-                self.data[ctd_type]["paths"]["batch_path"]
-            )
-            self.psa_directory: Path = Path(
-                self.data[ctd_type]["paths"]["psa_directory"]
-            )
             self.last_cast: int = self.data[ctd_type]["memory"]["last_cast"]
             self.last_filename: Path = Path(
                 self.data[ctd_type]["memory"]["last_filename"]
@@ -97,8 +88,6 @@ class ConfigurationFile:
             self.output_directory
         )
         self.data[ctd_type]["paths"]["xmlcon"] = str(self.xmlcon)
-        self.data[ctd_type]["paths"]["batch_path"] = str(self.path_to_batch)
-        self.data[ctd_type]["paths"]["psa_directory"] = str(self.psa_directory)
         self.data[ctd_type]["memory"]["last_cast"] = self.last_cast
         self.data[ctd_type]["memory"]["last_filename"] = str(
             self.last_filename

@@ -3,7 +3,6 @@
 platforms = ['CTD', 'Scanfish']
 last_platform = "Scanfish"
 seasave_exe = "/home/emil/scripts/echo"
-processing_exes = '/home/emil/.wine/drive_c/Program Files (x86)/Sea-Bird/SBEDataProcessing-Win32/'
 number_of_bottles = 13
 
 [dship]
@@ -36,8 +35,6 @@ last = "Martin Sass"
     seasave_psa = "/home/emil/Projects/CTD-Client/tests/data/Seasave_test.psa"
     output_directory = "/home/emil/Projects/CTD-Client/tests"
     xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB295_003-01_CTD_0003.XMLCON"
-    batch_path = "/home/emil/scripts/echo"
-    psa_directory = "."
 
     [ctd.memory]
     last_cast = 100
@@ -50,8 +47,6 @@ last = "Martin Sass"
     seasave_psa = "/home/emil/Projects/CTD-Client/tests/data/scanfish.psa"
     output_directory = "/home/emil/Projects/CTD-Client/tests/data/out"
     xmlcon = "/home/emil/Projects/CTD-Client/tests/data/EMB356_011-01_CTD_0010.XMLCON"
-    batch_path = "/home/emil/scripts/weather"
-    psa_directory = "."
 
     [scanfish.memory]
     last_cast = 11

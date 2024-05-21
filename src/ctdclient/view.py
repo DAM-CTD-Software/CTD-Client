@@ -12,7 +12,6 @@ from typing import Callable
 import importlib.metadata
 from sys import platform
 
-from ctdclient.batchprocessing import MyProcessing, WindowsBatch
 from ctdclient.runseasave import RunSeasave
 
 
@@ -25,7 +24,7 @@ class MainWindow:
         self.config = config
         root.title(
             f"DAM CTD Software v{
-                   importlib.metadata.version('ctdclient')}"
+                importlib.metadata.version('ctdclient')}"
         )
         # Because CTkToplevel currently is bugged on windows
         # and doesn't check if a user specified icon is set
@@ -544,6 +543,7 @@ class Processing:
             self.psa_paths = [
                 path.name for path in Path(self.psa_dir.get()).iterdir()
             ]
+            self.psa_paths = sorted(self.psa_paths, key=str.lower)
         except FileNotFoundError as error:
             # TODO: open window with message
             pass
@@ -552,8 +552,8 @@ class Processing:
         self.path_dict = self.get_values_to_set()
 
         self.path_frame = self.path_selection_frame()
-        self.step_frame = self.step_selection_frame()
-        self.button_frame = self.config_save_load_frame()
+        # self.step_frame = self.step_selection_frame()
+        # self.button_frame = self.config_save_load_frame()
         self.window.grid()
 
     def get_values_to_set(self):
@@ -570,50 +570,86 @@ class Processing:
             value.trace_add("write", self.update_processing_info)
         return value_dict
 
-    def path_selection_frame(self, padx=5, pady=5):
-        """
-        Frame that encapsulates the selection of the three paths needed in
-        order to run the processing.
-        """
+    def path_selection_frame(self):
         frame = ctk.CTkFrame(self.window)
-        for index, (parameter_name, variable) in enumerate(
-            self.path_dict.items()
-        ):
-            # individual frame construction
-            single_frame = ctk.CTkFrame(frame)
-            single_frame.columnconfigure(0, weight=1)
-            single_frame.columnconfigure(1, weight=7)
-            single_frame.columnconfigure(2, weight=1)
-            if parameter_name not in ("new_file_name", "file_suffix"):
+        row = 0
+        ctk.CTkLabel(
+            frame,
+            text="Processing settings",
+            font=(tkFont.nametofont("TkDefaultFont"), 20),
+        ).grid(
+            row=row,
+            column=0,
+            sticky=tk.W,
+            padx=self.padx,
+            pady=self.pady,
+        )
+        ttk.Separator(frame, orient="horizontal").grid(
+            row=row + 1, sticky=tk.E + tk.W
+        )
+        for index, (name, variable) in enumerate(self.path_dict.items()):
+            row = index + 2
+            ctk.CTkLabel(frame, text=f"{name.replace('_', ' ')}: ").grid(
+                row=row,
+                column=0,
+                sticky=tk.W,
+                padx=self.padx,
+                pady=self.pady,
+            )
+            if name in ("new_file_name", "file_suffix"):
+                ctk.CTkEntry(frame, textvariable=variable).grid(
+                    row=row,
+                    column=1,
+                    sticky=tk.E,
+                    padx=self.padx,
+                    pady=self.pady,
+                )
+            else:
                 ctk.CTkLabel(
-                    single_frame, text=f"Path to {parameter_name}"
-                ).grid(row=index, column=0, sticky=tk.W, padx=padx, pady=pady)
-                ctk.CTkEntry(single_frame, textvariable=variable).grid(
-                    row=index, column=1, sticky=tk.E, padx=padx, pady=pady
+                    frame,
+                    textvariable=variable,
+                    font=(tkFont.nametofont("TkDefaultFont"), 10),
+                ).grid(
+                    row=row,
+                    column=1,
+                    sticky=tk.E,
+                    padx=self.padx,
+                    pady=self.pady,
                 )
                 command_with_arguments = partial(
-                    self.select_file, parameter_name, variable
+                    self.select_file, name, variable
                 )
                 ctk.CTkButton(
-                    single_frame, text="Browse", command=command_with_arguments
-                ).grid(row=index, column=2, padx=padx, pady=pady)
-            else:
-                ctk.CTkLabel(single_frame, text=f"{parameter_name}").grid(
-                    row=index, column=0, sticky=tk.W, padx=padx, pady=pady
-                )
-                ctk.CTkEntry(single_frame, textvariable=variable).grid(
-                    row=index, column=1, sticky=tk.E, padx=padx, pady=pady
-                )
-            single_frame.grid()
+                    frame,
+                    text="Browse",
+                    command=command_with_arguments,
+                    width=28,
+                ).grid(row=row, column=2, padx=self.padx, pady=self.pady)
         frame.grid()
+        self.step_selection_frame(frame, row + 1)
+        self.config_save_load_frame(frame)
         return frame
 
-    def step_selection_frame(self):
+    def step_selection_frame(self, frame, row):
         """
         Frame to hold the dynamic drop-downs for processing step and psa
         selection.
         """
-        frame = ctk.CTkFrame(self.window)
+        # frame = ctk.CTkFrame(self.window)
+        ctk.CTkLabel(
+            frame,
+            text="Processing steps",
+            font=(tkFont.nametofont("TkDefaultFont"), 20),
+        ).grid(
+            row=row,
+            column=0,
+            sticky=tk.W,
+            padx=self.padx,
+            pady=self.pady,
+        )
+        ttk.Separator(frame, orient="horizontal").grid(
+            row=row + 1, sticky=tk.E + tk.W
+        )
         self.step_number = 1
         self.step_var_dict = {}
         # steps and psas frame
@@ -626,33 +662,34 @@ class Processing:
             self.add_processing_step(
                 modules_frame, self.step_number, user_defined_step, psa_value
             )
-        modules_frame.grid()
+        modules_frame.grid(column=1)
         frame.grid()
         return frame
 
-    def config_save_load_frame(self):
-        button_frame = ctk.CTkFrame(self.window)
+    def config_save_load_frame(self, frame):
+        # button_frame = ctk.CTkFrame(self.window)
+        row = len(frame.winfo_children())
         ctk.CTkButton(
-            button_frame,
+            frame,
             text="Save current configuration",
             command=self.save_current_configuration,
-        ).grid(row=0, column=0)
+        ).grid(row=row, column=0, sticky=tk.W, pady=10)
         load_config = partial(
             self.load_configuration, self.path_dict["file_path"]
         )
         ctk.CTkButton(
-            button_frame, text="Load configuration", command=load_config
-        ).grid(row=0, column=1)
-        button_frame.grid()
-        return button_frame
+            frame, text="Load configuration", command=load_config
+        ).grid(row=row, column=1, sticky=tk.E, pady=10)
+        frame.grid()
+        return frame
 
     def update_psa_selection(self, directory):
         """"""
         self.psa_paths = [path.name for path in Path(directory).iterdir()]
         self.psa_paths = sorted(self.psa_paths, key=str.lower)
-        self.step_frame.grid_forget()
-        self.step_frame.destroy()
-        self.step_frame = self.step_selection_frame()
+        self.path_frame.grid_forget()
+        self.path_frame.destroy()
+        self.path_frame = self.path_selection_frame()
         self.window.grid()
 
     def add_processing_step(
@@ -709,11 +746,11 @@ class Processing:
             command=update_psa_value,
         )
         step_box.set(preset_value)
-        step_box.grid(row=0, column=0)
+        step_box.grid(row=0, column=0, padx=2, pady=2)
         psa_box = ctk.CTkComboBox(
             new_step, values=self.psa_paths, variable=psa
         )
-        psa_box.grid(row=0, column=1)
+        psa_box.grid(row=0, column=1, padx=2, pady=2)
         # TODO: handle recursive case correctly to allow new step below current
         add_step = partial(self.new_processing_step, window, self.step_number)
         ctk.CTkButton(
@@ -730,7 +767,7 @@ class Processing:
 
     def new_processing_step(self, frame, step_number):
         self.add_processing_step(frame, step_number)
-        self.step_frame.grid()
+        # self.step_frame.grid()
 
     def remove_processing_step(self, frame, step_number):
         """
@@ -741,7 +778,7 @@ class Processing:
         frame.destroy()
         self.step_var_dict.pop(step_number)
         print(self.step_var_dict)
-        self.step_frame.grid()
+        # self.step_frame.grid()
         self.window.grid()
 
     def select_file(self, file_type: str, variable: tk.StringVar):
@@ -760,7 +797,7 @@ class Processing:
                 initialdir=path,
             )
             variable.set(directory)
-            if file_type == "psas":
+            if file_type == "psa_directory":
                 self.update_psa_selection(directory)
 
         else:
@@ -820,8 +857,8 @@ class Processing:
             if self.processing.load(path_to_file=path_to_file):
                 for frame in [
                     self.path_frame,
-                    self.step_frame,
-                    self.button_frame,
+                    # self.step_frame,
+                    # self.button_frame,
                 ]:
                     frame.grid_forget()
                     frame.destroy()

@@ -74,8 +74,8 @@ class MyProcessing:
             new_file.write(new_file_path)
 
     def load(self, path_to_file: Path | str) -> bool:
+        config_file = Configuration(path_to_file)
         try:
-            config_file = Configuration(path_to_file)
             ProcessingRoutine(config_file.data)
         except IncompleteConfigFile as error:
             pass

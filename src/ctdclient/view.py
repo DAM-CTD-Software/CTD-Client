@@ -556,6 +556,7 @@ class Processing:
 
         self.steps = []
         self.path_dict = self.get_values_to_set()
+        self.file_path = tk.StringVar(value=self.processing.file_path)
 
         self.path_frame = self.path_selection_frame()
         self.window.grid()
@@ -565,10 +566,6 @@ class Processing:
             key: tk.StringVar(value=value)
             for key, value in self.processing.processing_info.items()
             if key not in ("modules", "file_list")
-        }
-        value_dict = {
-            "file_path": tk.StringVar(value=self.processing.file_path),
-            **value_dict,
         }
         for value in value_dict.values():
             value.trace_add("write", self.update_processing_info)
@@ -585,6 +582,17 @@ class Processing:
             row=row,
             column=0,
             sticky=tk.W,
+            padx=self.padx,
+            pady=self.pady,
+        )
+        ctk.CTkLabel(
+            frame,
+            text=Path(self.file_path.get()).name,
+            font=(tkFont.nametofont("TkDefaultFont"), 14),
+        ).grid(
+            row=row,
+            column=1,
+            sticky=tk.E,
             padx=self.padx,
             pady=self.pady,
         )
@@ -676,11 +684,8 @@ class Processing:
             text="Save current configuration",
             command=self.save_current_configuration,
         ).grid(row=row, column=0, sticky=tk.W, pady=10)
-        load_config = partial(
-            self.load_configuration, self.path_dict["file_path"]
-        )
         ctk.CTkButton(
-            frame, text="Load configuration", command=load_config
+            frame, text="Load configuration", command=self.load_configuration
         ).grid(row=row, column=1, sticky=tk.E, pady=10)
         frame.grid()
         return frame
@@ -833,14 +838,14 @@ class Processing:
         return info_dict
 
     def save_current_configuration(self):
-        current_file = Path(self.path_dict["file_path"].get())
+        current_file = Path(self.file_path.get())
         new_file_name = fd.asksaveasfilename(
             title="Save new config as",
             initialdir=current_file.parent,
             initialfile=current_file.name,
         )
         if new_file_name:
-            self.path_dict["file_path"].set(new_file_name)
+            self.file_path.set(new_file_name)
             processing_dict = {
                 key: value.get() for key, value in self.path_dict.items()
             }
@@ -849,10 +854,11 @@ class Processing:
                 "modules": self.export_module_and_psa_info(),
             }
             self.processing.save(processing_dict)
+            self.processing.file_path = new_file_name
 
-    def load_configuration(self, file_var: tk.StringVar):
-        if self.select_file("toml", file_var):
-            path_to_file = file_var.get()
+    def load_configuration(self):
+        if self.select_file("toml", self.file_path):
+            path_to_file = self.file_path.get()
             if self.processing.load(path_to_file=path_to_file):
                 for frame in [
                     self.path_frame,

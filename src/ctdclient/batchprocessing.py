@@ -58,11 +58,9 @@ class MyProcessing:
             **self.processing_info,
         }
         ProcessingRoutine(self.processing_info).run()
-        self.save({"file_path": self.file_path, **self.processing_info})
+        self.save(self.processing_info)
 
     def save(self, info_dict: dict):
-        new_file_path = info_dict["file_path"]
-        del info_dict["file_path"]
         try:
             # check config file values
             ProcessingRoutine(info_dict)
@@ -71,7 +69,7 @@ class MyProcessing:
         finally:
             new_file = Configuration(path=self.file_path)
             new_file.data = info_dict
-            new_file.write(new_file_path)
+            new_file.write(self.file_path)
 
     def load(self, path_to_file: Path | str) -> bool:
         config_file = Configuration(path_to_file)

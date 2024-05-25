@@ -19,6 +19,7 @@ class MyProcessing:
         template: Path | str = Path("templates/processing_template.toml"),
     ):
         self.template = Configuration(template)
+        self.optional_options = self.template["optional"]
         if processing_info:
             self.processing_info = processing_info
             # TODO: think about good default path here

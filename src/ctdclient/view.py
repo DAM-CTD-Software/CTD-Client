@@ -11,6 +11,7 @@ import datetime
 from typing import Callable
 import importlib.metadata
 from sys import platform
+from tomlkit.exceptions import NonExistentKey
 
 from ctdclient.runseasave import RunSeasave
 
@@ -565,8 +566,19 @@ class Processing:
         value_dict = {
             key: tk.StringVar(value=value)
             for key, value in self.processing.processing_info.items()
-            if key not in ("modules", "file_list")
+            if key not in ("modules", "file_list", "optional")
         }
+        try:
+            optional_values = {
+                key: tk.StringVar(value=value)
+                for key, value in self.processing.processing_info[
+                    "optional"
+                ].items()
+            }
+        except (NonExistentKey, KeyError):
+            pass
+        else:
+            value_dict = {**value_dict, **optional_values}
         for value in value_dict.values():
             value.trace_add("write", self.update_processing_info)
         return value_dict
@@ -637,10 +649,64 @@ class Processing:
                     command=command_with_arguments,
                     width=28,
                 ).grid(row=row, column=2, padx=self.padx, pady=self.pady)
+            if name in self.processing.optional_options.keys():
+                remove_option = partial(
+                    self.remove_processing_option, name, variable
+                )
+                ctk.CTkButton(
+                    frame,
+                    text="-",
+                    command=remove_option,
+                    width=10,
+                    height=10,
+                ).grid(row=row, column=3)
+        row += 1
+        ctk.CTkLabel(frame, text="Add option:").grid(column=0, sticky=tk.W)
+        self.option_variable = tk.StringVar(value="")
+        new_option = ctk.CTkComboBox(
+            frame,
+            values=[
+                str(key)
+                for key in self.processing.optional_options.keys()
+                if key not in self.path_dict.keys()
+            ],
+            variable=self.option_variable,
+        )
+        new_option.grid(
+            row=row,
+            column=1,
+            sticky=tk.E,
+            padx=self.padx,
+            pady=self.pady,
+        )
+        add_processing_option = partial(self.add_processing_option)
+        ctk.CTkButton(
+            frame, text="+", width=10, height=10, command=add_processing_option
+        ).grid(row=row, column=3, sticky=tk.E)
         frame.grid()
         self.step_selection_frame(frame, row + 1)
         self.config_save_load_frame(frame)
         return frame
+
+    def add_processing_option(self):
+        try:
+            self.processing.processing_info["optional"][
+                self.option_variable.get()
+            ] = ""
+        except KeyError:
+            self.processing.processing_info["optional"] = {}
+            self.processing.processing_info["optional"][
+                self.option_variable.get()
+            ] = ""
+        self.path_frame.grid_forget()
+        self.path_frame.destroy()
+        self.update_values()
+
+    def remove_processing_option(self, name, variable):
+        del self.processing.processing_info[name]
+        self.path_frame.grid_forget()
+        self.path_frame.destroy()
+        self.update_values()
 
     def step_selection_frame(self, frame, row):
         """

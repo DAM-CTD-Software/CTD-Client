@@ -1,17 +1,13 @@
 exe_directory = "/home/emil/.wine/drive_c/Program Files (x86)/Sea-Bird/SBEDataProcessing-Win32/"
 psa_directory = "/home/emil/Projects/CTD-Client/tests/data/psas/EMB356/"
-xmlcons = ""
 output_directory = "/home/emil/Projects/CTD-Client/tests/data/out"
-file_type_dir = "/home/emil/Projects/CTD-Client/EMB356/"
-new_file_name = ""
-file_suffix = ""
 
 [modules]
 [modules.datcnv]
 psa = "DatCnv.psa"
 
-[modules.wildedit]
-psa = "WildEdit.psa"
+[modules.airpressure]
+psa = "AirPressure.par"
 
 [modules.w_filter]
 psa = "W_Filter.psa"
@@ -24,12 +20,6 @@ psa = "CellTM.psa"
 
 [modules.derive]
 psa = "Derive.psa"
-
-[modules.bottlesum]
-psa = "BottleSum.psa"
-
-[modules.iow_btl_id]
-psa = "WildEdit.psa"
 
 [modules.binavg]
 psa = "BinAvg_1.psa"

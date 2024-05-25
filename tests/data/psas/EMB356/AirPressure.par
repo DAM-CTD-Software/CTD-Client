@@ -1,14 +1,12 @@
 [files]
-infile=d:\ctd_data\tmp\input.cnv
-outfile=d:\ctd_data\tmp\output.cnv
-
+infile=/tmp/tmpinz4hx9r/emb304_004-01_ctd_0004.cnv
+outfile=/tmp/tmpinz4hx9r
 [keys]
 key_pcol=prDM:
 key_apr=Luftdruck
 key_sens=t090C:,c0mS/cm:,sbeox0ML/L:
 key_ccol=c0mS/cm:
 key_sens=
-
 [press]
 pr_stda=1
 pr_user=900

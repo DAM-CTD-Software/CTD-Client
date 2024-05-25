@@ -228,15 +228,23 @@ class DSHIPHeader:
             except AttributeError:
                 formatted_value = "000-00"
         elif name == "GPS_Lat":
-            first_part, second_part = value.split()
-            formatted_value = f"{first_part} {float(second_part):2.3f} N"
+            try:
+                first_part, second_part = value.split()
+                formatted_value = f"{first_part} {float(second_part):2.3f} N"
+            except ValueError:
+                formatted_value = f"{float(value):2.3f} N"
         elif name == "GPS_Lon":
-            first_part, second_part = value.split()
-            if float(second_part) < 10:
-                gap = "  "
-            else:
-                gap = " "
-            formatted_value = f"{first_part}{gap}{float(second_part):2.3f} E"
+            try:
+                first_part, second_part = value.split()
+                if float(second_part) < 10:
+                    gap = "  "
+                else:
+                    gap = " "
+                formatted_value = (
+                    f"{first_part}{gap}{float(second_part):2.3f} E"
+                )
+            except ValueError:
+                formatted_value = f"{float(value):2.3f} E"
         elif name == "Echo_Depth":
             formatted_value = f"{float(value): .1f} m"
         elif name == "Air_Pressure":

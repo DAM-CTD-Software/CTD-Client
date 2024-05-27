@@ -424,14 +424,16 @@ class Measurement:
         """
         # TODO: handle exceptions
         # TODO: move into controller
-        if self.current_filename.get() == self.last_filename.get():
+        if (self.current_filename.get() == self.last_filename.get()) and Path(
+            self.last_filename.get()
+        ).exists():
             msg = CTkMessagebox(
                 title="Warning",
                 message=f"Caution! Do you really want to override the last filename {
                     self.last_filename.get()}?",
                 icon="warning",
                 option_1="Cancel",
-                option_2="Go on",
+                option_2="Yes",
             )
             if msg.get() == "Cancel":
                 return

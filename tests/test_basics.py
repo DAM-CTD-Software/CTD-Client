@@ -22,11 +22,11 @@ class TestConfig(unittest.TestCase):
         self.config = ConfigurationFile(config_path)
 
     def test_basic_loading(self):
-        self.assertEqual(len(self.config.data), 9)
+        self.assertEqual(len(self.config.data), 8)
 
     def test_basic_modify(self):
         self.config.modify("blub", "test")
-        self.assertEqual(len(self.config.data), 10)
+        self.assertEqual(len(self.config.data), 9)
         self.config.modify(["number_of_bottles"], 5)
         self.assertEqual(self.config["number_of_bottles"], 5)
 
@@ -38,8 +38,8 @@ class TestConfig(unittest.TestCase):
 class TestBottles(unittest.TestCase):
 
     def setUp(self):
-        config = ConfigurationFile(config_path)
-        self.bottles = BottleClosingDepths(config)
+        self.config = ConfigurationFile(config_path)
+        self.bottles = BottleClosingDepths(self.config)
 
     def test_correct_base_dict(self):
         self.assertEqual(len(self.bottles), 13)
@@ -53,6 +53,22 @@ class TestBottles(unittest.TestCase):
             self.bottles.data,
             {number: "" for number in range(1, 18)},
         )
+
+    def test_bottle_set_to_1(self):
+        self.bottles.data = {1: "1.0", 2: "3.0"}
+        self.bottles.update_psa()
+        watersampler = self.config.psa["SeasaveProgramSetup"]["Settings"][
+            "WaterSamplerConfiguration"
+        ]
+        bottles = watersampler["AutoFireData"]["DataTable"]["Row"]
+        for bottle in bottles:
+            if bottle["@BottleNumber"] == "1":
+                self.assertEqual(bottle["@FireAt"], "0.0")
+                return
+            # elif bottle["@BottleNumber"] == "2":
+            #     self.assertEqual(bottle["@FireAt"], "3.0")
+            #     return
+        self.assertTrue(False)
 
 
 class TestMetadataHeader(unittest.TestCase):

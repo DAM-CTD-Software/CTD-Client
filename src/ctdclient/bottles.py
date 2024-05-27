@@ -53,4 +53,6 @@ class BottleClosingDepths(UserDict):
         Calls the psa editing method of SeasavePsa of the seabirdfilehandler
         in order to generate the XML code necessary to set the bottle layout.
         """
-        self.config.psa.set_bottle_fire_info(self.data)
+        self.config.psa.set_bottle_fire_info(
+            bottle_info=self.data, number_of_bottles=self.number_of_bottles
+        )

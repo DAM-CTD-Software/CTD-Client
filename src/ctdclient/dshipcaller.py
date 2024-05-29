@@ -254,11 +254,14 @@ class DSHIPHeader:
         return formatted_value
 
     def build_file_name(self, cast_number, platform):
-        cruise = self.dship_values["Cruise"]
-        # handle special case when a cruise consists of two separate legs and
-        # indicates that by a /
-        if "/" in cruise:
-            cruise = cruise.replace("/", "_")
+        try:
+            cruise = self.dship_values["Cruise"]
+            # handle special case when a cruise consists of two separate legs and
+            # indicates that by a /
+            if "/" in cruise:
+                cruise = cruise.replace("/", "_")
+        except KeyError:
+            cruise = ""
         station = self.dship_values["Station"]
         cast_number = int(cast_number.get())
         platform_name_mapper = {

@@ -43,9 +43,15 @@ class Controller:
         self.config = ConfigurationFile(config_path)
         self.dship_info = DSHIPHeader(self.config, dummy=True)
         self.bottles = BottleClosingDepths(self.config)
-        self.processing = MyProcessing(
-            processing_config=self.config.last_processing_file
-        )
+        proc_file = Path(self.config.last_processing_file)
+        if proc_file.suffix == ".toml":
+            self.processing = MyProcessing(
+                processing_config=self.config.last_processing_file
+            )
+        else:
+            self.processing = MyProcessing()
+            self.processing.file_path = proc_file
+            self.processing.use_custom_script = proc_file
         self.main_window = MainWindow(
             self,
             self.root,

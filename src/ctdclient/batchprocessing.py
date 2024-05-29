@@ -1,5 +1,6 @@
 from pathlib import Path
 import subprocess
+from time import sleep
 from code_tools.logging import get_logger
 from processing import IncompleteConfigFile, ProcessingRoutine, Configuration
 from tomlkit.exceptions import NonExistentKey
@@ -33,14 +34,19 @@ class MyProcessing:
                 self.config_file = self.template
                 self.processing_info = self.config_file.data
                 self.file_path = self.config_file.path
-                logger.warning(
-                    "Processing information is needed to run processing. Defaulting to template."
-                )
         self.modules = self.processing_info["modules"]
         self.input_file: Path | str
+        self.use_custom_script: bool | Path = False
 
     def run(self):
         """Runs a processing routine according to the preset values."""
+        if self.use_custom_script:
+            self.file_path = self.use_custom_script
+            self.process = WindowsBatch(
+                self.use_custom_script, self.input_file
+            )
+            self.process.run()
+            return
         # cheap hack to allow 'file_list' at specific position
         pre_files = {}
         for keys in ["exe_directory", "psa_directory"]:
@@ -58,8 +64,17 @@ class MyProcessing:
             "file_list": [self.input_file],
             **self.processing_info,
         }
-        ProcessingRoutine(self.processing_info).run()
+        self.process = ProcessingRoutine(self.processing_info)
+        self.process.start_thread()
+        while self.process.run_thread.is_alive():
+            sleep(1)
         self.save(self.processing_info)
+
+    def cancel(self):
+        try:
+            self.process.cancel()
+        except ValueError:
+            pass
 
     def save(self, info_dict: dict):
         try:
@@ -97,17 +112,26 @@ class WindowsBatch:
             self.hex_file = hex_file.parent.joinpath(hex_file.stem)
         except TypeError as error:
             logger.error(f"Wrong input type: {error}")
-        else:
-            self.run(self.hex_file)
 
-    def run(self, hex_file):
+    def run(self):
         try:
-            ps = subprocess.Popen([self.batch, hex_file], shell=False)
-            if ps.stdout:
-                logger.debug(ps.stdout)
+            self.killed = False
+            self.ps = subprocess.Popen(
+                [self.batch, self.hex_file], shell=False
+            )
+            if self.ps.stdout:
+                logger.debug(self.ps.stdout)
         except subprocess.CalledProcessError as error:
             if error.stderr:
                 logger.error(error.stderr)
             raise error
         else:
-            logger.info(f"Ran processing: {self.batch} {hex_file}")
+            self.ps.wait()
+            if self.killed:
+                logger.info(f"Interupted processing: {self.batch}")
+            else:
+                logger.info(f"Ran processing: {self.batch} {self.hex_file}")
+
+    def cancel(self):
+        self.killed = True
+        self.ps.kill()

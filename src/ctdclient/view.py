@@ -1,4 +1,5 @@
 from pathlib import Path
+import threading
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog as fd
@@ -369,13 +370,31 @@ class Measurement:
             text="Start Seasave",
             command=self.start_seasave,
         ).grid(row=row, column=0, sticky=tk.W, padx=20, pady=5)
-        ctk.CTkButton(
-            run_frame,
-            text="Run Processing",
-            command=self.run_processing,
-        ).grid(row=row, column=1, sticky=tk.E, padx=20, pady=5)
+        self.processing_button = ctk.CTkButton(
+            run_frame, text="Run Processing", command=self.processing_thread
+        )
+        self.processing_button.grid(
+            row=row, column=1, sticky=tk.E, padx=20, pady=5
+        )
         run_frame.grid()
         return run_frame
+
+    def update_button(self):
+        if self.proc_thread.is_alive():
+            button_name = "Cancel"
+            button_command = self.cancel_processing
+            self.processing_button.after(1000, self.update_button)
+        else:
+            button_name = "Run Processing"
+            button_command = self.processing_thread
+        self.processing_button.configure(
+            text=button_name, command=button_command
+        )
+
+    def processing_thread(self):
+        self.proc_thread = threading.Thread(target=self.run_processing)
+        self.proc_thread.start()
+        self.update_button()
 
     def stopwatch_frame(self):
         """Frame that acts as a simple stopwatch."""
@@ -471,6 +490,9 @@ class Measurement:
                 self.config.last_processing_file = self.processing.file_path
                 self.config.write()
 
+    def cancel_processing(self):
+        self.processing.cancel()
+
     def select_file(self, file_type, variable):
         """
         Generic file selection method, that opens a file browsing pop-up.
@@ -561,7 +583,10 @@ class Processing:
         self.path_dict = self.get_values_to_set()
         self.file_path = tk.StringVar(value=self.processing.file_path)
 
-        self.path_frame = self.path_selection_frame()
+        if self.file_path.get().endswith(".toml"):
+            self.path_frame = self.path_selection_frame()
+        else:
+            self.path_frame = self.custom_srcipt_frame()
         self.window.grid()
 
     def get_values_to_set(self):
@@ -926,17 +951,55 @@ class Processing:
 
     def load_configuration(self):
         if self.select_file("toml", self.file_path):
-            path_to_file = self.file_path.get()
-            if self.processing.load(path_to_file=path_to_file):
-                for frame in [
-                    self.path_frame,
-                ]:
-                    frame.grid_forget()
-                    frame.destroy()
-                self.update_values()
+            path_to_file = Path(self.file_path.get())
+            if path_to_file.suffix == ".toml":
+                if self.processing.load(path_to_file=path_to_file):
+                    self.processing.use_custom_script = False
+                    self.path_frame.grid_forget()
+                    self.path_frame.destroy()
+                    self.update_values()
+                else:
+                    # TODO: open a message window
+                    pass
+            # allow custom scripts
             else:
-                # TODO: open a message window
-                pass
+                self.processing.use_custom_script = path_to_file
+                self.path_frame.grid_forget()
+                self.path_frame.destroy()
+                self.file_path.set(str(path_to_file))
+                self.path_frame = self.custom_srcipt_frame()
+
+    def custom_srcipt_frame(self):
+        frame = ctk.CTkFrame(self.window)
+        ctk.CTkLabel(
+            frame,
+            text="Processing settings",
+            font=(tkFont.nametofont("TkDefaultFont"), 20),
+        ).grid(
+            row=0,
+            column=0,
+            sticky=tk.W,
+            padx=self.padx,
+            pady=self.pady,
+        )
+        ttk.Separator(frame, orient="horizontal").grid(
+            row=1, sticky=tk.E + tk.W
+        )
+        ctk.CTkLabel(
+            frame,
+            text=f"Custom script:     {Path(self.file_path.get()).name}",
+        ).grid(
+            row=2,
+            column=0,
+            sticky=tk.W,
+            padx=self.padx,
+            pady=self.pady,
+        )
+        ctk.CTkButton(
+            frame, text="Load configuration", command=self.load_configuration
+        ).grid(row=3, column=0, columnspan=3, pady=10)
+        frame.grid()
+        return frame
 
 
 class Configuration:

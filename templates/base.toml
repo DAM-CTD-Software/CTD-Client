@@ -1,7 +1,7 @@
 exe_directory = "/home/emil/.wine/drive_c/Program Files (x86)/Sea-Bird/SBEDataProcessing-Win32/"
 psa_directory = "/home/emil/Projects/CTD-Client/tests/data/psas/EMB356/"
-file_list = ["/home/emil/Projects/processing/tests/data/EMB356_011-01_CTD_0010.hex"]
-xmlcons = ""
+
+[optional]
 output_directory = "/home/emil/Projects/CTD-Client/tests/data/out"
 new_file_name = ""
 file_suffix = ""

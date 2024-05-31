@@ -936,18 +936,35 @@ class Processing:
             title="Save new config as",
             initialdir=current_file.parent,
             initialfile=current_file.name,
+            defaultextension=".toml",
+            filetypes=[
+                ("toml file", ".toml"),
+                ("batch script", ".bat"),
+                ("All files", ".*"),
+            ],
         )
         if new_file_name:
             self.file_path.set(new_file_name)
             processing_dict = {
-                key: value.get() for key, value in self.path_dict.items()
+                key: value.get()
+                for key, value in self.path_dict.items()
+                if key not in self.processing.optional_options.keys()
+            }
+            optional_dict = {
+                key: value.get()
+                for key, value in self.path_dict.items()
+                if key in self.processing.optional_options.keys()
             }
             processing_dict = {
                 **processing_dict,
+                "optional": optional_dict,
                 "modules": self.export_module_and_psa_info(),
             }
-            self.processing.save(processing_dict)
             self.processing.file_path = new_file_name
+            self.processing.save(processing_dict)
+            self.path_frame.grid_forget()
+            self.path_frame.destroy()
+            self.update_values()
 
     def load_configuration(self):
         if self.select_file("toml", self.file_path):

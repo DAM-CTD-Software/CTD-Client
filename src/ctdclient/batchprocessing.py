@@ -83,7 +83,7 @@ class MyProcessing:
         except IncompleteConfigFile:
             pass
         finally:
-            new_file = Configuration(path=self.file_path)
+            new_file = self.config_file
             new_file.data = info_dict
             new_file.write(self.file_path)
 

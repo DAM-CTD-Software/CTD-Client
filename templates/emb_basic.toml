@@ -1,5 +1,7 @@
 exe_directory = "/home/emil/.wine/drive_c/Program Files (x86)/Sea-Bird/SBEDataProcessing-Win32/"
 psa_directory = "/home/emil/Projects/CTD-Client/tests/data/psas/EMB356/"
+
+[optional]
 output_directory = "/home/emil/Projects/CTD-Client/tests/data/out"
 
 [modules]

@@ -311,21 +311,23 @@ class Measurement:
         """
         # configure bottle closing times
         bottle_frame = ctk.CTkFrame(self.window)
+        depth_frame = ctk.CTkScrollableFrame(bottle_frame, height=400)
         self.bottle_values = {}
-        ctk.CTkLabel(bottle_frame, text="BottleIDs").grid(column=0, row=0)
-        ctk.CTkLabel(bottle_frame, text="Depth to close").grid(row=0, column=1)
+        ctk.CTkLabel(depth_frame, text="BottleIDs").grid(column=0, row=0)
+        ctk.CTkLabel(depth_frame, text="Depth to close").grid(row=0, column=1)
         for index, (key, value) in enumerate(self.bottles.items()):
             textvariable = tk.StringVar()
             textvariable.set(value)
             self.bottle_values[key] = textvariable
-            ctk.CTkLabel(bottle_frame, text=key).grid(row=index + 1, column=0)
+            ctk.CTkLabel(depth_frame, text=key).grid(row=index + 1, column=0)
             ctk.CTkEntry(
-                bottle_frame, textvariable=textvariable, justify="center"
+                depth_frame, textvariable=textvariable, justify="center"
             ).grid(row=index + 1, column=1)
         row = len(bottle_frame.winfo_children())
+        depth_frame.grid()
         ctk.CTkButton(
             bottle_frame, text="Reset bottles", command=self.reset_bottles
-        ).grid(row=row + 1, column=0, columnspan=2, pady=5)
+        ).grid(row=2, column=0, columnspan=2, pady=5)
         return bottle_frame
 
     def reset_bottles(self):

@@ -1,12 +1,17 @@
 from pathlib import Path
 import unittest
 from parameterized import parameterized
+import json
+
+from seabirdfilehandler import SeaBirdFile
 from ctdclient.bottles import BottleClosingDepths
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.dshipcaller import DSHIPHeader
+from ctdclient.fileupdater import UpdateFiles
 from ctdclient.runseasave import RunSeasave
 import platform
 import sys
+
 
 if platform.system() == "Linux":
     config_path = "linux_config.toml"
@@ -42,8 +47,11 @@ class TestBottles(unittest.TestCase):
         self.bottles = BottleClosingDepths(self.config)
 
     def test_correct_base_dict(self):
-        self.assertEqual(len(self.bottles), 13)
-        self.assertEqual(list(self.bottles), [c for c in range(1, 14)])
+        self.assertEqual(len(self.bottles), self.config.number_of_bottles)
+        self.assertEqual(
+            list(self.bottles),
+            [c for c in range(1, self.config.number_of_bottles + 1)],
+        )
 
     def test_bottle_instantiation(self):
         self.bottles.config.number_of_bottles = 17
@@ -170,4 +178,47 @@ class IntegrationTests(unittest.TestCase):
         with open("tests/data/expected_integration_test.psa") as file:
             for line in file:
                 expected_output.append(line)
-        # self.assertEqual(output, expected_output)
+
+
+class TestPostMeasurementFileUpdate(unittest.TestCase):
+
+    def setUp(self):
+        self.config = ConfigurationFile(config_path)
+        self.dship = DSHIPHeader(self.config, dummy=True)
+        self.station_event_info = "MSM129/1_6-1"
+        self.test_file = "MSM129_1_000-00_CTD_0022.hex"
+        self.test_dir = Path("tests/data")
+        self.update = UpdateFiles(
+            self.test_file,
+            self.test_dir,
+            self.station_event_info,
+            auto_run=False,
+        )
+        with open("tests/data/station_list_export.json", "r") as file:
+            self.json_info = file.read()
+
+    def test_find_last_ctd_event(self):
+        output = self.dship.get_ctd_last_event(self.json_info)
+        self.assertEqual(output["Device"], "CTD")
+        self.assertEqual(output["Device Operation"], "MSM129/1_7-1")
+
+    def test_correct_station_id(self):
+        output = self.dship.get_station_id(
+            json.loads(self.json_info)["list"][0]
+        )
+        self.assertEqual(output, "MSM129_1_0_Underway-1")
+
+    def test_metaheader_updater(self):
+        self.update.replace_metadata_header_info(self.station_event_info)
+        self.assertEqual(
+            SeaBirdFile(self.test_dir.joinpath(self.test_file)).metadata[
+                "Station"
+            ],
+            self.station_event_info.replace("/", "_"),
+        )
+
+    def test_new_file_name(self):
+        output = self.update.create_new_file_name(
+            self.test_file[:-4], self.station_event_info
+        )
+        self.assertEqual(output, "MSM129_1_006-01_CTD_0022")

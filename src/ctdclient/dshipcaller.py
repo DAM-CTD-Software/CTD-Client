@@ -2,6 +2,8 @@ import time
 import requests
 import xmltodict
 import random
+import psutil
+import json
 from functools import partial
 from code_tools.logging import get_logger
 from code_tools.repeating import RepeatedTimer
@@ -18,9 +20,8 @@ class DSHIPHeader:
     def __init__(
         self,
         config,
-        mode="api",
         dship_url_part=":8080/dship-web/service/samples",
-        dummy=False,
+        dummy=True,
     ):
         # will hold the dhsip info
         self.data: dict
@@ -32,8 +33,6 @@ class DSHIPHeader:
         self.dship_values = {}
         # the URL of the API
         self.source = f"http://{self.ip}{dship_url_part}"
-        # waiting time between two rounds of API calls
-        self.fetch_timeout = config.dhsip_fetch_intervall
         # configuration file representation
         self.config = config
         self.last_call = "unsucessfull"
@@ -44,6 +43,10 @@ class DSHIPHeader:
         self.fail_tolerance = 700
         # the status of the API listener
         self.alive = False
+        # waiting time between two rounds of API calls
+        fetch_timeout = config.dhsip_fetch_intervall
+        # 0 is a flag for testing purposes
+        self.fetch_timeout = fetch_timeout
         self.dummy = dummy
         self.start_listener()
 
@@ -116,6 +119,7 @@ class DSHIPHeader:
                 self.fail_counter = 0
                 self.last_call = "successfull"
             else:
+                self.dship_values[sample] = ""
                 self.fail_counter += 1
                 self.last_call = "unsucessfull"
                 if self.fail_counter == self.fail_tolerance:
@@ -289,3 +293,49 @@ class DSHIPHeader:
         """ """
         self.alive = False
         self.listener.stop()
+
+    def process_exists(self, process_name: str) -> bool:
+        progs = {p.info["name"].lower() for p in psutil.process_iter(["name"])}
+        if process_name in progs:
+            return True
+        else:
+            return False
+
+    def get_station_log(self, cruise_id: str) -> None | str:
+        manida_url = "http://dship1:8080/manida-v3/"
+        station_log_url = f"{manida_url}station?expeditionId={
+            cruise_id}&format=JSON"
+        try:
+            call = requests.get(station_log_url)
+        except (
+            requests.exceptions.ConnectTimeout,
+            requests.exceptions.ConnectionError,
+            OSError,
+        ):
+            return None
+        else:
+            if call.status_code in ["200", 200]:
+                return call.text
+            else:
+                return None
+
+    def get_ctd_last_event(self, station_log_json: str) -> dict:
+        stations_info = json.loads(station_log_json)
+        last_ctd_entry = {}
+        for entry in stations_info["list"]:
+            if entry["Device"] == "CTD":
+                last_ctd_entry = entry
+        return last_ctd_entry
+
+    def get_station_id(self, event_json: dict) -> str:
+        station_id = event_json["Device Operation"]
+        return station_id.replace("/", "_")
+
+    def retrieve_station_and_event_info(self, cruise_id: str) -> str | None:
+        station_log = self.get_station_log(cruise_id)
+        if station_log:
+            last_event = self.get_ctd_last_event(station_log)
+            station_event_info = self.get_station_id(last_event)
+            if len(station_event_info) > 0:
+                return station_event_info
+        return None

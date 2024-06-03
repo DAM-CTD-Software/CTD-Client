@@ -14,6 +14,7 @@ import importlib.metadata
 from sys import platform
 from tomlkit.exceptions import NonExistentKey
 
+from ctdclient.fileupdater import UpdateFiles
 from ctdclient.runseasave import RunSeasave
 
 
@@ -353,6 +354,7 @@ class Measurement:
         # start measurement
         run_frame = ctk.CTkFrame(self.window)
         self.autostart = tk.BooleanVar(value=True)
+        self.downcast = tk.BooleanVar(value=True)
         ctk.CTkCheckBox(
             run_frame,
             text="autostart",
@@ -360,7 +362,6 @@ class Measurement:
         ).grid(row=0, pady=2)
         row = 1
         if self.downcast_option:
-            self.downcast = tk.BooleanVar(value=True)
             ctk.CTkCheckBox(
                 run_frame,
                 text="downcast",
@@ -471,10 +472,29 @@ class Measurement:
 
         self.last_filename.set(self.current_filename.get())
         self.cast_number.set(str(int(self.cast_number.get()) + 1))
-        output_dir = self.config.output_directory
-        full_file_path = output_dir.joinpath(self.current_filename.get())
+        self.output_dir = self.config.output_directory
+        full_file_path = self.output_dir.joinpath(self.current_filename.get())
         self.config.last_platform = self.platform.get()
-        RunSeasave(self.config, full_file_path).run(self.autostart.get())
+        self.process = RunSeasave(self.config, full_file_path).run(
+            self.downcast.get(), self.autostart.get()
+        )
+        self.check_seasave()
+
+    def check_seasave(self):
+        if self.process.poll() is not None:
+            station_and_event_info = (
+                self.dship_info.retrieve_station_and_event_info(
+                    cruise_id=self.dship_vars["Cruise"].get()
+                )
+            )
+            if station_and_event_info:
+                UpdateFiles(
+                    self.last_filename.get(),
+                    self.output_dir,
+                    station_and_event_info,
+                )
+        else:
+            self.frame_run.after(1000, self.check_seasave)
 
     def run_processing(self):
         """Collects the processing step information and feeds it into the

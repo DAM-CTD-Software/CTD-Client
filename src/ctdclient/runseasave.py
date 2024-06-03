@@ -52,8 +52,11 @@ class RunSeasave:
             )
             raise error
         else:
-            logger.info(f"Ran Seasave : {run_command}\nwith this psa: {
-                        self.path_to_psa}\nand this file name: {self.hex_name}")
+            logger.info(
+                f"Ran Seasave : {run_command}\nwith this psa: {
+                        self.path_to_psa}\nand this file name: {self.hex_name}"
+            )
+            return ps
 
     def set_psa_run_info(self, psa_output_name=None):
         """Sets XMLCON and hex file paths in Seasave.psa."""
@@ -65,8 +68,8 @@ class RunSeasave:
 
     def set_seasave_command_line_parameters(
         self,
+        downcast=True,
         autostart=False,
-        downcast=True
     ) -> list:
         """
         Builds command line argument list for usage in the run method.

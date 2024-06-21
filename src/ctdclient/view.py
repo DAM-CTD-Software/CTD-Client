@@ -13,6 +13,7 @@ from typing import Callable
 import importlib.metadata
 from sys import platform
 from tomlkit.exceptions import NonExistentKey
+import psutil
 
 from ctdclient.fileupdater import UpdateFiles
 from ctdclient.runseasave import RunSeasave
@@ -324,7 +325,6 @@ class Measurement:
             ctk.CTkEntry(
                 depth_frame, textvariable=textvariable, justify="center"
             ).grid(row=index + 1, column=1)
-        row = len(bottle_frame.winfo_children())
         depth_frame.grid()
         ctk.CTkButton(
             bottle_frame, text="Reset bottles", command=self.reset_bottles
@@ -446,6 +446,14 @@ class Measurement:
         """
         # TODO: handle exceptions
         # TODO: move into controller
+        if self.process_exists("thunderbird"):
+            CTkMessagebox(
+                title="Warning",
+                message="Seasave is already running!",
+                icon="warning",
+                option_1="Ok",
+            )
+            return
         if (self.current_filename.get() == self.last_filename.get()) and Path(
             self.last_filename.get()
         ).exists():
@@ -495,6 +503,13 @@ class Measurement:
                 )
         else:
             self.frame_run.after(1000, self.check_seasave)
+
+    def process_exists(self, process_name: str) -> bool:
+        progs = {p.info["name"].lower() for p in psutil.process_iter(["name"])}
+        if process_name in progs:
+            return True
+        else:
+            return False
 
     def run_processing(self):
         """Collects the processing step information and feeds it into the

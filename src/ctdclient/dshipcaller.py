@@ -2,7 +2,6 @@ import time
 import requests
 import xmltodict
 import random
-import psutil
 import json
 from functools import partial
 from code_tools.logging import get_logger
@@ -262,8 +261,11 @@ class DSHIPHeader:
             cruise = self.dship_values["Cruise"]
             # handle special case when a cruise consists of two separate legs and
             # indicates that by a /
-            if "/" in cruise:
-                cruise = cruise.replace("/", "_")
+            try:
+                if "/" in cruise:
+                    cruise = cruise.replace("/", "_")
+            except TypeError:
+                pass
         except KeyError:
             cruise = ""
         station = self.dship_values["Station"]
@@ -293,13 +295,6 @@ class DSHIPHeader:
         """ """
         self.alive = False
         self.listener.stop()
-
-    def process_exists(self, process_name: str) -> bool:
-        progs = {p.info["name"].lower() for p in psutil.process_iter(["name"])}
-        if process_name in progs:
-            return True
-        else:
-            return False
 
     def get_station_log(self, cruise_id: str) -> None | str:
         manida_url = "http://dship1:8080/manida-v3/"

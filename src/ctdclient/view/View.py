@@ -8,7 +8,8 @@ class ViewMixin:
     encapsulation as specified in MVC.
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.callbacks = {}
 
     def add_callback(self, key: str, method: Callable):

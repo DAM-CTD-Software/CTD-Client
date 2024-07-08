@@ -27,28 +27,7 @@ class BottleClosingDepths(UserDict):
             number + 1: "" for number in range(self.number_of_bottles)
         }
 
-    def update_bottle_information(self, info: dict):
-        """
-        Workhouse method that is being called from the outside to set a
-        different bottle layout and to edit the psa.
-
-        Parameters
-        ----------
-        info: dict : bottle layout information in the format specified above
-
-        save_info: boolean : allows to write this bottle layout to the config
-             (Default value = True)
-
-        Returns
-        -------
-
-        """
-        # assert len(self.data) == len(info)
-        if isinstance(info, dict):
-            self.data = info
-        self.update_psa()
-
-    def update_psa(self):
+    def set_psa_bottle_info(self):
         """
         Calls the psa editing method of SeasavePsa of the seabirdfilehandler
         in order to generate the XML code necessary to set the bottle layout.

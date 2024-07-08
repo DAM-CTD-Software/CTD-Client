@@ -1,16 +1,18 @@
+import json
+import random
 import time
+from functools import partial
+
 import requests
 import xmltodict
-import random
-import json
-from functools import partial
 from code_tools.logging import get_logger
 from code_tools.repeating import RepeatedTimer
+from ctdclient.model.metadataheader import MetadataHeader
 
 logger = get_logger(__name__)
 
 
-class DSHIPHeader:
+class DshipCaller:
     """
     Fetches DSHIP information via API or UDP telegram and generates
     Seabird-specific XML from that.
@@ -110,8 +112,8 @@ class DSHIPHeader:
             if response:
                 value = response["sample"]["value"]
                 try:
-                    self.dship_values[sample] = self.format_dship_response(
-                        sample, value
+                    self.dship_values[sample] = (
+                        MetadataHeader.format_dship_response(sample, value)
                     )
                 except IndexError:
                     pass
@@ -166,118 +168,6 @@ class DSHIPHeader:
         else:
             return None
 
-    def build_metadata_header(
-        self,
-        platform: str,
-        cast: str,
-        operator: str,
-        pos_alias: bool = False,
-        autostart: bool = False,
-    ):
-        """
-        Generates the metadata header in the needed format and saves the last
-        operator.
-
-        Parameters
-        ----------
-        operator :
-
-
-        Returns
-        -------
-
-        """
-        self.config.operators["last"] = operator
-        self.config.last_cast = int(cast)
-        self.config.write(platform)
-        if platform == "Scanfish":
-            platform = "sfCTD"
-        header_list = []
-        for name, value in self.dship_values.items():
-            header_list.append(self.create_metadata_header_line(name, value))
-        header_list.insert(
-            2, self.create_metadata_header_line("Platform", platform)
-        )
-        header_list.insert(
-            3, self.create_metadata_header_line("Cast", f"{int(cast):04d}")
-        )
-        header_list.insert(
-            4, self.create_metadata_header_line("Operator", operator)
-        )
-        header_list.insert(
-            10,
-            self.create_metadata_header_line(
-                "WsStartID", f"{int(cast)*25 + 1}"
-            ),
-        )
-        if pos_alias:
-            header_list[-1] = self.create_metadata_header_line(
-                "Pos_Alias", pos_alias
-            )
-        self.config.psa.set_metadata_header(header_list, autostart)
-        header_print = "\n".join(header_list)
-        logger.info(f"Wrote the following metadata header:\n{header_print}")
-        return header_print
-
-    def create_metadata_header_line(self, name, value):
-        return f"{name} = {value}"
-
-    def format_dship_response(self, name, value):
-        if name == "Station":
-            try:
-                _, action_log_info = value.split("_")
-                station, event = action_log_info.split("-")
-                formatted_value = f"{int(station):03d}-{int(event):02d}"
-            except AttributeError:
-                formatted_value = "000-00"
-        elif name == "GPS_Lat":
-            try:
-                first_part, second_part = value.split()
-                formatted_value = f"{first_part} {float(second_part):2.3f} N"
-            except ValueError:
-                formatted_value = f"{float(value):2.3f} N"
-        elif name == "GPS_Lon":
-            try:
-                first_part, second_part = value.split()
-                if float(second_part) < 10:
-                    gap = "  "
-                else:
-                    gap = " "
-                formatted_value = (
-                    f"{first_part}{gap}{float(second_part):2.3f} E"
-                )
-            except ValueError:
-                formatted_value = f"{float(value):2.3f} E"
-        elif name == "Echo_Depth":
-            formatted_value = f"{float(value): .1f} m"
-        elif name == "Air_Pressure":
-            formatted_value = f"{float(value): .1f} hPa"
-        else:
-            formatted_value = value
-        return formatted_value
-
-    def build_file_name(self, cast_number, platform):
-        try:
-            cruise = self.dship_values["Cruise"]
-            # handle special case when a cruise consists of two separate legs and
-            # indicates that by a /
-            try:
-                if "/" in cruise:
-                    cruise = cruise.replace("/", "_")
-            except TypeError:
-                pass
-        except KeyError:
-            cruise = ""
-        station = self.dship_values["Station"]
-        cast_number = int(cast_number.get())
-        platform_name_mapper = {
-            "CTD": "CTD",
-            "vCTD": "CTD",
-            "Scanfish": "SF",
-            "pCTD": "pCTD",
-        }
-        return f"{cruise}_{station}_{platform_name_mapper[platform]}_{cast_number:04d}.hex"
-
     def start_listener(self):
         """ """
         self.fail_counter = 0
@@ -326,8 +216,8 @@ class DSHIPHeader:
         station_id = event_json["Device Operation"]
         return station_id.replace("/", "_")
 
-    def retrieve_station_and_event_info(self, cruise_id: str) -> str | None:
-        station_log = self.get_station_log(cruise_id)
+    def retrieve_station_and_event_info(self) -> str | None:
+        station_log = self.get_station_log(self.dship_values["Cruise"])
         if station_log:
             last_event = self.get_ctd_last_event(station_log)
             station_event_info = self.get_station_id(last_event)

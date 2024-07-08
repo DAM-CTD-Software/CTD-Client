@@ -8,24 +8,16 @@ class UpdateFiles:
         file_path: str | Path,
         file_dir: str | Path,
         station_event_info: str,
-        auto_run=True,
     ):
         self.file_path = Path(file_path)
         self.file_name = self.file_path.stem
         self.file_dir = Path(file_dir)
-        if self.check_file_name() and auto_run:
-            self.file_list = self.find_all_files()
-            self.new_name = self.create_new_file_name(
-                self.file_name, station_event_info
-            )
-            self.replace_metadata_header_info(station_event_info)
-            self.rename_files(self.file_list, self.new_name)
-
-    def check_file_name(self) -> bool:
-        if self.file_name.split("-")[0].endswith("000"):
-            return True
-        else:
-            return False
+        self.file_list = self.find_all_files()
+        self.new_name = self.create_new_file_name(
+            self.file_name, station_event_info
+        )
+        self.replace_metadata_header_info(station_event_info)
+        self.rename_files(self.file_list, self.new_name)
 
     def find_all_files(self) -> list[Path]:
         out_list = []
@@ -51,7 +43,7 @@ class UpdateFiles:
             if part == "000-00":
                 individual_name_parts[index] = (
                     f"{
-                    int(station):03d}-{int(event):02d}"
+                        int(station):03d}-{int(event):02d}"
                 )
         return "_".join(individual_name_parts)
 

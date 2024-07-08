@@ -1,18 +1,20 @@
-from pathlib import Path
-import sys
-import platform
-import customtkinter as ctk
-import tkinter.font as tkFont
 import importlib.metadata
+import platform
+import sys
+import tkinter.font as tkFont
+from pathlib import Path
 from typing import Type
 
-from code_tools.logging import configure_logging, get_logger
-
+import customtkinter as ctk
+from code_tools.logging import configure_logging
+from code_tools.logging import get_logger
 from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.controller.Controller import Controller
+from ctdclient.controller.maincontroller import MainController
+from ctdclient.view.configuration import ConfigurationView
+from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
 from ctdclient.view.measurement import MeasurementView
-from ctdclient.view.processing import ProcessingView
-from ctdclient.view.configuration import ConfigurationView
 
 configure_logging("ctdclient.log")
 logger = get_logger(__name__)
@@ -54,16 +56,17 @@ def main():
         config=configuration_file,
         tab_dict=create_tabs(configuration_file),
     )
+    MainController(configuration_file, main_window)
     main_window.grid(row=0, column=0)
     root.mainloop()
 
 
-def create_tabs(config: ConfigurationFile) -> dict[str, Type[ctk.CTkFrame]]:
+def create_tabs(config: ConfigurationFile) -> dict[str, Type[CtkFrame]]:
     # TODO: implement config part to allow tab selection
     tab_dict = {
-        # "measurement": MeasurementView,
+        "measurement": MeasurementView,
         # "processing": ProcessingView,
-        "configuration": ConfigurationView
+        "configuration": ConfigurationView,
     }
     return tab_dict
 

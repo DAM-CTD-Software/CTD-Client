@@ -1,26 +1,26 @@
-from pathlib import Path
 import tkinter as tk
-from tkinter import ttk
-from tkinter import filedialog as fd
 import tkinter.font as tkFont
-import customtkinter as ctk
 from functools import partial
-from ctdclient.view.View import ViewMixin
+from pathlib import Path
+from tkinter import filedialog as fd
+from tkinter import ttk
+
+import customtkinter as ctk
 from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.view.ctkframe import CtkFrame
+from ctdclient.view.View import ViewMixin
 
 
-class ConfigurationView(ctk.CTkFrame, ViewMixin):
+class ConfigurationView(CtkFrame, ViewMixin):
     """ """
 
     def __init__(
         self,
-        parent: ctk.CTkFrame,
-        configuration: ConfigurationFile,
         *args,
         **kwargs,
     ):
-        super().__init__(parent, *args, **kwargs)
-        self.configuration = configuration
+        super().__init__(*args, **kwargs)
+        self.configuration: ConfigurationFile
         self.values_to_set = self.get_values_to_set()
         self.padx = 5
         self.pady = 5

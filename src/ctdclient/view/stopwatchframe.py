@@ -13,29 +13,31 @@ class StopwatchFrame(CtkFrame):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        self.color = "gray14"
 
         self.timer_seconds = 0
         self.stopwatch_label = ctk.CTkLabel(
             self,
             height=70,
             width=70,
-            corner_radius=20,
+            corner_radius=200,
             text="00:00:00",
             font=("Normal", 15, "bold"),
         )
+        self.stopwatch_label.configure(fg_color=self.color)
         self.stopwatch_label.grid()
 
         self.stopwatch_label.bind("<Button-1>", self.reset)
         self.stopwatch_label.bind(
             "<Enter>",
             command=lambda e: self.stopwatch_label.configure(
-                fg_color="#1e7898"
+                fg_color="#1f538d"
             ),
         )
         self.stopwatch_label.bind(
             "<Leave>",
             command=lambda e: self.stopwatch_label.configure(
-                fg_color="transparent"
+                fg_color=self.color
             ),
         )
         self.update()

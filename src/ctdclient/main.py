@@ -49,7 +49,7 @@ def main():
     default_font.configure(size=14)
     root.option_add("*Font", default_font)
     ctk.set_appearance_mode("dark")
-    ctk.set_default_color_theme("dark-blue")
+    ctk.set_default_color_theme("src/ctdclient/view/ctktheme.json")
     root.geometry("620x780")
     main_window = MainWindow(
         parent=root,

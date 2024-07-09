@@ -30,6 +30,9 @@ class BottleFrame(ViewMixin, CtkFrame):
     def initialize(self, bottles: BottleClosingDepths):
         self.bottles = bottles
         depth_frame = ctk.CTkScrollableFrame(self, height=400)
+        depth_frame.configure(
+            border_width=1, border_color="gray10", fg_color="transparent"
+        )
         self.bottle_values = {}
         ctk.CTkLabel(depth_frame, text="BottleIDs").grid(column=0, row=0)
         ctk.CTkLabel(depth_frame, text="Depth to close").grid(row=0, column=1)

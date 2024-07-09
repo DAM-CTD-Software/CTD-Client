@@ -52,6 +52,7 @@ class ConfigurationView(CtkFrame, ViewMixin):
 
     def setting_frame(self):
         frame = ctk.CTkFrame(self)
+        frame.configure(fg_color="transparent")
         for index, (instrument, inner_dict) in enumerate(
             self.values_to_set.items()
         ):

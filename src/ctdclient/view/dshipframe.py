@@ -28,6 +28,7 @@ class DshipFrame(ViewMixin, CtkFrame):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        self.set_border()
         self.dship_values: dict
 
     def initialize(self, dship_values: dict):

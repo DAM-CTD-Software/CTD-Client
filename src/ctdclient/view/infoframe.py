@@ -18,6 +18,7 @@ class InfoFrame(ViewMixin, CtkFrame):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        self.set_border()
         for arg in args:
             if hasattr(arg, "name"):
                 if arg.name == "measurement":

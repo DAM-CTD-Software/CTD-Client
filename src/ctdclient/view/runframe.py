@@ -32,11 +32,10 @@ class RunFrame(ViewMixin, CtkFrame):
     ):
         super().__init__(*args, **kwargs)
         for arg in args:
-            if hasattr(arg, "name"):
-                if arg.name == "measurement":
-                    self.last_filename = arg.last_filename
-                    self.current_filename = arg.current_filename
-                    self.initialize()
+            if arg.__class__.__name__ == "MeasurementView":
+                self.last_filename = arg.last_filename
+                self.current_filename = arg.current_filename
+                self.initialize()
 
     def initialize(self):
         self.downcast_option = self.configuration.downcast_option

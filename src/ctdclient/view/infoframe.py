@@ -20,14 +20,13 @@ class InfoFrame(ViewMixin, CtkFrame):
         super().__init__(*args, **kwargs)
         self.set_border()
         for arg in args:
-            if hasattr(arg, "name"):
-                if arg.name == "measurement":
-                    self.last_filename = arg.last_filename
-                    self.cast_number = arg.cast_number
-                    self.current_filename = arg.current_filename
-                    self.operator = arg.operator
-                    self.station = arg.station
-                    self.initialize()
+            if arg.__class__.__name__ == "MeasurementView":
+                self.last_filename = arg.last_filename
+                self.cast_number = arg.cast_number
+                self.current_filename = arg.current_filename
+                self.operator = arg.operator
+                self.station = arg.station
+                self.initialize()
 
     def initialize(self):
         ctk.CTkLabel(self, text="current filename").grid(

@@ -23,7 +23,6 @@ class MeasurementView(CtkFrame, ViewMixin):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.name = "measurement"
 
         # setting variables according to configuration file
         # TODO: add option to set the platform

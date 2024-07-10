@@ -1,10 +1,12 @@
-from pathlib import Path
-import tomlkit
-from tomlkit.toml_file import TOMLFile
-from tomlkit.exceptions import NonExistentKey, KeyAlreadyPresent, EmptyKeyError
 import sys
-from seabirdfilehandler import SeasavePsa
+from pathlib import Path
+
+import tomlkit
 from code_tools.logging import get_logger
+from seabirdfilehandler import SeasavePsa
+from tomlkit.exceptions import EmptyKeyError
+from tomlkit.exceptions import KeyAlreadyPresent
+from tomlkit.exceptions import NonExistentKey
 
 logger = get_logger(__name__)
 
@@ -18,7 +20,6 @@ class ConfigurationFile:
 
     def __init__(self, path_to_config: Path | str):
         self.path_to_config = Path(path_to_config)
-        self.data = TOMLFile(self.path_to_config).read()
         self.read_config()
 
     def __str__(self):
@@ -31,7 +32,11 @@ class ConfigurationFile:
         self.modify([keys], value)
 
     def read_config(self, ctd_type=None):
-        self.data = TOMLFile(self.path_to_config).read()
+        with open(self.path_to_config, encoding="utf-8") as file:
+            config = []
+            for line in file:
+                config.append(line)
+            self.data = tomlkit.loads("".join(config))
         try:
             self.platforms: list = self.data["platforms"]
             assert isinstance(self.platforms, list)

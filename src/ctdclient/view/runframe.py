@@ -41,6 +41,7 @@ class RunFrame(ViewMixin, CtkFrame):
         self.downcast_option = self.configuration.downcast_option
         self.autostart = tk.BooleanVar(value=True)
         self.downcast = tk.BooleanVar(value=True)
+        self.path_to_seasave: Path
         ctk.CTkCheckBox(
             self,
             text="autostart",
@@ -54,11 +55,14 @@ class RunFrame(ViewMixin, CtkFrame):
                 variable=self.downcast,
             ).grid(row=row)
             row += 1
-        ctk.CTkButton(
+        self.measurement_button = ctk.CTkButton(
             self,
             text="Start Seasave",
             command=self.start_seasave,
-        ).grid(row=row, column=0, sticky=tk.W, padx=20, pady=5)
+        )
+        self.measurement_button.grid(
+            row=row, column=0, sticky=tk.W, padx=20, pady=5
+        )
         self.processing_button = ctk.CTkButton(
             self, text="Run Processing", command=self.processing_thread
         )
@@ -73,10 +77,11 @@ class RunFrame(ViewMixin, CtkFrame):
         the information flow of bottle closing information and dship metadata.
         """
         # pre-run check
-        if self.process_exists("seasave"):
+        executable_name = self.path_to_seasave.stem
+        if self.process_exists(executable_name):
             CTkMessagebox(
                 title="Warning",
-                message="Seasave is already running!",
+                message=f"{executable_name} is already running!",
                 icon="warning",
                 option_1="Ok",
             )
@@ -101,20 +106,30 @@ class RunFrame(ViewMixin, CtkFrame):
             self.downcast.get(),
             self.autostart.get(),
         )
+        self.measurement_button.configure(
+            text="Cancel", command=self.cancel_measurement
+        )
         self.check_seasave()
 
     def check_seasave(self):
         if self.process.poll() is not None:
+            self.measurement_button.configure(
+                text="Start Seasave",
+                command=self.start_seasave,
+            )
             self.callbacks["postruncheck"]()
         else:
             self.after(1000, self.check_seasave)
 
     def process_exists(self, process_name: str) -> bool:
         progs = {p.info["name"].lower() for p in psutil.process_iter(["name"])}
-        if process_name in progs:
+        if process_name.lower() in progs:
             return True
         else:
             return False
+
+    def cancel_measurement(self):
+        self.process.terminate()
 
     def update_button(self):
         if self.proc_thread.is_alive():

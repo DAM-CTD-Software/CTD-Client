@@ -6,20 +6,15 @@ logger = get_logger(__name__)
 
 class MetadataHeader:
 
-    def __init__(
-        self,
+    @classmethod
+    def build_metadata_header(
+        cls,
         configuration: ConfigurationFile,
         dship_values: dict,
-    ):
-        self.configuration = configuration
-        self.dship_values = dship_values
-
-    def build_metadata_header(
-        self,
         platform: str,
         cast: str,
         operator: str,
-        pos_alias: bool = False,
+        pos_alias: str = "",
         autostart: bool = False,
     ):
         """
@@ -35,39 +30,40 @@ class MetadataHeader:
         -------
 
         """
-        self.configuration.operators["last"] = operator
-        self.configuration.last_cast = int(cast)
-        self.configuration.write(platform)
+        configuration.operators["last"] = operator
+        configuration.last_cast = int(cast)
+        configuration.write(platform)
         if platform == "Scanfish":
             platform = "sfCTD"
         header_list = []
-        for name, value in self.dship_values.items():
-            header_list.append(self.create_metadata_header_line(name, value))
+        for name, value in dship_values.items():
+            header_list.append(cls.create_metadata_header_line(name, value))
         header_list.insert(
-            2, self.create_metadata_header_line("Platform", platform)
+            2, cls.create_metadata_header_line("Platform", platform)
         )
         header_list.insert(
-            3, self.create_metadata_header_line("Cast", f"{int(cast):04d}")
+            3, cls.create_metadata_header_line("Cast", f"{int(cast):04d}")
         )
         header_list.insert(
-            4, self.create_metadata_header_line("Operator", operator)
+            4, cls.create_metadata_header_line("Operator", operator)
         )
         header_list.insert(
             10,
-            self.create_metadata_header_line(
+            cls.create_metadata_header_line(
                 "WsStartID", f"{int(cast)*25 + 1}"
             ),
         )
         if pos_alias:
-            header_list[-1] = self.create_metadata_header_line(
+            header_list[-1] = cls.create_metadata_header_line(
                 "Pos_Alias", pos_alias
             )
-        self.configuration.psa.set_metadata_header(header_list, autostart)
+        configuration.psa.set_metadata_header(header_list, autostart)
         header_print = "\n".join(header_list)
         logger.info(f"Wrote the following metadata header:\n{header_print}")
         return header_print
 
-    def create_metadata_header_line(self, name, value):
+    @classmethod
+    def create_metadata_header_line(cls, name, value):
         return f"{name} = {value}"
 
     @classmethod

@@ -1,16 +1,17 @@
-from pathlib import Path
 import subprocess
+from pathlib import Path
 from time import sleep
+
 from code_tools.logging import get_logger
-from processing import IncompleteConfigFile, ProcessingRoutine, Configuration
+from processing import Configuration
+from processing import IncompleteConfigFile
+from processing import ProcessingRoutine
 from tomlkit.exceptions import NonExistentKey
 
 logger = get_logger(__name__)
 
-# TODO: rename file
 
-
-class MyProcessing:
+class Processing:
     """"""
 
     def __init__(
@@ -35,18 +36,30 @@ class MyProcessing:
                 self.processing_info = self.config_file.data
                 self.file_path = self.config_file.path
         self.modules = self.processing_info["modules"]
+        # TODO: extend these or handle differently
+        self.psa_paths = [
+            path.name
+            for path in Path(self.processing_info["psa_directory"]).iterdir()
+        ]
+        self.psa_paths = sorted(self.psa_paths, key=str.lower)
+        self.step_names = [
+            "alignctd",
+            "airpressure",
+            "binavg",
+            "bottlesum",
+            "celltm",
+            "datcnv",
+            "derive",
+            "filter",
+            "iow_btl_id",
+            "loopedit",
+            "wildedit",
+            "w_filter",
+        ]
         self.input_file: Path | str
-        self.use_custom_script: bool | Path = False
 
     def run(self):
         """Runs a processing routine according to the preset values."""
-        if self.use_custom_script:
-            self.file_path = self.use_custom_script
-            self.process = WindowsBatch(
-                self.use_custom_script, self.input_file
-            )
-            self.process.run()
-            return
         # cheap hack to allow 'file_list' at specific position
         pre_files = {}
         for keys in ["exe_directory", "psa_directory"]:
@@ -77,28 +90,17 @@ class MyProcessing:
             pass
 
     def save(self, info_dict: dict):
-        try:
-            # check config file values
-            ProcessingRoutine(info_dict)
-        except IncompleteConfigFile:
-            pass
-        finally:
-            new_file = self.config_file
-            new_file.data = info_dict
-            new_file.write(self.file_path)
+        new_file = self.config_file
+        new_file.data = info_dict
+        new_file.write(self.file_path)
 
     def load(self, path_to_file: Path | str) -> bool:
         config_file = Configuration(path_to_file)
-        try:
-            ProcessingRoutine(config_file.data)
-        except IncompleteConfigFile as error:
-            pass
-        finally:
-            self.config_file = config_file
-            self.processing_info = config_file.data
-            self.file_path = Path(path_to_file)
-            self.modules = self.processing_info["modules"]
-            return True
+        self.config_file = config_file
+        self.processing_info = config_file.data
+        self.file_path = Path(path_to_file)
+        self.modules = self.processing_info["modules"]
+        return True
 
 
 class WindowsBatch:
@@ -112,6 +114,8 @@ class WindowsBatch:
             self.hex_file = hex_file.parent.joinpath(hex_file.stem)
         except TypeError as error:
             logger.error(f"Wrong input type: {error}")
+        else:
+            self.run()
 
     def run(self):
         try:

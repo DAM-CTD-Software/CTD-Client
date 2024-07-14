@@ -1,9 +1,11 @@
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.controller.bottlecontroller import BottleController
 from ctdclient.controller.dshipcontroller import DshipController
+from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
+from ctdclient.model.processing import Processing
 from ctdclient.view.mainwindow import MainWindow
 
 
@@ -19,6 +21,8 @@ class MainController:
         self.tabs = mainwindow.tabs
         self.measurement = self.tabs.measurement
 
+        self.processing = Processing()
+        self.processing.file_path = configuration.last_processing_file
         # bottles
         self.bottles = BottleClosingDepths(configuration)
         self.bottle_view = self.measurement.bottle_frame
@@ -41,7 +45,17 @@ class MainController:
             self.run_view,
             bottles=self.bottles,
             dship=self.dship,
+            processing=self.processing,
         )
 
         # processing
-        # self.processing = MyProcessing()
+        try:
+            self.processing_view = self.tabs.processing
+        except AttributeError:
+            pass
+        else:
+            self.processing_controller = ProcessingController(
+                configuration,
+                self.processing,
+                self.processing_view,
+            )

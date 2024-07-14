@@ -29,6 +29,11 @@ class TabView(ctk.CTkTabview):
                     self.tab(name), configuration=configuration
                 )
                 self.measurement.grid()
+            elif name == "processing":
+                self.processing = ProcessingView(
+                    self.tab(name), configuration=configuration
+                )
+                self.processing.grid()
             else:
                 tab = view(master=self.tab(name), configuration=configuration)
                 tab.grid()

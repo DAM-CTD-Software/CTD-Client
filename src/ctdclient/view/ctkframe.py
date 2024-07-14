@@ -19,3 +19,7 @@ class CtkFrame(ctk.CTkFrame):
     def set_border(self, width: int = 1, color: str = "gray10"):
         """Sets a uniform, minimal border around the frame."""
         self.configure(border_width=width, border_color=color)
+
+    def kill(self):
+        self.grid_forget()
+        self.destroy()

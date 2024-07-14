@@ -12,6 +12,7 @@ from ctdclient.view.configuration import ConfigurationView
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
 from ctdclient.view.measurement import MeasurementView
+from ctdclient.view.processing import ProcessingView
 
 
 def main():
@@ -31,7 +32,7 @@ def main():
     default_font.configure(size=14)
     root.option_add("*Font", default_font)
     ctk.set_appearance_mode("dark")
-    ctk.set_default_color_theme(THEMES_PATH)
+    ctk.set_default_color_theme(str(THEMES_PATH))
     root.geometry("620x780")
     main_window = MainWindow(
         parent=root,
@@ -47,7 +48,7 @@ def create_tabs(config: ConfigurationFile) -> dict[str, Type[CtkFrame]]:
     # TODO: implement config part to allow tab selection
     tab_dict = {
         "measurement": MeasurementView,
-        # "processing": ProcessingView,
+        "processing": ProcessingView,
         "configuration": ConfigurationView,
     }
     return tab_dict

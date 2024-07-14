@@ -156,18 +156,12 @@ class RunFrame(ViewMixin, CtkFrame):
         selected_file = self.select_file("hex", hex_file)
         if selected_file:
             try:
-                self.processing.input_file = hex_file.get()
-                self.processing.run()
+                self.callbacks["runprocessing"](hex_file.get())
             except TypeError:
                 pass
-            else:
-                self.configuration.last_processing_file = (
-                    self.processing.file_path
-                )
-                self.configuration.write()
 
     def cancel_processing(self):
-        self.processing.cancel()
+        self.callbacks["cancelprocessing"]()
 
     def select_file(self, file_type: str, variable: tk.StringVar):
         """

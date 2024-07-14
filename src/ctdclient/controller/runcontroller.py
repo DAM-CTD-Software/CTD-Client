@@ -3,6 +3,7 @@ from pathlib import Path
 from ctdclient.controller.Controller import Controller
 from ctdclient.model.fileupdater import UpdateFiles
 from ctdclient.model.metadataheader import MetadataHeader
+from ctdclient.model.processing import WindowsBatch
 from ctdclient.model.runseasave import RunSeasave
 from ctdclient.view.measurement import MeasurementView
 from ctdclient.view.runframe import RunFrame
@@ -15,6 +16,7 @@ class RunController(Controller):
         *args,
         bottles,
         dship,
+        processing,
         **kwargs,
     ):
 
@@ -23,6 +25,7 @@ class RunController(Controller):
         self.variables: MeasurementView = self.view.master  # pyright: ignore
         self.bottles = bottles
         self.dship = dship
+        self.processing = processing
         # set exe path in view
         self.view.path_to_seasave = self.configuration.path_to_seasave
         # define variables
@@ -36,6 +39,8 @@ class RunController(Controller):
         # set callback methods
         self.view.add_callback("runseasave", self.run_seasave)
         self.view.add_callback("postruncheck", self.check_correct_filename)
+        self.view.add_callback("runprocessing", self.run_processing)
+        self.view.add_callback("cancelprocessing", self.cancel_processing)
 
     def run_seasave(
         self,
@@ -84,3 +89,15 @@ class RunController(Controller):
                 self.output_dir,
                 station_and_event_info,
             )
+
+    def run_processing(self, target_file: str):
+        if not self.processing.file_path.suffix == ".toml":
+            WindowsBatch(self.processing.file_path, target_file)
+        else:
+            self.processing.input_file = target_file
+            self.processing.run()
+            self.configuration.last_processing_file = self.model.file_path
+            self.configuration.write()
+
+    def cancel_processing(self):
+        self.processing.cancel()

@@ -68,4 +68,3 @@ class MeasurementView(CtkFrame, ViewMixin):
         self.bottle_frame.grid(
             column=1, row=0, rowspan=2, padx=self.padx, pady=self.pady
         )
-        self.grid()

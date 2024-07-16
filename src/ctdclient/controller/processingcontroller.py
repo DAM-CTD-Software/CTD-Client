@@ -19,25 +19,22 @@ class ProcessingController(Controller):
         self.model: Processing
         self.view: ProcessingView
         # variables
-        self.steps = self.step_dict_to_tuple_list(self.model.modules)
-        self.processing_info = self.model.processing_info
-        self.psa_directory = self.processing_info["psa_directory"]
         self.use_custom_script = False
         self.target_file: Path
-        self.set_config_file_path(self.model.file_path)
+        self.load_processing(self.configuration.last_processing_file)
 
+    def reload_view(self):
         # initialize view data
         self.view.populate(self.use_custom_script, self.steps)
         self.view.steps_frame.psa_paths = self.model.psa_paths
         self.view.steps_frame.step_options = self.model.step_names
-
         # set callbacks
         self.view.steps_frame.add_callback("configload", self.load_processing)
 
     def set_config_file_path(self, file_path: Path | str):
         self.config_file_path = Path(file_path)
         if self.config_file_path.suffix == ".toml":
-            self.load_processing(self.config_file_path)
+            pass
         else:
             self.use_custom_script = True
 
@@ -63,7 +60,8 @@ class ProcessingController(Controller):
         self.set_config_file_path(file_path)
         self.processing_info = self.model.processing_info
         self.psa_directory = self.processing_info["psa_directory"]
-        self.view.populate(self.use_custom_script, self.steps)
+        self.set_psa_selection(self.psa_directory)
+        self.reload_view()
 
     def processing_values_to_set(self):
         value_dict = {
@@ -102,10 +100,7 @@ class ProcessingController(Controller):
             info_dict = {}
         return info_dict
 
-    def update_psa_selection(self, directory):
+    def set_psa_selection(self, directory):
         """"""
         self.psa_paths = [path.name for path in Path(directory).iterdir()]
         self.psa_paths = sorted(self.psa_paths, key=str.lower)
-        self.path_frame.kill()
-        self.path_frame = ProcessingStepFrame(self.steps_header, self.steps)
-        self.grid()

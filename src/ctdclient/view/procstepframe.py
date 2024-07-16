@@ -22,7 +22,6 @@ class ProcessingStepFrame(ViewMixin, CtkFrame):
             (tk.StringVar(value=step), tk.StringVar(value=psa))
             for (step, psa) in steps
         ]
-        print(steps)
         self.step_options = []
         self.psa_paths = []
         self.load_steps()
@@ -32,14 +31,17 @@ class ProcessingStepFrame(ViewMixin, CtkFrame):
             child.kill()
         for step, psa in self.steps:
             step_frame = ProcessingStep(
-                self, configuration=self.configuration, step=step, psa=psa
+                self,
+                configuration=self.configuration,
+                step=step,
+                psa=psa,
+                psa_paths=self.psa_paths,
             )
             step_frame.grid()
         self.grid()
         self.steps = [
             (child.step, child.psa) for child in self.winfo_children()
         ]
-        print(self.winfo_children)
 
     def add_step(self, child_object: ProcessingStep):
         index = self.steps.index((child_object.step, child_object.psa))

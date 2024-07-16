@@ -19,8 +19,6 @@ class ProcessingView(CtkFrame):
     ):
         super().__init__(*args, **kwargs)
 
-        # self.file_path = tk.StringVar(value=self.processing.file_path)
-
         # layout
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
@@ -28,6 +26,7 @@ class ProcessingView(CtkFrame):
     def populate(self, custom_script: bool, steps: list[tuple] = []):
         if len(self.winfo_children()) > 0:
             for child in self.winfo_children():
+                print(child)
                 child.kill()
         if custom_script:
             self.steps_frame = ProcessingCustomScriptFrame(
@@ -44,3 +43,4 @@ class ProcessingView(CtkFrame):
                 configuration=self.configuration,
                 steps=steps,
             )
+        self.grid()

@@ -28,6 +28,7 @@ class ProcessingStep(ViewMixin, CtkFrame):
         *args,
         step: tk.StringVar,
         psa: tk.StringVar,
+        psa_paths: list,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
@@ -35,8 +36,7 @@ class ProcessingStep(ViewMixin, CtkFrame):
         self.step = step
         self.step.trace_add("write", self.set_closest_psa_value)
         self.psa = psa
-        # is being set by controller
-        self.psa_paths = self.master.psa_paths
+        self.psa_paths = psa_paths
 
         if self.psa.get() in ("", None):
             self.set_closest_psa_value()

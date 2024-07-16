@@ -29,3 +29,4 @@ class HeaderFrame(CtkFrame):
         ttk.Separator(self, orient="horizontal").grid(
             row=1, sticky=tk.E + tk.W
         )
+        self.grid()

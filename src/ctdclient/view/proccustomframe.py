@@ -18,6 +18,8 @@ class ProcessingCustomScriptFrame(ViewMixin, CtkFrame):
     ):
         super().__init__(*args, **kwargs)
         self.file_path = self.configuration.last_processing_file
+        self.psa_paths = []
+        self.step_options = []
 
         ctk.CTkLabel(
             self,

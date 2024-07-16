@@ -34,6 +34,11 @@ class TabView(ctk.CTkTabview):
                     self.tab(name), configuration=configuration
                 )
                 self.processing.grid()
+            elif name == "configuration":
+                self.configuration = ConfigurationView(
+                    self.tab(name), configuration=configuration
+                )
+                self.configuration.grid()
             else:
                 tab = view(master=self.tab(name), configuration=configuration)
                 tab.grid()

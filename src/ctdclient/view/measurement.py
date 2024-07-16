@@ -43,6 +43,12 @@ class MeasurementView(CtkFrame, ViewMixin):
         # configure window layout
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=3)
+        self.populate()
+
+    def populate(self):
+        if len(self.winfo_children()) > 0:
+            for child in self.winfo_children():
+                child.kill()
 
         # children frames set-up
         self.bottle_frame = BottleFrame(self, configuration=self.configuration)

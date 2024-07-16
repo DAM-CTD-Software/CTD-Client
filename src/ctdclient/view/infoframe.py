@@ -29,6 +29,11 @@ class InfoFrame(ViewMixin, CtkFrame):
                 self.initialize()
 
     def initialize(self):
+        if len(self.winfo_children()) > 0:
+            for child in self.winfo_children():
+                child.grid_forget()
+                child.destroy()
+
         ctk.CTkLabel(self, text="current filename").grid(
             row=0, column=0, sticky=tk.W, padx=self.padx
         )
@@ -50,7 +55,7 @@ class InfoFrame(ViewMixin, CtkFrame):
             self,
             values=[
                 item
-                for item in list(self.configuration.operators.values())[:-1]
+                for item in list(self.configuration["operators"].values())[:-1]
                 if item != ""
             ],
             variable=self.operator,
@@ -62,10 +67,6 @@ class InfoFrame(ViewMixin, CtkFrame):
         CTkSpinbox(self, variable=self.cast_number).grid(
             row=3, column=1, sticky=tk.E
         )
-        # platform selection
-        ctk.CTkLabel(self, text="Platform").grid(
-            row=4, column=0, sticky=tk.W, padx=self.padx
-        )
         # scanfish-specific option to override the current Pos_Alias
         ctk.CTkLabel(self, text="Override Pos_Alias").grid(
             row=5, column=0, sticky=tk.W, padx=self.padx
@@ -74,3 +75,4 @@ class InfoFrame(ViewMixin, CtkFrame):
             self,
             textvariable=self.station,
         ).grid(row=5, column=1, sticky=tk.E)
+        self.grid()

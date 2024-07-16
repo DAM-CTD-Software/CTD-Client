@@ -14,6 +14,9 @@ class BottleController(Controller):
         super().__init__(*args, **kwargs)
         self.model: BottleClosingDepths
         self.view: BottleFrame
+        self.initialize()
+
+    def initialize(self):
         self.initialize_bottle_setup()
 
     def initialize_bottle_setup(self):

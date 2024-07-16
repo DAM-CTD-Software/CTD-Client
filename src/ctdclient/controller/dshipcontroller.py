@@ -17,6 +17,9 @@ class DshipController(Controller):
         super().__init__(*args, **kwargs)
         self.model: DshipCaller
         self.view: DshipFrame
+        self.initialize()
+
+    def initialize(self):
         self.variables: MeasurementView = self.view.master  # pyright: ignore
         self.current_filename = self.variables.current_filename
         self.cast_number = self.variables.cast_number

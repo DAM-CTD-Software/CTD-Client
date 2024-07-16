@@ -1,5 +1,6 @@
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.controller.bottlecontroller import BottleController
+from ctdclient.controller.configcontroller import ConfigurationController
 from ctdclient.controller.dshipcontroller import DshipController
 from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
@@ -20,6 +21,7 @@ class MainController:
         self.configuration = configuration
         self.tabs = mainwindow.tabs
         self.measurement = self.tabs.measurement
+        self.configuration_view = self.tabs.configuration
 
         self.processing = Processing()
         self.processing.file_path = configuration.last_processing_file
@@ -59,3 +61,11 @@ class MainController:
                 self.processing,
                 self.processing_view,
             )
+
+        # configuration
+        self.config_controller = ConfigurationController(
+            configuration,
+            configuration,
+            self.configuration_view,
+            measurementview=self.measurement,
+        )

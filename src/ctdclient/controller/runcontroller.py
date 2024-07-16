@@ -36,6 +36,7 @@ class RunController(Controller):
         self.platform = self.variables.platform
         self.operator = self.variables.operator
         self.station = self.variables.station
+        self.bottle_values = self.variables.bottle_frame.bottle_values
         # set callback methods
         self.view.add_callback("runseasave", self.run_seasave)
         self.view.add_callback("postruncheck", self.check_correct_filename)
@@ -65,6 +66,9 @@ class RunController(Controller):
 
     def update_variables_pre_run(self, autostart):
         self.output_dir = self.configuration.output_directory
+        self.bottles.data = {
+            key: value.get() for key, value in self.bottle_values.items()
+        }
         self.bottles.set_psa_bottle_info()
         MetadataHeader.build_metadata_header(
             configuration=self.configuration,

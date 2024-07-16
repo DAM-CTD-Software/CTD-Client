@@ -6,12 +6,11 @@ from tkinter import filedialog as fd
 from tkinter import ttk
 
 import customtkinter as ctk
-from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.View import ViewMixin
 
 
-class ConfigurationView(CtkFrame, ViewMixin):
+class ConfigurationView(ViewMixin, CtkFrame):
     """ """
 
     def __init__(
@@ -20,10 +19,7 @@ class ConfigurationView(CtkFrame, ViewMixin):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.configuration: ConfigurationFile
         self.values_to_set = self.get_values_to_set()
-        self.padx = 5
-        self.pady = 5
         setting_frame = self.setting_frame()
         setting_frame.grid()
 
@@ -110,7 +106,7 @@ class ConfigurationView(CtkFrame, ViewMixin):
                         width=28,
                     ).grid(row=row, column=2, padx=self.padx, pady=self.pady)
         ctk.CTkButton(
-            frame, text="Set operators", command=self.write_config, width=600
+            frame, text="Save", command=self.write_config, width=600
         ).grid(row=row, column=0, columnspan=3, padx=self.padx, pady=self.pady)
         return frame
 
@@ -120,6 +116,7 @@ class ConfigurationView(CtkFrame, ViewMixin):
             for key, value in self.values_to_set["operators"].items()
         }
         self.configuration.write(use_internal_values=False)
+        self.callbacks["save"]()
 
     def select_file(self, instrument, name, variable):
         """

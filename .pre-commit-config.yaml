@@ -17,9 +17,9 @@ repos:
         stages: [commit]
     -   id: git-tag-bump
         stages: [commit]
-    -   id: poetry-build
-        stages: [push]
-    -   id: upload-package
-        stages: [push]
-    -   id: update-sphinx-doc
-        stages: [push]
+      #     -   id: poetry-build
+      #         stages: [push]
+      #     -   id: upload-package
+      #         stages: [push]
+      #     -   id: update-sphinx-doc
+      #         stages: [push]

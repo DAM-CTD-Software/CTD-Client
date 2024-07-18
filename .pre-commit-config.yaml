@@ -11,15 +11,15 @@ repos:
     hooks:
     -   id: black-formatter
         stages: [commit]
-    -   id: export-requirements
-        stages: [push]
+      #     -   id: export-requirements
+      #         stages: [push]
     -   id: poetry-version-bump
         stages: [commit]
     -   id: git-tag-bump
         stages: [commit]
-    -   id: poetry-build
-        stages: [push]
-    -   id: upload-package
-        stages: [push]
-    -   id: update-sphinx-doc
-        stages: [push]
+      #     -   id: poetry-build
+      #         stages: [push]
+      #     -   id: upload-package
+      #         stages: [push]
+      #     -   id: update-sphinx-doc
+      #         stages: [push]

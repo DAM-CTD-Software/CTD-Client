@@ -19,6 +19,7 @@ class MainController:
     ):
 
         self.configuration = configuration
+        self.mainwindow = mainwindow
         self.tabs = mainwindow.tabs
         self.measurement = self.tabs.measurement
         self.configuration_view = self.tabs.configuration
@@ -69,3 +70,10 @@ class MainController:
             self.configuration_view,
             measurementview=self.measurement,
         )
+
+        # check for update upon start
+        self.check_updates()
+
+    def check_updates(self):
+        # TODO: think about check intervall during run time
+        self.mainwindow.check_for_update()

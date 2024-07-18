@@ -1,4 +1,3 @@
-import importlib.metadata
 import sys
 import tkinter.font as tkFont
 from typing import Type
@@ -8,6 +7,7 @@ from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.controller.maincontroller import MainController
 from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import THEMES_PATH
+from ctdclient.definitions import VERSION
 from ctdclient.view.configuration import ConfigurationView
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
@@ -16,12 +16,11 @@ from ctdclient.view.processing import ProcessingView
 
 
 def main():
+    # check for updates
     configuration_file = ConfigurationFile(CONFIG_PATH)
+    # set ctk options
     root = ctk.CTk()
-    root.title(
-        f"DAM CTD Software v{
-            importlib.metadata.version('ctdclient')}"
-    )
+    root.title(f"DAM CTD Software v{VERSION}")
     # Because CTkToplevel currently is bugged on windows
     # and doesn't check if a user specified icon is set
     # we need to set the icon again after 200ms
@@ -34,6 +33,7 @@ def main():
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme(str(THEMES_PATH))
     root.geometry("620x780")
+    # initialize objects
     main_window = MainWindow(
         parent=root,
         config=configuration_file,
@@ -55,4 +55,5 @@ def create_tabs(config: ConfigurationFile) -> dict[str, Type[CtkFrame]]:
 
 
 if __name__ == "__main__":
+    # TODO: add command line parameter for DEV run
     main()

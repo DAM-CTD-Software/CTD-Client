@@ -26,6 +26,7 @@ class RunController(Controller):
         self.bottles = bottles
         self.dship = dship
         self.processing = processing
+        self.batch_process = WindowsBatch()
         # set exe path in view
         self.view.path_to_seasave = self.configuration.path_to_seasave
         # define variables
@@ -59,9 +60,10 @@ class RunController(Controller):
         self.configuration.last_platform = self.platform
         if self.current_filename.exists():
             self.last_filename.set(str(self.current_filename.name))
+            self.configuration.last_cast = int(self.cast_number.get())
             self.cast_number.set(str(int(self.cast_number.get()) + 1))
             self.configuration.last_filename = Path(self.last_filename.get())
-            self.configuration.last_cast = int(self.cast_number.get())
+            self.configuration.operators["last"] = self.operator.get()
             self.configuration.write()
 
     def update_variables_pre_run(self, autostart):
@@ -96,7 +98,7 @@ class RunController(Controller):
 
     def run_processing(self, target_file: str):
         if not self.processing.file_path.suffix == ".toml":
-            WindowsBatch(self.processing.file_path, target_file)
+            self.batch_process.run(self.processing.file_path, target_file)
         else:
             self.processing.input_file = target_file
             self.processing.run()
@@ -104,4 +106,7 @@ class RunController(Controller):
             self.configuration.write()
 
     def cancel_processing(self):
-        self.processing.cancel()
+        if not self.processing.file_path.suffix == ".toml":
+            self.batch_process.cancel()
+        else:
+            self.processing.cancel()

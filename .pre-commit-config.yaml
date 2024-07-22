@@ -11,8 +11,8 @@ repos:
     hooks:
     -   id: black-formatter
         stages: [commit]
-    -   id: export-requirements
-        stages: [push]
+      #     -   id: export-requirements
+      #         stages: [push]
     -   id: poetry-version-bump
         stages: [commit]
     -   id: git-tag-bump

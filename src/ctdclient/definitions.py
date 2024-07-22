@@ -6,9 +6,8 @@ from ctdclient.utils import get_config_path
 
 ROOT_PATH = Path(__file__).absolute().parents[2]
 CONFIG_PATH = get_config_path()
-THEMES_PATH = ROOT_PATH.joinpath("src/ctdclient/view/ctktheme.json")
 VERSION = importlib.metadata.version("ctdclient")
-
+THEMES_PATH = ROOT_PATH.joinpath("templates/ctktheme.json")
 
 # update specifics
 INSTALL_DIR = ROOT_PATH.joinpath("updates")

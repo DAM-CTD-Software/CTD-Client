@@ -25,7 +25,7 @@ class ProcessingController(Controller):
 
     def reload_view(self):
         # initialize view data
-        self.view.populate(self.use_custom_script, self.steps)
+        self.view.populate(self.use_custom_script, self.steps, self.config_file_path)
         self.view.steps_frame.psa_paths = self.model.psa_paths
         self.view.steps_frame.step_options = self.model.step_names
         # set callbacks
@@ -33,6 +33,7 @@ class ProcessingController(Controller):
 
     def set_config_file_path(self, file_path: Path | str):
         self.config_file_path = Path(file_path)
+        self.model.file_path = self.config_file_path
         if self.config_file_path.suffix == ".toml":
             pass
         else:
@@ -55,12 +56,13 @@ class ProcessingController(Controller):
         self.model.save(info_dict)
 
     def load_processing(self, file_path: Path | str):
-        self.model.load(file_path)
-        self.steps = self.step_dict_to_tuple_list(self.model.modules)
         self.set_config_file_path(file_path)
-        self.processing_info = self.model.processing_info
-        self.psa_directory = self.processing_info["psa_directory"]
-        self.set_psa_selection(self.psa_directory)
+        if not self.use_custom_script:
+            self.model.load(file_path)
+            self.processing_info = self.model.processing_info
+            self.psa_directory = self.processing_info["psa_directory"]
+            self.set_psa_selection(self.psa_directory)
+        self.steps = self.step_dict_to_tuple_list(self.model.modules)
         self.reload_view()
 
     def processing_values_to_set(self):

@@ -17,7 +17,6 @@ class RunSeasave:
         self.path_to_seasave_exe = self.config.path_to_seasave
         self.path_to_psa = self.config.seasave_psa
         self.hex_name = hex_name
-        self.set_psa_run_info(psa_output_name)
 
     def run(self, downcast=True, autostart=True):
         """
@@ -57,12 +56,6 @@ class RunSeasave:
                     self.path_to_psa}\nand this file name: {self.hex_name}"
             )
             return ps
-
-    def set_psa_run_info(self, psa_output_name=None):
-        """Sets XMLCON and hex file paths in Seasave.psa."""
-        self.config.psa.set_xmlcon_file_path(self.config.xmlcon)
-        self.config.psa.set_hex_file_path(self.hex_name)
-        self.config.psa.to_xml(file_name=psa_output_name)
 
     def set_seasave_command_line_parameters(
         self,

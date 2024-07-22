@@ -26,12 +26,3 @@ class BottleClosingDepths(UserDict):
         self.data = {
             number + 1: "" for number in range(self.number_of_bottles)
         }
-
-    def set_psa_bottle_info(self):
-        """
-        Calls the psa editing method of SeasavePsa of the seabirdfilehandler
-        in order to generate the XML code necessary to set the bottle layout.
-        """
-        self.config.psa.set_bottle_fire_info(
-            bottle_info=self.data, number_of_bottles=self.number_of_bottles
-        )

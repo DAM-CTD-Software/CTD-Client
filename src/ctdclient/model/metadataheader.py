@@ -1,3 +1,4 @@
+from seabirdfilehandler import SeasavePsa
 from code_tools.logging import get_logger
 from ctdclient.configurationhandler import ConfigurationFile
 
@@ -10,6 +11,7 @@ class MetadataHeader:
     def build_metadata_header(
         cls,
         configuration: ConfigurationFile,
+        psa: SeasavePsa,
         dship_values: dict,
         platform: str,
         cast: str,
@@ -54,7 +56,7 @@ class MetadataHeader:
             header_list[-1] = cls.create_metadata_header_line(
                 "Pos_Alias", pos_alias
             )
-        configuration.psa.set_metadata_header(header_list, autostart)
+        psa.set_metadata_header(header_list, autostart)
         header_print = "\n".join(header_list)
         return header_print
 

@@ -3,7 +3,6 @@ from pathlib import Path
 
 import tomlkit
 from code_tools.logging import get_logger
-from seabirdfilehandler import SeasavePsa
 from tomlkit.exceptions import EmptyKeyError
 from tomlkit.exceptions import KeyAlreadyPresent
 from tomlkit.exceptions import NonExistentKey
@@ -66,7 +65,6 @@ class ConfigurationFile:
     def read_ctd_config(self, ctd_type: str):
         try:
             self.ctd_info: dict = self.data[ctd_type]
-            self.psa = SeasavePsa(self.data[ctd_type]["paths"]["seasave_psa"])
             assert isinstance(self.ctd_info, dict)
             self.seasave_psa: Path = Path(
                 self.data[ctd_type]["paths"]["seasave_psa"]

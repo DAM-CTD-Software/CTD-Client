@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from seabirdfilehandler import SeasavePsa
 from ctdclient.controller.Controller import Controller
 from ctdclient.model.fileupdater import UpdateFiles
 from ctdclient.model.metadataheader import MetadataHeader
@@ -50,8 +51,8 @@ class RunController(Controller):
         downcast: bool = True,
         autostart: bool = False,
     ):
-        self.update_variables_pre_run(autostart)
         self.current_filename = self.output_dir.joinpath(file_name)
+        self.update_variables_pre_run(autostart)
         return RunSeasave(self.configuration, self.current_filename).run(
             downcast, autostart
         )
@@ -71,9 +72,17 @@ class RunController(Controller):
         self.bottles.data = {
             key: value.get() for key, value in self.bottle_values.items()
         }
-        self.bottles.set_psa_bottle_info()
+        # set psa values
+        psa = SeasavePsa(self.configuration.seasave_psa)
+        psa.set_xmlcon_file_path(self.configuration.xmlcon)
+        psa.set_hex_file_path(self.current_filename)
+        psa.set_bottle_fire_info(
+            bottle_info=self.bottles.data, number_of_bottles=self.bottles.number_of_bottles
+        )
+        # write metadataheader
         MetadataHeader.build_metadata_header(
             configuration=self.configuration,
+            psa=psa,
             dship_values=self.dship.dship_values,
             platform=self.platform,
             cast=self.cast_number.get(),
@@ -81,6 +90,7 @@ class RunController(Controller):
             pos_alias=self.station.get(),
             autostart=autostart,
         )
+        psa.to_xml()
 
     def check_correct_filename(self):
         self.update_variables_post_run()

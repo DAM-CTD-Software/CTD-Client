@@ -107,21 +107,15 @@ class WindowsBatch:
     """Simple class to only run the old windows batch we actually want to
     replace"""
 
-    def __init__(self, batch: Path | str, hex_file: Path | str):
-        try:
-            self.batch = Path(batch)
-            hex_file = Path(hex_file)
-            self.hex_file = hex_file.parent.joinpath(hex_file.stem)
-        except TypeError as error:
-            logger.error(f"Wrong input type: {error}")
-        else:
-            self.run()
+    def __init__(self):
+        pass
 
-    def run(self):
+    def run(self, batch: Path | str, hex_file: Path | str):
         try:
+            hex_file = Path(hex_file).parent.joinpath(Path(hex_file).stem)
             self.killed = False
             self.ps = subprocess.Popen(
-                [self.batch, self.hex_file], shell=False
+                [batch, hex_file], shell=False
             )
             if self.ps.stdout:
                 logger.debug(self.ps.stdout)
@@ -129,12 +123,14 @@ class WindowsBatch:
             if error.stderr:
                 logger.error(error.stderr)
             raise error
+        except TypeError as error:
+            logger.error(f"Wrong input type: {error}")
         else:
             self.ps.wait()
             if self.killed:
-                logger.info(f"Interupted processing: {self.batch}")
+                logger.info(f"Interupted processing: {batch}")
             else:
-                logger.info(f"Ran processing: {self.batch} {self.hex_file}")
+                logger.info(f"Ran processing: {batch} {hex_file}")
 
     def cancel(self):
         self.killed = True

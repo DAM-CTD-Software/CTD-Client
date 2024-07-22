@@ -30,9 +30,6 @@ class MetadataHeader:
         -------
 
         """
-        configuration.operators["last"] = operator
-        configuration.last_cast = int(cast)
-        configuration.write(platform)
         if platform == "Scanfish":
             platform = "sfCTD"
         header_list = []
@@ -59,7 +56,6 @@ class MetadataHeader:
             )
         configuration.psa.set_metadata_header(header_list, autostart)
         header_print = "\n".join(header_list)
-        logger.info(f"Wrote the following metadata header:\n{header_print}")
         return header_print
 
     @classmethod

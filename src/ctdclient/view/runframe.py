@@ -77,7 +77,7 @@ class RunFrame(ViewMixin, CtkFrame):
         the information flow of bottle closing information and dship metadata.
         """
         # pre-run check
-        executable_name = self.path_to_seasave.stem
+        executable_name = self.path_to_seasave.name
         if self.process_exists(executable_name):
             CTkMessagebox(
                 title="Warning",

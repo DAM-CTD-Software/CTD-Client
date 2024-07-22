@@ -14,10 +14,11 @@ class ProcessingCustomScriptFrame(ViewMixin, CtkFrame):
     def __init__(
         self,
         *args,
+        file_path,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.file_path = self.configuration.last_processing_file
+        self.file_path = file_path
         self.psa_paths = []
         self.step_options = []
 

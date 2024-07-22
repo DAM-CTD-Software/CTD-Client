@@ -33,7 +33,7 @@ class MainController:
         )
 
         # dship
-        self.dship = DshipCaller(configuration)
+        self.dship = DshipCaller(configuration, dummy=False)
         self.dship_view = self.measurement.dship_frame
         self.dship_controller = DshipController(
             configuration, self.dship, self.dship_view

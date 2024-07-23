@@ -16,7 +16,6 @@ from ctdclient.view.processing import ProcessingView
 
 
 def main():
-    # check for updates
     configuration_file = ConfigurationFile(CONFIG_PATH)
     # set ctk options
     root = ctk.CTk()
@@ -55,5 +54,4 @@ def create_tabs(config: ConfigurationFile) -> dict[str, Type[CtkFrame]]:
 
 
 if __name__ == "__main__":
-    # TODO: add command line parameter for DEV run
     main()

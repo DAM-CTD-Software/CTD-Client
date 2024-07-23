@@ -1,3 +1,4 @@
+from ctdclient.definitions import DSHIP
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.controller.bottlecontroller import BottleController
 from ctdclient.controller.configcontroller import ConfigurationController
@@ -34,7 +35,7 @@ class MainController:
         )
 
         # dship
-        self.dship = DshipCaller(configuration, dummy=False)
+        self.dship = DshipCaller(configuration, dummy=DSHIP)
         self.dship_view = self.measurement.dship_frame
         self.dship_controller = DshipController(
             configuration, self.dship, self.dship_view

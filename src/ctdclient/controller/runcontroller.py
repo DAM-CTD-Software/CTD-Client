@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from seabirdfilehandler import SeasavePsa
+from ctdclient.model.psa import SeasavePsa
 from ctdclient.controller.Controller import Controller
 from ctdclient.model.fileupdater import UpdateFiles
 from ctdclient.model.metadataheader import MetadataHeader

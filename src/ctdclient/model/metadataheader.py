@@ -1,4 +1,4 @@
-from seabirdfilehandler import SeasavePsa
+from ctdclient.model.psa import SeasavePsa
 from code_tools.logging import get_logger
 from ctdclient.configurationhandler import ConfigurationFile
 

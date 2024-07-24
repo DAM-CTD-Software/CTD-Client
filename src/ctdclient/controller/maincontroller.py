@@ -35,7 +35,7 @@ class MainController:
         )
 
         # dship
-        self.dship = DshipCaller(configuration, dummy=DSHIP)
+        self.dship = DshipCaller(configuration, dummy=not DSHIP)
         self.dship_view = self.measurement.dship_frame
         self.dship_controller = DshipController(
             configuration, self.dship, self.dship_view
@@ -73,7 +73,7 @@ class MainController:
         )
 
         # check for update upon start
-        self.check_updates()
+        # self.check_updates()
 
     def check_updates(self):
         # TODO: think about check intervall during run time

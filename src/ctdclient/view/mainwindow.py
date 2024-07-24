@@ -8,6 +8,7 @@ from ctdclient.definitions import TARGET_URL
 from ctdclient.definitions import TUFUP_METADATA
 from ctdclient.definitions import TUFUP_TARGET
 from ctdclient.definitions import VERSION
+from ctdclient.definitions import UPDATING
 from ctdclient.view.tabview import TabView
 from CTkMessagebox import CTkMessagebox
 
@@ -33,15 +34,16 @@ class MainWindow(ctk.CTkFrame):
             # command=self.update_config_values,
         )
         self.tabs.grid()
-        self.tufup_client = Client(
-            app_name="CTD-Client",
-            app_install_dir=INSTALL_DIR,
-            current_version=VERSION,
-            metadata_dir=TUFUP_METADATA,
-            metadata_base_url=METADATA_URL,
-            target_dir=TUFUP_TARGET,
-            target_base_url=TARGET_URL,
-        )
+        if UPDATING:
+            self.tufup_client = Client(
+                app_name="CTD-Client",
+                app_install_dir=INSTALL_DIR,
+                current_version=VERSION,
+                metadata_dir=TUFUP_METADATA,
+                metadata_base_url=METADATA_URL,
+                target_dir=TUFUP_TARGET,
+                target_base_url=TARGET_URL,
+            )
 
     def check_for_update(self):
         update = self.tufup_client.check_for_updates()

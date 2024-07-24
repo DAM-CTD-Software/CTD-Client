@@ -2,9 +2,9 @@ import subprocess
 from pathlib import Path
 from time import sleep
 
+from ctdclient.definitions import PROCESSING_TEMPLATE_PATH
 from code_tools.logging import get_logger
 from processing import Configuration
-from processing import IncompleteConfigFile
 from processing import ProcessingRoutine
 from tomlkit.exceptions import NonExistentKey
 
@@ -18,7 +18,7 @@ class Processing:
         self,
         processing_info: dict | None = None,
         processing_config: Path | str | None = None,
-        template: Path | str = Path("templates/processing_template.toml"),
+        template: Path | str = PROCESSING_TEMPLATE_PATH,
     ):
         self.template = Configuration(template)
         self.optional_options = self.template["optional"]

@@ -7,6 +7,7 @@ from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.controller.maincontroller import MainController
 from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import THEMES_PATH
+from ctdclient.definitions import ICON_PATH
 from ctdclient.definitions import VERSION
 from ctdclient.view.configuration import ConfigurationView
 from ctdclient.view.ctkframe import CtkFrame
@@ -24,7 +25,7 @@ def main():
     # and doesn't check if a user specified icon is set
     # we need to set the icon again after 200ms
     if sys.platform.startswith("win"):
-        root.after(200, lambda: root.iconbitmap("icon.ico"))
+        root.after(200, lambda: root.iconbitmap(ICON_PATH))
 
     default_font = tkFont.nametofont("TkDefaultFont")
     default_font.configure(size=14)

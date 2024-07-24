@@ -2,10 +2,14 @@
 
 
 a = Analysis(
-    ['src\\ctdclient\\controller.py'],
+    ['src\\ctdclient\\main.py'],
     pathex=[],
     binaries=[],
-    datas=[('.venv/Lib/site-packages/customtkinter', 'customtkinter/')],
+    datas=[('.venv/Lib/site-packages/customtkinter', 'customtkinter/'),
+           ('updates/metadata/root.json', 'updates/metadata'),
+           ('templates', 'templates'),
+           ('icon.ico', '.'),
+           ('ctktheme.json', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

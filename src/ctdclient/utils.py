@@ -6,17 +6,14 @@ from pathlib import Path
 from tkinter import filedialog as fd
 from typing import Callable
 
-from code_tools.logging import configure_logging
 from code_tools.logging import get_logger
 
-configure_logging("ctdclient.log")
 logger = get_logger(__name__)
 
 
 def get_config_path(
         root_path: Path,
         ressources_path: Path,
-        dir_range: range = range(1, 4)
     ) -> Path:
     if platform.system() == "Linux":
         config_name = "linux_config.toml"
@@ -24,11 +21,9 @@ def get_config_path(
         config_name = "ctdclient.toml"
     else:
         sys.exit("Unknown operating system. Aborting.")
-    for dir_level in dir_range:
-        dir = Path(__file__).absolute().parents[dir_level]
-        file_path = dir.joinpath(config_name)
-        if file_path.exists():
-            return file_path
+    default_file_path = root_path.joinpath(config_name)
+    if default_file_path.exists():
+        return default_file_path
     try:
         logger.warning("Using template configuration file.")
         return shutil.copy(ressources_path.joinpath('templates', 'ctdclient.toml'), root_path)        

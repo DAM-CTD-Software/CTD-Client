@@ -48,7 +48,10 @@ class DshipCaller:
         fetch_timeout = config.dhsip_fetch_intervall
         # 0 is a flag for testing purposes
         self.fetch_timeout = fetch_timeout
-        self.dummy = dummy
+        if dummy:
+            self.dummy = dummy
+        else:
+            self.dummy = not config.use_dship
         self.start_listener()
 
     def generate_random_numbers(self):

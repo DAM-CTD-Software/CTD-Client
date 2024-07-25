@@ -45,6 +45,9 @@ class ConfigurationFile:
             self.number_of_bottles: int = self.data["number_of_bottles"]
             assert isinstance(self.number_of_bottles, int)
             self.downcast_option: bool = self.data["downcast_option"]
+            self.updating: bool = self.data["self_updating"]
+            self.server: str = self.data["server_address"]
+            self.use_dship: bool = self.data["use_dship_values"]
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dhsip_fetch_intervall: float = float(
                 self.data["dship"]["fetch_intervall"]

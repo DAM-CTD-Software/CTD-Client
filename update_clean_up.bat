@@ -1,0 +1,2 @@
+TIMEOUT /T 10
+del %1

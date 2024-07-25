@@ -36,12 +36,16 @@ class Processing:
                 self.processing_info = self.config_file.data
                 self.file_path = self.config_file.path
         self.modules = self.processing_info["modules"]
-        # TODO: extend these or handle differently
-        self.psa_paths = [
-            path.name
-            for path in Path(self.processing_info["psa_directory"]).iterdir()
-        ]
-        self.psa_paths = sorted(self.psa_paths, key=str.lower)
+        try:
+            psa_dir = Path(self.processing_info["psa_directory"])
+        except (KeyError, FileNotFoundError, OSError):
+            psa_dir = Path.home().joinpath("AppData", "Local", "Sea-Bird", "SBEDataProcessing-Win32")
+        finally:
+            if psa_dir.exists():
+                self.psa_paths = [path.name for path in psa_dir.iterdir()]
+                self.psa_paths = sorted(self.psa_paths, key=str.lower)
+            else:
+                self.psa_paths = []
         self.step_names = [
             "alignctd",
             "airpressure",

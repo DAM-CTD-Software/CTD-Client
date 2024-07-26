@@ -26,19 +26,19 @@ fetch_intervall = 1
     Pos_Alias = 'Web.PUP.NextWPName'
 
 [operators]
-op1 = "Martin Sass"
-op2 = "Sebastian Neubert"
-op3 = "Julia Wickenhaeuser"
+op1 = ""
+op2 = ""
+op3 = ""
 op4 = ""
 op5 = ""
-last = "Julia Wickenhaeuser"
+last = ""
 
 [ctd]
 
     [ctd.paths]
-    seasave_psa = "D:\\CTD-Client\\tests\\data\\Seasave_test.psa"
-    output_directory = "D:\\CTD-Client\\tests\\data\\out"
-    xmlcon = "D:\\CTD-Client\\tests\\data\\EMB295_006-01_CTD_0006.XMLCON"
+    seasave_psa = ""
+    output_directory = ""
+    xmlcon = ""
 
     [ctd.memory]
     last_cast = 0

@@ -12,9 +12,9 @@ logger = get_logger(__name__)
 
 
 def get_config_path(
-        root_path: Path,
-        ressources_path: Path,
-    ) -> Path:
+    root_path: Path,
+    ressources_path: Path,
+) -> Path:
     if platform.system() == "Linux":
         config_name = "linux_config.toml"
     elif platform.system() == "Windows":
@@ -26,7 +26,9 @@ def get_config_path(
         return default_file_path
     try:
         logger.warning("Using template configuration file.")
-        return shutil.copy(ressources_path.joinpath('templates', 'ctdclient.toml'), root_path)        
+        return shutil.copy(
+            ressources_path.joinpath("templates", "ctdclient.toml"), root_path
+        )
     except FileNotFoundError:
         sys.exit("No configuration file found. Aborting.")
 

@@ -7,7 +7,7 @@ number_of_bottles = 13
 downcast_option = false
 self_updating = true
 server_address = "http://localhost:8000/"
-use_dship_values = false
+use_dship_values = true
 
 [dship]
 ip='dship1'

@@ -27,7 +27,7 @@ def get_config_path(
     try:
         logger.warning("Using template configuration file.")
         return shutil.copy(
-            ressources_path.joinpath("templates", "ctdclient.toml"), root_path
+            ressources_path.joinpath("templates", config_name), root_path
         )
     except FileNotFoundError:
         sys.exit("No configuration file found. Aborting.")

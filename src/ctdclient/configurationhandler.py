@@ -61,9 +61,15 @@ class ConfigurationFile:
             if not ctd_type:
                 ctd_type = self.last_platform.lower()
             self.read_ctd_config(ctd_type)
-        except (NonExistentKey, EmptyKeyError, KeyAlreadyPresent) as error:
-            logger.error(f"Invalid configuration file: {error}")
-            sys.exit(1)
+        except (
+            NonExistentKey,
+            EmptyKeyError,
+            KeyAlreadyPresent,
+            AssertionError,
+        ) as error:
+            message = f"Invalid configuration file: {error}"
+            logger.error(message)
+            raise InvalidConfigFile(message)
 
     def read_ctd_config(self, ctd_type: str):
         try:
@@ -172,3 +178,10 @@ class ConfigurationFile:
     def reload(self):
         """Reopens the configuration file."""
         self.read_config()
+
+
+class InvalidConfigFile(Exception):
+    """Raise when config is missing a critical value"""
+
+    def __init__(self, message):
+        super().__init__(message)

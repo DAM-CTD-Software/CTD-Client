@@ -20,6 +20,7 @@ from ctdclient.definitions import THEMES_PATH
 from ctdclient.definitions import TUFUP_METADATA
 from ctdclient.definitions import TUFUP_TARGET
 from ctdclient.definitions import VERSION
+from ctdclient.definitions import WRONG_CONFIG
 from ctdclient.view.configuration import ConfigurationView
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
@@ -73,10 +74,22 @@ def main():
         )
         main_window.after(5000, check_for_update, tufup_client, main_window)
 
+    if WRONG_CONFIG:
+        main_window.after(2000, inform_about_bad_config)
+
     main_window.grid(row=0, column=0)
     root.mainloop()
     # clean up for shutdown
     main_controller.kill_threads()
+
+
+def inform_about_bad_config():
+    CTkMessagebox(
+        title="Misconfigured config file",
+        message="Your configuration file seems to be misformed. A new one has been generated and is being used for this session. Please make sure that all the necessary settings are correct.",
+        icon="warning",
+        option_1="Ok",
+    )
 
 
 def check_for_update(tufup_client: Client, main_window: MainWindow):

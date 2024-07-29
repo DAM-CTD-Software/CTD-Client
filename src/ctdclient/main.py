@@ -58,7 +58,7 @@ def main():
         config=configuration_file,
         tab_dict=create_tabs(configuration_file),
     )
-    MainController(configuration_file, main_window)
+    main_controller = MainController(configuration_file, main_window)
 
     # check for update upon start
     if configuration_file.updating:
@@ -75,6 +75,8 @@ def main():
 
     main_window.grid(row=0, column=0)
     root.mainloop()
+    # clean up for shutdown
+    main_controller.kill_threads()
 
 
 def check_for_update(tufup_client: Client, main_window: MainWindow):
@@ -98,7 +100,7 @@ def check_for_update(tufup_client: Client, main_window: MainWindow):
                 update(tufup_client)
                 logger.info(
                     f"Updated succesfully from version {
-                            VERSION} to {check_update.version}"
+                        VERSION} to {check_update.version}"
                 )
             if answer.get() == "Update later":
                 return

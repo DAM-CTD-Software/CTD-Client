@@ -1,6 +1,8 @@
 import tkinter as tk
+from multiprocessing import Queue
 
 import customtkinter as ctk
+from ctdclient.model.metadataheader import MetadataHeader
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.ctkspinbox import CTkSpinbox
 from ctdclient.view.View import ViewMixin
@@ -21,14 +23,14 @@ class InfoFrame(ViewMixin, CtkFrame):
         self.set_border()
         for arg in args:
             if arg.__class__.__name__ == "MeasurementView":
+                self.platform = arg.platform
                 self.last_filename = arg.last_filename
                 self.cast_number = arg.cast_number
                 self.current_filename = arg.current_filename
                 self.operator = arg.operator
                 self.station = arg.station
-                self.initialize()
 
-    def initialize(self):
+    def initialize(self, queue: Queue):
         if len(self.winfo_children()) > 0:
             for child in self.winfo_children():
                 child.grid_forget()
@@ -76,3 +78,19 @@ class InfoFrame(ViewMixin, CtkFrame):
             textvariable=self.station,
         ).grid(row=5, column=1, sticky=tk.E)
         self.grid()
+        self.update_filename(queue)
+
+    def update_filename(self, queue: Queue):
+        try:
+            while not queue.empty():
+                data = queue.get()
+                self.current_filename.set(
+                    MetadataHeader.build_file_name(
+                        data,
+                        int(self.cast_number.get()),
+                        self.platform,
+                    )
+                )
+        except Exception as error:
+            pass
+        self.after(1000, self.update_filename, queue)

@@ -34,10 +34,14 @@ class MainController:
         )
 
         # dship
+        self.info_frame = self.measurement.info_frame
         self.dship = DshipCaller(configuration)
         self.dship_view = self.measurement.dship_frame
         self.dship_controller = DshipController(
-            configuration, self.dship, self.dship_view
+            configuration,
+            self.dship,
+            self.dship_view,
+            info_frame=self.info_frame,
         )
 
         # run Seasave
@@ -70,3 +74,6 @@ class MainController:
             self.configuration_view,
             measurementview=self.measurement,
         )
+
+    def kill_threads(self):
+        self.dship_controller.kill_threads()

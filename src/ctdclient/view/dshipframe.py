@@ -1,4 +1,5 @@
 import tkinter as tk
+from multiprocessing import Queue
 
 import customtkinter as ctk
 from ctdclient.view.ctkframe import CtkFrame
@@ -29,21 +30,20 @@ class DshipFrame(ViewMixin, CtkFrame):
     ):
         super().__init__(*args, **kwargs)
         self.set_border()
-        self.dship_values: dict
 
-    def initialize(self, dship_values: dict):
-        self.dship_values = dship_values
+    def initialize(self, dship_values: dict, queue: Queue):
+        self.queue = queue
         self.dship_vars = {
             key: tk.StringVar(value=value)
-            for key, value in self.dship_values.items()
+            for key, value in dship_values.items()
         }
         self.dship_label = ctk.CTkLabel(self, text="waiting for connection...")
-        self.dship_label.grid(row=0, column=0)
-        ctk.CTkButton(
-            self,
-            text="Reconnect",
-            command=self.bind_commands_to_callbacks("reconnect"),
-        ).grid(row=0, column=1)
+        self.dship_label.grid(row=0, column=1)
+        # ctk.CTkButton(
+        #     self,
+        #     text="Reconnect",
+        #     command=self.bind_commands_to_callbacks("reconnect"),
+        # ).grid(row=0, column=1)
 
         for index, (key, value) in enumerate(self.dship_vars.items()):
             if key != "Cruise":
@@ -51,8 +51,9 @@ class DshipFrame(ViewMixin, CtkFrame):
                 ctk.CTkLabel(self, textvariable=value).grid(
                     row=index + 1, column=1
                 )
+        self.update_dship_values()
 
-    def update_dship_values(self, dship_answer: dict):
+    def update_dship_values(self):
         """
 
         Parameters
@@ -64,15 +65,27 @@ class DshipFrame(ViewMixin, CtkFrame):
         -------
 
         """
-        for (_, var), value in zip(
-            self.dship_vars.items(), dship_answer.values()
-        ):
-            var.set(value)
+
+        try:
+            while not self.queue.empty():
+                data = self.queue.get()
+                # TODO: handle reconnecting and error display
+                if "error" in data:
+                    self.set_dship_status_bad()
+                else:
+                    self.set_dship_status_good()
+                    for (_, var), value in zip(
+                        self.dship_vars.items(), data.values()
+                    ):
+                        var.set(value)
+        except Exception as error:
+            self.set_dship_status_bad(str(error))
+        self.after(1000, self.update_dship_values)
 
     def set_dship_status_good(self):
         """"""
         self.dship_label.configure(text_color="green", text="DSHIP live")
 
-    def set_dship_status_bad(self):
+    def set_dship_status_bad(self, text: str = "not connected"):
         """"""
-        self.dship_label.configure(text_color="red", text="not connected")
+        self.dship_label.configure(text_color="red", text=text)

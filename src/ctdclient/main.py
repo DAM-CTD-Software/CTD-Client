@@ -170,6 +170,12 @@ def create_tabs(config: ConfigurationFile) -> dict[str, Type[CtkFrame]]:
 
 
 if __name__ == "__main__":
+    # necessary for PyInstaller, to avoid spawning endless loops of the Clients
+    # process. See https://pyinstaller.org/en/stable/common-issues-and-pitfalls.html
+    import multiprocessing
+
+    multiprocessing.freeze_support()
+
     main()
 
     if UPDATED:

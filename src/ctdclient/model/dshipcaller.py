@@ -139,7 +139,7 @@ class DshipCaller:
             return None
 
     def get_station_log(self, cruise_id: str) -> None | str:
-        manida_url = "http://dship1:8080/manida-v3/"
+        manida_url = f"http://{self.ip}:8080/manida-v3/"
         station_log_url = f"{manida_url}station?expeditionId={
             cruise_id}&format=JSON"
         try:
@@ -148,7 +148,8 @@ class DshipCaller:
             requests.exceptions.ConnectTimeout,
             requests.exceptions.ConnectionError,
             OSError,
-        ):
+        ) as error:
+            logger.error(f"Could not reach the manida interface: {error}")
             return None
         else:
             if call.status_code in ["200", 200]:

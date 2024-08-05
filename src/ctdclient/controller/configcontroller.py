@@ -20,7 +20,9 @@ class ConfigurationController(Controller):
         self.measurementview = measurementview
 
         # set callbacks
-        self.view.add_callback("save", self.save_configuration)
+        self.view.tabs.basic_settings.add_callback(
+            "save", self.save_configuration
+        )
 
     def save_configuration(self):
         self.measurementview.info_frame.initialize()

@@ -6,6 +6,7 @@ from code_tools.logging import get_logger
 from tomlkit.exceptions import EmptyKeyError
 from tomlkit.exceptions import KeyAlreadyPresent
 from tomlkit.exceptions import NonExistentKey
+from tomlkit.exceptions import UnexpectedCharError
 
 logger = get_logger(__name__)
 
@@ -37,17 +38,15 @@ class ConfigurationFile:
                 config.append(line)
             self.data = tomlkit.loads("".join(config))
         try:
-            self.platforms: list = self.data["platforms"]
-            assert isinstance(self.platforms, list)
             self.last_platform: str = self.data["last_platform"]
             assert isinstance(self.last_platform, str)
-            self.path_to_seasave: Path = Path(self.data["seasave_exe"])
-            self.number_of_bottles: int = self.data["number_of_bottles"]
-            assert isinstance(self.number_of_bottles, int)
-            self.downcast_option: bool = self.data["downcast_option"]
-            self.updating: bool = self.data["self_updating"]
-            self.server: str = self.data["server_address"]
-            self.use_dship: bool = self.data["use_dship_values"]
+            self.platforms: list = self.data["base"]["platforms"]
+            assert isinstance(self.platforms, list)
+            self.path_to_seasave: Path = Path(self.data["base"]["seasave_exe"])
+            self.downcast_option: bool = self.data["base"]["downcast_option"]
+            self.updating: bool = self.data["base"]["self_updating"]
+            self.server: str = self.data["base"]["server_address"]
+            self.use_dship: bool = self.data["base"]["use_dship_values"]
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dhsip_fetch_intervall: float = float(
                 self.data["dship"]["fetch_intervall"]
@@ -66,6 +65,7 @@ class ConfigurationFile:
             EmptyKeyError,
             KeyAlreadyPresent,
             AssertionError,
+            UnexpectedCharError,
         ) as error:
             message = f"Invalid configuration file: {error}"
             logger.error(message)
@@ -82,6 +82,10 @@ class ConfigurationFile:
                 self.data[ctd_type]["paths"]["output_directory"]
             )
             self.xmlcon: Path = Path(self.data[ctd_type]["paths"]["xmlcon"])
+            self.number_of_bottles: int = self.data[ctd_type]["paths"][
+                "number_of_bottles"
+            ]
+            assert isinstance(self.number_of_bottles, int)
             self.last_cast: int = self.data[ctd_type]["memory"]["last_cast"]
             self.last_filename: Path = Path(
                 self.data[ctd_type]["memory"]["last_filename"]

@@ -2,6 +2,7 @@ from typing import Type
 
 import customtkinter as ctk
 from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.tabview import TabView
 
 
@@ -11,7 +12,7 @@ class MainWindow(ctk.CTkFrame):
         self,
         parent: ctk.CTk,
         config: ConfigurationFile,
-        tab_dict: dict[str, Type[ctk.CTkFrame]],
+        tab_dict: dict[str, Type[CtkFrame]],
     ):
         super().__init__(parent)
 

@@ -30,7 +30,7 @@ class InfoFrame(ViewMixin, CtkFrame):
                 self.operator = arg.operator
                 self.station = arg.station
 
-    def initialize(self, queue: Queue):
+    def initialize(self):
         if len(self.winfo_children()) > 0:
             for child in self.winfo_children():
                 child.grid_forget()
@@ -78,7 +78,6 @@ class InfoFrame(ViewMixin, CtkFrame):
             textvariable=self.station,
         ).grid(row=5, column=1, sticky=tk.E)
         self.grid()
-        self.update_filename(queue)
 
     def update_filename(self, queue: Queue):
         try:

@@ -63,19 +63,24 @@ def main():
 
     # check for update upon start
     if configuration_file.updating:
-        tufup_client = Client(
-            app_name="CTD-Client",
-            app_install_dir=ROOT_PATH,
-            current_version=VERSION,
-            metadata_dir=TUFUP_METADATA,
-            metadata_base_url=METADATA_URL,
-            target_dir=TUFUP_TARGET,
-            target_base_url=TARGET_URL,
-        )
-        main_window.after(5000, check_for_update, tufup_client, main_window)
+        try:
+            tufup_client = Client(
+                app_name="CTD-Client",
+                app_install_dir=ROOT_PATH,
+                current_version=VERSION,
+                metadata_dir=TUFUP_METADATA,
+                metadata_base_url=METADATA_URL,
+                target_dir=TUFUP_TARGET,
+                target_base_url=TARGET_URL,
+            )
+            main_window.after(
+                5000, check_for_update, tufup_client, main_window
+            )
+        except FileNotFoundError as error:
+            logger.error(f"Could not initiate updating: {error}")
 
     if WRONG_CONFIG:
-        main_window.after(2000, inform_about_bad_config)
+        main_window.after(2000, inform_about_bad_config, main_window)
 
     main_window.grid(row=0, column=0)
     root.mainloop()
@@ -83,13 +88,21 @@ def main():
     main_controller.kill_threads()
 
 
-def inform_about_bad_config():
-    CTkMessagebox(
+def inform_about_bad_config(main_window):
+    answer = CTkMessagebox(
         title="Misconfigured config file",
         message="Your configuration file seems to be misformed. A new one has been generated and is being used for this session. Please make sure that all the necessary settings are correct.",
         icon="warning",
         option_1="Ok",
     )
+    if answer.get() == "Ok":
+        main_window.tabs.configuration.tabs.set("expert settings")
+        main_window.tabs.set("configuration")
+        CTkMessagebox(
+            title="Caution",
+            message="These settings can break the application, proceed with caution and only if you know what you are doing.",
+            option_1="Ok",
+        )
 
 
 def check_for_update(tufup_client: Client, main_window: MainWindow):

@@ -1,9 +1,9 @@
 # base configuration for the software internals and system specifics which are
 # usually set only once during the software installation process
-platforms = ['CTD']
 last_platform = "CTD"
+[base]
+platforms = ['CTD', "Scanfish"]
 seasave_exe = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\Seasave.exe"
-number_of_bottles = 13
 downcast_option = false
 self_updating = true
 server_address = "http://localhost:8000/"
@@ -39,6 +39,7 @@ last = ""
     seasave_psa = ""
     output_directory = ""
     xmlcon = ""
+    number_of_bottles = 13
 
     [ctd.memory]
     last_cast = 0

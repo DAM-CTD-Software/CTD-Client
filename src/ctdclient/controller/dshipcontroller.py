@@ -40,7 +40,8 @@ class DshipController(Controller):
         self.alive = True
         self.calling_dship.start()
         self.view.initialize(self.model.dship_values, self.queue)
-        self.info_frame.initialize(self.info_queue)
+        self.info_frame.initialize()
+        self.info_frame.update_filename(self.info_queue)
 
     def calling(self, method_to_call: Callable):
         while self.alive:

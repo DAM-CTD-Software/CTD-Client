@@ -28,7 +28,7 @@ class DshipCaller:
         # vessel-specific IP, where DSHIP can be reached
         self.ip = config.dship_ip
         # the values fetched from dship with corresponding header names
-        self.dship_values = self.dict_of_samples
+        self.dship_values = {}
         # the URL of the API
         self.source = f"http://{self.ip}{dship_url_part}"
         # configuration file representation
@@ -49,6 +49,7 @@ class DshipCaller:
         if self.fail_counter == self.fail_tolerance:
             # TODO: what to do in this case?
             pass
+        return self.dship_values
 
     def call_api(
         self,
@@ -100,6 +101,7 @@ class DshipCaller:
                     )
 
             time.sleep(timeout)
+        return self.dship_values
 
     def individual_call(self, url) -> dict | None:
         """
@@ -170,7 +172,11 @@ class DshipCaller:
         return station_id.replace("/", "_")
 
     def retrieve_station_and_event_info(self) -> str | None:
-        station_log = self.get_station_log(self.dship_values["Cruise"])
+        try:
+            station_log = self.get_station_log(self.dship_values["Cruise"])
+        except KeyError as error:
+            # TODO: handle this situation properly
+            return None
         if station_log:
             last_event = self.get_ctd_last_event(station_log)
             station_event_info = self.get_station_id(last_event)

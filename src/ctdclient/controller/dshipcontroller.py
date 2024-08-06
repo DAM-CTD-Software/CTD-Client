@@ -47,7 +47,7 @@ class DshipController(Controller):
         self.info_queue = Queue()
         self.calling_dship = Process(
             target=calling,
-            args=[method_to_call, self.configuration.dhsip_fetch_intervall, self.queue, self.info_queue, self.model],
+            args=[method_to_call, self.configuration.dhsip_fetch_intervall, self.queue, self.info_queue],
             name="calling_dship",
             daemon=True,
         )

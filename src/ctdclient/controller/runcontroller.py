@@ -81,9 +81,7 @@ class RunController(Controller):
         )
         # write metadataheader
         MetadataHeader.build_metadata_header(
-            configuration=self.configuration,
             psa=psa,
-            dship_values=self.dship.dship_values,
             platform=self.platform,
             cast=self.cast_number.get(),
             operator=self.operator.get(),

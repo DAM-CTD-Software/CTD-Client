@@ -7,12 +7,12 @@ logger = get_logger(__name__)
 
 class MetadataHeader:
 
+    dship_values = {}
+
     @classmethod
     def build_metadata_header(
         cls,
-        configuration: ConfigurationFile,
         psa: SeasavePsa,
-        dship_values: dict,
         platform: str,
         cast: str,
         operator: str,
@@ -35,7 +35,7 @@ class MetadataHeader:
         if platform == "Scanfish":
             platform = "sfCTD"
         header_list = []
-        for name, value in dship_values.items():
+        for name, value in MetadataHeader.dship_values.items():
             header_list.append(cls.create_metadata_header_line(name, value))
         header_list.insert(
             2, cls.create_metadata_header_line("Platform", platform)
@@ -124,4 +124,6 @@ class MetadataHeader:
             "Scanfish": "SF",
             "pCTD": "pCTD",
         }
+        # save the current dship metadata every time a file name is created (every second)
+        MetadataHeader.dship_values = dship_values
         return f"{cruise}_{station}_{platform_name_mapper[platform]}_{cast_number:04d}.hex"

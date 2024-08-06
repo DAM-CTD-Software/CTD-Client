@@ -190,14 +190,25 @@ class BaseSettings(ViewMixin, CtkFrame):
             self.configuration.write(use_internal_values=False)
 
 
-class ExpertSettings(CtkFrame):
+class ExpertSettings(ctk.CTkScrollableFrame):
 
     def __init__(
         self,
         *args,
+        configuration,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        self.configuration = configuration
+        self.configure(
+            height = 500,
+            width = 600,
+            border_width=1,
+            border_color="gray10",
+            fg_color="transparent"
+        )
+        self.padx = 5
+        self.pady = 5
         self.values = self.get_values_to_set()
         self.platform_options = ["CTD"]  # ¨Scanfish¨
         top_entry_length = len(self.values["base"])
@@ -330,7 +341,6 @@ class ExpertSettings(CtkFrame):
                 new_base[key] = value[0].get()
             else:
                 new_base[key] = value
-                print(f"{key}: {value}")
 
         self.configuration["base"] = new_base
         self.configuration["dship"]["identifier"] = {

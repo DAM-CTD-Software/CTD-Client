@@ -1,5 +1,4 @@
 import shutil
-import subprocess
 import sys
 import tkinter.font as tkFont
 from pathlib import Path
@@ -52,7 +51,7 @@ def main():
     root.option_add("*Font", default_font)
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme(str(THEMES_PATH))
-    root.geometry("620x780")
+    root.geometry("700x780")
     # initialize objects
     main_window = MainWindow(
         parent=root,
@@ -130,6 +129,7 @@ def check_for_update(tufup_client: Client, main_window: MainWindow):
                 )
             if answer.get() == "Update later":
                 return
+            # TODO: implement update message routine
             # if answer.get() == "Show update details":
             #     try:
             #         message = check_update.custom["changes"]
@@ -161,16 +161,24 @@ def update(tufup_client: Client):
         progress_hook=update_progress,
         log_file_name="install.log",
     )
+    CTkMessagebox(
+        title="Updated",
+        message="The software has successfully been updated. You need to restart the application in order to use the new features.",
+        option_1="Ok",
+    )
 
 
 def installation_procedure(src_dir: Path, dst_dir: Path, **kwargs):
     # rename exe in root dir
+    new_temp_name = ROOT_PATH.joinpath(".old.exe")
+    if new_temp_name.exists():
+        new_temp_name.unlink()
     shutil.move(
-        ROOT_PATH.joinpath("ctdclient.exe"), ROOT_PATH.joinpath(".old.exe")
+        ROOT_PATH.joinpath("ctdclient.exe"), new_temp_name
     )
     # move extracted new files into root dir
     for file in src_dir.iterdir():
-        if file.name == "ctdclient.exe":
+        if file.name in ("ctdclient.exe", "update_fixer.bat"):
             shutil.move(file, dst_dir)
     # delete the tmp update directory and its files
     shutil.rmtree(src_dir)
@@ -205,12 +213,21 @@ if __name__ == "__main__":
     main()
 
     if UPDATED:
-        subprocess.Popen(
-            [
-                RESSOURCES_PATH.joinpath("update_clean_up.bat"),
-                str(ROOT_PATH.joinpath(".old.exe")),
-            ],
-            subprocess.DETACHED_PROCESS,
-        )
+        import os
+        old_path = RESSOURCES_PATH.joinpath("update_clean_up.bat")
+        if not old_path.is_absolute():
+            old_path = old_path.absolute()
+        target_dir = old_path.parents[2]
+        # move the batch file out of the tmp dir of the exe into its own tmp space
+        shutil.copy(old_path, target_dir)
+        os.startfile(
+            target_dir.joinpath("update_clean_up.bat"),
+            str(ROOT_PATH.joinpath(".old.exe")),
+            )
+        # option to start a batch script for special update needs
+        # needs to be deployed with the update
+        update_fixing_script = ROOT_PATH.joinpath("update_fixer.bat")
+        if update_fixing_script.exists():
+            os.startfile(update_fixing_script)
 
     sys.exit(0)

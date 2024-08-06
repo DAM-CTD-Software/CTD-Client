@@ -1,2 +1,3 @@
-TIMEOUT /T 10
-del %1
+TIMEOUT /T 1
+TASKKILL /IM "ctdclient.exe"
+DEL %1

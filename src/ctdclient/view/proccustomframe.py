@@ -54,6 +54,6 @@ class ProcessingCustomScriptFrame(ViewMixin, CtkFrame):
     def load_configuration(self):
         # TODO: change seletc_file to return the file name?
         file_path = tk.StringVar(value=str(self.file_path))
-        file_selected = select_file("batch", file_path)
+        file_selected = select_file("bat", file_path)
         if file_selected:
             self.callbacks["configload"](file_path.get())

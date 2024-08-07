@@ -63,7 +63,7 @@ class RunController(Controller):
             self.last_filename.set(str(self.current_filename.name))
             self.configuration.last_cast = int(self.cast_number.get())
             self.cast_number.set(str(int(self.cast_number.get()) + 1))
-            self.configuration.last_filename = Path(self.last_filename.get())
+            self.configuration.last_filename = Path(self.current_filename)
             self.configuration.operators["last"] = self.operator.get()
             self.configuration.write()
 

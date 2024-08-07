@@ -1,10 +1,10 @@
 from pathlib import Path
 
-from ctdclient.model.psa import SeasavePsa
 from ctdclient.controller.Controller import Controller
 from ctdclient.model.fileupdater import UpdateFiles
 from ctdclient.model.metadataheader import MetadataHeader
 from ctdclient.model.processing import WindowsBatch
+from ctdclient.model.psa import SeasavePsa
 from ctdclient.model.runseasave import RunSeasave
 from ctdclient.view.measurement import MeasurementView
 from ctdclient.view.runframe import RunFrame
@@ -77,7 +77,8 @@ class RunController(Controller):
         psa.set_xmlcon_file_path(self.configuration.xmlcon)
         psa.set_hex_file_path(self.current_filename)
         psa.set_bottle_fire_info(
-            bottle_info=self.bottles.data, number_of_bottles=self.bottles.number_of_bottles
+            bottle_info=self.bottles.data,
+            number_of_bottles=self.bottles.number_of_bottles,
         )
         # write metadataheader
         MetadataHeader.build_metadata_header(
@@ -107,11 +108,12 @@ class RunController(Controller):
     def run_processing(self, target_file: str):
         if not self.processing.file_path.suffix == ".toml":
             self.batch_process.run(self.processing.file_path, target_file)
+            self.configuration.last_processing_file = self.processing.file_path
         else:
             self.processing.input_file = target_file
             self.processing.run()
             self.configuration.last_processing_file = self.model.file_path
-            self.configuration.write()
+        self.configuration.write()
 
     def cancel_processing(self):
         if not self.processing.file_path.suffix == ".toml":

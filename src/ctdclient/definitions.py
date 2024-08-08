@@ -34,5 +34,7 @@ TUFUP_TARGET = INSTALL_DIR.joinpath("targets")
 # ensure, that directory exists
 if not TUFUP_TARGET.exists():
     TUFUP_TARGET.mkdir(parents=True)
+if not config.server[-1] == "/":
+    config.server = f"{config.server}/"
 METADATA_URL = f"{config.server}metadata/"
 TARGET_URL = f"{config.server}targets/"

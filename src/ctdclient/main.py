@@ -217,12 +217,13 @@ if __name__ == "__main__":
         old_path = RESSOURCES_PATH.joinpath("update_clean_up.bat")
         if not old_path.is_absolute():
             old_path = old_path.absolute()
-        target_dir = old_path.parents[2]
+        target_dir = old_path.parents[1]
         # move the batch file out of the tmp dir of the exe into its own tmp space
         shutil.copy(old_path, target_dir)
         os.startfile(
             target_dir.joinpath("update_clean_up.bat"),
-            str(ROOT_PATH.joinpath(".old.exe")),
+            operation="open",
+            arguments=str(ROOT_PATH.joinpath(".old.exe")),
             )
         # option to start a batch script for special update needs
         # needs to be deployed with the update

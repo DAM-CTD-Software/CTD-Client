@@ -24,6 +24,7 @@ fetch_intervall = 1
     Echo_Depth = 'SYS.CALC.WaterDepth'
     Air_Pressure = 'Weatherstation.PEUMA.Air_pressure'
     Pos_Alias = 'Web.PUP.NextWPName'
+    Dev_Short_Name = 'ActionLog.PUP.DeviveShortName'
 
 [operators]
 op1 = ""

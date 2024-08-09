@@ -46,7 +46,7 @@ class DshipFrame(ViewMixin, CtkFrame):
         # ).grid(row=0, column=1)
 
         for index, (key, value) in enumerate(self.dship_vars.items()):
-            if key != "Cruise":
+            if key not in ("Cruise", "Device"):
                 ctk.CTkLabel(self, text=key).grid(row=index + 1, column=0)
                 ctk.CTkLabel(self, textvariable=value).grid(
                     row=index + 1, column=1

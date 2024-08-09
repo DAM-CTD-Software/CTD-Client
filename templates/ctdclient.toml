@@ -14,16 +14,17 @@ ip='dship1'
 # timeout between individual API calls in seconds
 fetch_intervall = 1
 
-    # the internal dship names of the different parameters
-    [dship.identifier]
-    Cruise = 'SYS.DISP.ExpNumber'
-    Station = 'ActionLog.PUP.DopName'
-    GPS_Time = 'SYS.DISP.TimeTxt'
-    GPS_Lat = 'SYS.STR.PosLat'
-    GPS_Lon = 'SYS.STR.PosLon'
-    Echo_Depth = 'SYS.CALC.WaterDepth'
-    Air_Pressure = 'Weatherstation.PEUMA.Air_pressure'
-    Pos_Alias = 'Web.PUP.NextWPName'
+# the internal dship names of the different parameters
+[dship.identifier]
+Cruise = 'SYS.DISP.ExpNumber'
+Station = 'ActionLog.PUP.DopName'
+GPS_Time = 'SYS.DISP.TimeTxt'
+GPS_Lat = 'SYS.STR.PosLat'
+GPS_Lon = 'SYS.STR.PosLon'
+Echo_Depth = 'SYS.CALC.WaterDepth'
+Air_Pressure = 'Weatherstation.PEUMA.Air_pressure'
+Pos_Alias = 'Web.PUP.NextWPName'
+Device = 'ActionLog.PUP.DeviceShortName'
 
 [operators]
 op1 = ""
@@ -35,13 +36,13 @@ last = ""
 
 [ctd]
 
-    [ctd.paths]
-    seasave_psa = ""
-    output_directory = ""
-    xmlcon = ""
-    number_of_bottles = 13
+[ctd.paths]
+seasave_psa = ""
+output_directory = ""
+xmlcon = ""
+number_of_bottles = 13
 
-    [ctd.memory]
-    last_cast = 0
-    last_filename = ""
-    last_processing_file = ""
+[ctd.memory]
+last_cast = 0
+last_filename = ""
+last_processing_file = ""

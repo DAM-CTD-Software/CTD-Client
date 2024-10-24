@@ -41,7 +41,10 @@ def udpate_ctd_station(
     Action numbers.
     For testing reasons, an instance check is performed.
     """
-    value = dship_values["Device"]
+    try:
+        value = dship_values["Device"]
+    except KeyError:
+        return (ctd_station, dship_values)
     if isinstance(value, int):
         if value > 15:
             dship_values["Station"] = ctd_station

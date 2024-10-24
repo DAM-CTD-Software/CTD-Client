@@ -3,7 +3,6 @@ from pathlib import Path
 from ctdclient.controller.Controller import Controller
 from ctdclient.model.fileupdater import UpdateFiles
 from ctdclient.model.metadataheader import MetadataHeader
-from ctdclient.model.processing import WindowsBatch
 from ctdclient.model.psa import SeasavePsa
 from ctdclient.model.runseasave import RunSeasave
 from ctdclient.view.measurement import MeasurementView
@@ -27,7 +26,6 @@ class RunController(Controller):
         self.bottles = bottles
         self.dship = dship
         self.processing = processing
-        self.batch_process = WindowsBatch()
         # set exe path in view
         self.view.path_to_seasave = self.configuration.path_to_seasave
         # define variables
@@ -106,17 +104,11 @@ class RunController(Controller):
             )
 
     def run_processing(self, target_file: str):
-        if not self.processing.file_path.suffix == ".toml":
-            self.batch_process.run(self.processing.file_path, target_file)
-            self.configuration.last_processing_file = self.processing.file_path
-        else:
-            self.processing.input_file = target_file
-            self.processing.run()
-            self.configuration.last_processing_file = self.model.file_path
+        self.processing.run(target_file)
+        self.configuration.last_processing_file = (
+            self.processing.current_config
+        )
         self.configuration.write()
 
     def cancel_processing(self):
-        if not self.processing.file_path.suffix == ".toml":
-            self.batch_process.cancel()
-        else:
-            self.processing.cancel()
+        self.processing.cancel()

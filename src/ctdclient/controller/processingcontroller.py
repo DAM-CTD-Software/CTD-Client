@@ -25,17 +25,17 @@ class ProcessingController(Controller):
 
     def reload_view(self):
         # initialize view data
-        self.view.populate(self.use_custom_script, self.steps, self.config_file_path)
-        self.view.steps_frame.psa_paths = self.model.psa_paths
-        self.view.steps_frame.step_options = self.model.step_names
+        self.view.populate(self.use_custom_script, [], self.config_file_path)
+        # self.view.steps_frame.psa_paths = self.model.psa_paths
+        # self.view.steps_frame.step_options = self.model.step_names
         # set callbacks
         self.view.steps_frame.add_callback("configload", self.load_processing)
 
     def set_config_file_path(self, file_path: Path | str):
         self.config_file_path = Path(file_path)
-        self.model.file_path = self.config_file_path
+        self.model.update_config(self.config_file_path)
         if self.config_file_path.suffix == ".toml":
-            pass
+            self.use_custom_script = True
         else:
             self.use_custom_script = True
 
@@ -50,37 +50,9 @@ class ProcessingController(Controller):
                 tuple_list.append((step, psa))
         return tuple_list
 
-    def save_processing(self):
-        # TODO: dict contruction from individual pieces
-        info_dict = {}
-        self.model.save(info_dict)
-
     def load_processing(self, file_path: Path | str):
         self.set_config_file_path(file_path)
-        if not self.use_custom_script:
-            self.model.load(file_path)
-            self.processing_info = self.model.processing_info
-            self.psa_directory = self.processing_info["psa_directory"]
-            self.set_psa_selection(self.psa_directory)
-        self.steps = self.step_dict_to_tuple_list(self.model.modules)
         self.reload_view()
-
-    def processing_values_to_set(self):
-        value_dict = {
-            key: tk.StringVar(value=value)
-            for key, value in self.processing_info.items()
-            if key not in ("modules", "file_list", "optional")
-        }
-        try:
-            optional_values = {
-                key: tk.StringVar(value=value)
-                for key, value in self.processing_info["optional"].items()
-            }
-        except (NonExistentKey, KeyError):
-            pass
-        else:
-            value_dict = {**value_dict, **optional_values}
-        return value_dict
 
     def update_processing_info(self, general_infos: dict, steps: dict):
         processing_dict = {

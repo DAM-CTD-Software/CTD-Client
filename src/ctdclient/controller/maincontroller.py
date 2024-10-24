@@ -25,7 +25,6 @@ class MainController:
         self.configuration_view = self.tabs.configuration
 
         self.processing = Processing()
-        self.processing.file_path = configuration.last_processing_file
         # bottles
         self.bottles = BottleClosingDepths(configuration)
         self.bottle_view = self.measurement.bottle_frame

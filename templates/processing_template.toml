@@ -1,14 +1,9 @@
-exe_directory = "C:\\Program Files (x86)\\Sea-Bird\\SBEDataProcessing-Win32"
-psa_directory = ""
-file_list = []
+input = [""]
+output_type = "cnv"
+# output_dir = ""
+# output_name = ""
 
-[optional]
-output_directory = ""
-file_type_directory = ""
-new_file_name = ""
-file_suffix = ""
-
-[modules]
+# these paths need to be altered to real targets
 [modules.datcnv]
 psa = "DatCnv.psa"
 

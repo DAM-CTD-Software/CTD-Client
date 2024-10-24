@@ -47,6 +47,9 @@ class ConfigurationFile:
             self.updating: bool = self.data["base"]["self_updating"]
             self.server: str = self.data["base"]["server_address"]
             self.use_dship: bool = self.data["base"]["use_dship_values"]
+            self.generate_processing_fingerprint: str = self.data["base"][
+                "generate_processing_fingerprint"
+            ]
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dhsip_fetch_intervall: float = float(
                 self.data["dship"]["fetch_intervall"]

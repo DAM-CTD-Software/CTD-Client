@@ -8,6 +8,7 @@ downcast_option = false
 self_updating = true
 server_address = "http://localhost:8000/"
 use_dship_values = true
+generate_processing_fingerprint = ""
 
 [dship]
 ip='dship1'

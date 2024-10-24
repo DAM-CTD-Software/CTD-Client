@@ -33,7 +33,10 @@ class ProcessingController(Controller):
 
     def set_config_file_path(self, file_path: Path | str):
         self.config_file_path = Path(file_path)
-        self.model.update_config(self.config_file_path)
+        self.model.update_config(
+            self.config_file_path,
+            self.configuration.generate_processing_fingerprint,
+        )
         if self.config_file_path.suffix == ".toml":
             self.use_custom_script = True
         else:

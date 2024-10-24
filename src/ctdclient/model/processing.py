@@ -20,12 +20,19 @@ class Processing:
     def update_config(
         self,
         path_to_config: Path | str,
+        procedure_fingerprint_directory: str,
     ):
         new_config = Path(path_to_config)
         config_suffix = new_config.suffix
         if config_suffix == ".toml":
             config = Configuration(new_config)
-            self.procedure = Procedure(config, auto_run=False)
+            if len(procedure_fingerprint_directory) == 0:
+                procedure_fingerprint_directory = None
+            self.procedure = Procedure(
+                config,
+                auto_run=False,
+                procedure_fingerprint_directory=procedure_fingerprint_directory,
+            )
         else:
             self.procedure = [new_config]
         self.current_config = new_config

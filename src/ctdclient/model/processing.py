@@ -21,6 +21,7 @@ class Processing:
         self,
         path_to_config: Path | str,
         procedure_fingerprint_directory: str,
+        file_type_dir: str,
     ):
         new_config = Path(path_to_config)
         config_suffix = new_config.suffix
@@ -32,6 +33,7 @@ class Processing:
                 config,
                 auto_run=False,
                 procedure_fingerprint_directory=procedure_fingerprint_directory,
+                file_type_dir=file_type_dir,
             )
         else:
             self.procedure = [new_config]

@@ -1,4 +1,3 @@
-import tkinter as tk
 from pathlib import Path
 
 from ctdclient.controller.Controller import Controller
@@ -36,6 +35,7 @@ class ProcessingController(Controller):
         self.model.update_config(
             self.config_file_path,
             self.configuration.generate_processing_fingerprint,
+            self.configuration.file_type_dir,
         )
         if self.config_file_path.suffix == ".toml":
             self.use_custom_script = True

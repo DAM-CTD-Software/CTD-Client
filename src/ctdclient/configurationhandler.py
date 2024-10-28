@@ -50,6 +50,7 @@ class ConfigurationFile:
             self.generate_processing_fingerprint: str = self.data["base"][
                 "generate_processing_fingerprint"
             ]
+            self.file_type_dir: str = self.data["base"]["file_type_dir"]
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dhsip_fetch_intervall: float = float(
                 self.data["dship"]["fetch_intervall"]

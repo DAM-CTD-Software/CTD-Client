@@ -1,11 +1,11 @@
 input = [""]
-output_type = "cnv"
-# output_dir = ""
-# output_name = ""
+psa_directory = ""
 
-# these paths need to be altered to real targets
 [modules.datcnv]
 psa = "DatCnv.psa"
+
+[modules.airpressure]
+psa = "AirPressure.par"
 
 [modules.wildedit]
 psa = "WildEdit.psa"
@@ -25,5 +25,14 @@ psa = "Derive.psa"
 [modules.bottlesum]
 psa = "BottleSum.psa"
 
-[modules.binavg]
+[modules.binavg_1]
 psa = "BinAvg_1.psa"
+file_suffix = "_1"
+
+[modules.binavg_2]
+psa = "BinAvg_2.psa"
+file_suffix = "_2"
+
+[modules.binavg_3]
+psa = "BinAvg_3.psa"
+file_suffix = "_3"

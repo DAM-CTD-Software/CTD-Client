@@ -84,7 +84,11 @@ class SeasavePsa(PsaFile):
     def set_metadata_header(self, metadata_list, header_prompt: bool = False):
         headerform = self.settings_part['HeaderForm']
         header_dict = {}
-        header_dict['@HeaderChoice'] = str(int(not header_prompt))
+        if header_prompt:
+            header_choice = "2"
+        else:
+            header_choice = "0"
+        header_dict['@HeaderChoice'] = header_choice
         prompt = []
         for index, value in enumerate(metadata_list):
             prompt_element = {}

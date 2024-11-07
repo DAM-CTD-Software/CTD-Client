@@ -40,7 +40,8 @@ class XMLFile(UserDict):
         ) as file:
             file.write(xmltodict.unparse(self.data, pretty=True))
         logger.info(
-            f"Wrote {self.path_to_file} to {file_name}{self.path_to_file.suffix}"
+            f"Wrote {self.path_to_file} to {
+                file_name}{self.path_to_file.suffix}"
         )
 
     def to_json(self, file_name=None, file_path=None):
@@ -86,11 +87,7 @@ class SeasavePsa(PsaFile):
     def set_metadata_header(self, metadata_list, header_prompt: bool = False):
         headerform = self.settings_part["HeaderForm"]
         header_dict = {}
-        if header_prompt:
-            header_choice = "2"
-        else:
-            header_choice = "0"
-        header_dict["@HeaderChoice"] = header_choice
+        header_dict["@HeaderChoice"] = str(int(not header_prompt))
         prompt = []
         for index, value in enumerate(metadata_list):
             prompt_element = {}

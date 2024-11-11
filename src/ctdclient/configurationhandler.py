@@ -51,6 +51,7 @@ class ConfigurationFile:
                 "generate_processing_fingerprint"
             ]
             self.file_type_dir: str = self.data["base"]["file_type_dir"]
+            self.debugging: bool = self.data["base"]["debugging"]
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dhsip_fetch_intervall: float = float(
                 self.data["dship"]["fetch_intervall"]
@@ -148,7 +149,7 @@ class ConfigurationFile:
         out_str = tomlkit.dumps(self.data)
         out_str = out_str.replace("\r", "")
         try:
-            with open(output_path, "w") as file:
+            with open(output_path, "w", encoding="utf-8") as file:
                 file.write(out_str)
         except IOError as error:
             logger.error(f"Could not write configuration file: {error}")

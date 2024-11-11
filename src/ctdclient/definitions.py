@@ -38,3 +38,6 @@ if not config.server[-1] == "/":
     config.server = f"{config.server}/"
 METADATA_URL = f"{config.server}metadata/"
 TARGET_URL = f"{config.server}targets/"
+
+global last_ctd_station
+last_ctd_station = ""

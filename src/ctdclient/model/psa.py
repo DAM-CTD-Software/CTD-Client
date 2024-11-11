@@ -39,10 +39,6 @@ class XMLFile(UserDict):
             Path(file_path).joinpath(file_name + self.path_to_file.suffix), "w"
         ) as file:
             file.write(xmltodict.unparse(self.data, pretty=True))
-        logger.info(
-            f"Wrote {self.path_to_file} to {
-                file_name}{self.path_to_file.suffix}"
-        )
 
     def to_json(self, file_name=None, file_path=None):
         """Writes the dictionary representation of the XML input to a json

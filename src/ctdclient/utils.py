@@ -26,9 +26,9 @@ def get_config_path(
         return default_file_path
     try:
         logger.warning("Using template configuration file.")
-        return shutil.copy(
+        return Path(shutil.copy(
             ressources_path.joinpath("templates", config_name), root_path
-        )
+        ))
     except FileNotFoundError:
         sys.exit("No configuration file found. Aborting.")
 

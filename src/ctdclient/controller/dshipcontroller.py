@@ -8,6 +8,7 @@ from ctdclient.controller.Controller import Controller
 from ctdclient.model.dshipcaller import DshipCaller
 from ctdclient.view.dshipframe import DshipFrame
 from ctdclient.view.infoframe import InfoFrame
+from ctdclient.definitions import last_ctd_station
 
 global alive
 alive = True
@@ -18,17 +19,24 @@ def calling(
     fetch_intervall: int,
     queue: Queue,
     info_queue: Queue,
+    debug: bool,
 ):
     # free function instead of class method to avoid a new class instance
     # inside of another thread
-    last_ctd_station = ""
     while alive:
         dship_values = method_to_call()
+        global last_ctd_station
+        if debug:
+            station = dship_values["Station"]
         last_ctd_station, dship_values = udpate_ctd_station(
             last_ctd_station, dship_values
         )
+        debug_dship_values = dship_values
+        if debug:
+            debug_dship_values["Last_CTD_Station"] = last_ctd_station
+            debug_dship_values["Current_Station_Read_Out"] = station
         queue.put(dship_values)
-        info_queue.put(dship_values)
+        info_queue.put(debug_dship_values)
         time.sleep(fetch_intervall)
 
 
@@ -51,7 +59,7 @@ def udpate_ctd_station(
         else:
             ctd_station = str(dship_values["Station"])
     else:
-        if value.lower() not in ("ctd", ""):
+        if value.lower() not in ("ctd"):
             dship_values["Station"] = ctd_station
         else:
             ctd_station = dship_values["Station"]
@@ -85,6 +93,7 @@ class DshipController(Controller):
                 self.configuration.dhsip_fetch_intervall,
                 self.queue,
                 self.info_queue,
+                self.configuration.debugging,
             ],
             name="calling_dship",
             daemon=True,

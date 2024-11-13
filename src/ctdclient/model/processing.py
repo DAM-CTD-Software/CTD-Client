@@ -49,7 +49,6 @@ class Processing:
                 sleep(0.1)
         else:
             self._run_custom_script(Path(file))
-        logger.info(f"Ran processing of file {str(Path(file).name)}")
 
     def _run_custom_script(self, file: Path):
         assert isinstance(self.procedure, list)

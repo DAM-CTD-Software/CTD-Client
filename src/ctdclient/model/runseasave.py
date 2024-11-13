@@ -51,10 +51,6 @@ class RunSeasave:
             )
             raise error
         else:
-            logger.info(
-                f"Ran Seasave : {run_command}\nwith this psa: {
-                    self.path_to_psa}\nand this file name: {self.hex_name}"
-            )
             return ps
 
     def set_seasave_command_line_parameters(

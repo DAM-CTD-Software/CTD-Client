@@ -39,10 +39,6 @@ class XMLFile(UserDict):
             Path(file_path).joinpath(file_name + self.path_to_file.suffix), "w"
         ) as file:
             file.write(xmltodict.unparse(self.data, pretty=True))
-        logger.info(
-            f"Wrote {self.path_to_file} to {
-                file_name}{self.path_to_file.suffix}"
-        )
 
     def to_json(self, file_name=None, file_path=None):
         """Writes the dictionary representation of the XML input to a json
@@ -87,7 +83,11 @@ class SeasavePsa(PsaFile):
     def set_metadata_header(self, metadata_list, header_prompt: bool = False):
         headerform = self.settings_part["HeaderForm"]
         header_dict = {}
-        header_dict["@HeaderChoice"] = str(int(not header_prompt))
+        if header_prompt:
+            header_choice = "2"
+        else:
+            header_choice = "1"
+        header_dict["@HeaderChoice"] = header_choice
         prompt = []
         for index, value in enumerate(metadata_list):
             prompt_element = {}
@@ -100,10 +100,14 @@ class SeasavePsa(PsaFile):
 
     def map_umlauts_for_seasave(self, header_line: str) -> str:
         return (
-            header_line.replace("ä", "ae")
+            header_line
+            .replace("ä", "ae")
             .replace("ö", "oe")
             .replace("ü", "ue")
             .replace("ß", "ss")
+            .replace("Ä", "Ae")
+            .replace("Ö", "Oe")
+            .replace("Ü", "Ue")
         )
 
     def set_bottle_fire_info(self, bottle_info={}, number_of_bottles=13):

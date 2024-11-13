@@ -24,7 +24,11 @@ class DshipCaller:
         # will hold the dship info
         self.data: dict
         # loads the key values we want to fetch from DSHIP
-        self.dict_of_samples = config.dship_api_target_names
+        if config.debugging:
+            extra_dict = {"Last_CTD_Station": "", "Current_Station_Read_Out": ""}
+        else:
+            extra_dict = {}
+        self.dict_of_samples = {**config.dship_api_target_names, **extra_dict}
         # vessel-specific IP, where DSHIP can be reached
         self.ip = config.dship_ip
         # the values fetched from dship with corresponding header names

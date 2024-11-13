@@ -59,7 +59,7 @@ def udpate_ctd_station(
         else:
             ctd_station = str(dship_values["Station"])
     else:
-        if value.lower() not in ("ctd"):
+        if value.lower() not in ("ctd", ""):
             dship_values["Station"] = ctd_station
         else:
             ctd_station = dship_values["Station"]

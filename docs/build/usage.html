@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usage &mdash; ctdclient  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="_static/icon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="ctdclient" href="modules.html" />
+    <link rel="prev" title="Installation" href="installing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ctdclient
+              <img src="_static/BrnBld_CtdRosette_256.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-measure">How to measure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dship-information">DSHIP information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#water-bottles">Water bottles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data-file-and-metadata-information">Data file and metadata information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#a-stopwatch">A stopwatch</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-process">How to process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-to-configure">How to configure</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ctdclient</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h1>
+<p>There are mainly two things this software can be used for: initiating a CTD
+measurement using a Sea-Bird CTD with the Seasave software, and configuring
+and running a CTD processing procedure. The benefit of doing it through this
+interface is the automated metadata addition to data and about the processing
+process. Additionally, it allows the programable closure of CTD water bottles
+by specification of target depth values.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>CTD-Client uses tabs to display different pieces of information to the user.</p>
+</section>
+<section id="how-to-measure">
+<h2>How to measure<a class="headerlink" href="#how-to-measure" title="Link to this heading"></a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The CTD-Client comes with sensible default, but some things need to be configured before using it first time. So have a look at <a class="reference internal" href="#configure"><span class="std std-ref">How to configure</span></a> to set up for measurement.</p>
+</div>
+<p>For measurements you can safely stay inside of the tab of the same name. Here,
+you can see different areas to interact with:</p>
+<section id="dship-information">
+<h3>DSHIP information<a class="headerlink" href="#dship-information" title="Link to this heading"></a></h3>
+<p>This panel displays selected DSHIP parameters that can be chosen inside of the
+configuration tabs. You cannot interact with these values in any way, they are
+solely meant for information. Internally, these values are used for the
+metadata header and the file name.</p>
+</section>
+<section id="water-bottles">
+<h3>Water bottles<a class="headerlink" href="#water-bottles" title="Link to this heading"></a></h3>
+<p>Here, you can see number of water bottles that are set up and can assign depth
+values to them. After starting a measurement, these values are used for
+automatic bottle firing. You can insert any value you want, but only positive
+numbers will be used as bottle closing depths. All other values will be an
+internal signal to Seasave, that the CTD Operator plans on closing this bottle.
+This information will result in Seasave offering this bottle as next to fire,
+if it is the lowest one, seen in cronological order, after all automatic bottles
+have been fired. Setting a non numerical value to a bottle can therefore be
+used as a reminder for the operator to close this bottle manually under a
+certain condition. When arranging the Seasave window(s) and the CTD-Client, one
+can also keep an eye on any pieces of information that has been entered here
+previous to measurement.</p>
+</section>
+<section id="data-file-and-metadata-information">
+<h3>Data file and metadata information<a class="headerlink" href="#data-file-and-metadata-information" title="Link to this heading"></a></h3>
+</section>
+<section id="a-stopwatch">
+<h3>A stopwatch<a class="headerlink" href="#a-stopwatch" title="Link to this heading"></a></h3>
+<p>Measurement and Processing start/stop bottoms
+^^^</p>
+</section>
+</section>
+<section id="how-to-process">
+<h2>How to process<a class="headerlink" href="#how-to-process" title="Link to this heading"></a></h2>
+</section>
+<section id="how-to-configure">
+<span id="configure"></span><h2>How to configure<a class="headerlink" href="#how-to-configure" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installing.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="ctdclient" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Emil Michels.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

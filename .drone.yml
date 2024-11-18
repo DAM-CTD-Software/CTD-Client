@@ -39,8 +39,7 @@ steps:
       - ssh-keyscan -t rsa git.io-warnemuende.de >> ~/.ssh/known_hosts
       - git remote set-url origin git@git.io-warnemuende.de:CTD-Software/CTD-Client.git
       - git fetch
-      - git checkout -B pages
-      - git pull
+      - git checkout pages
       - rm -rf *
       - cp -r /mnt/html-volume/* .
       - git config --global user.email "emil.michels@io-warnemuende.de"

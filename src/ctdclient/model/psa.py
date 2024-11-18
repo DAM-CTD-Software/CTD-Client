@@ -1,86 +1,60 @@
-import json
-import xml.etree.ElementTree as ET
-from collections import UserDict
 from pathlib import Path
-
-import xmltodict
 from code_tools.logging import get_logger
+from seabirdfilehandler import PsaFile
 
 logger = get_logger(__name__)
 
 
-class XMLFile(UserDict):
-    """Parent class for XML and psa representation that loads XML as a
-    python-internal tree and as a dict.
+class SeasavePsa(PsaFile):
+    """
+    Python-internal representation of the Seasave.psa that allows targeted
+    modifications of individual xml parts inside the file.
+
+    Specifically, this class has methods to edit:
+    - the custom metadata header, that SeaBird has given the ** prefix
+    - the pre-set depths at which specific bottles are meant to be closed
+    - the xmlcon and new hex paths
 
     Parameters
     ----------
-
-    Returns
-    -------
+    path_to_file: Path | str :
+        The path to the Seasave.psa file
 
     """
 
-    def __init__(self, path_to_file):
-        self.path_to_file = Path(path_to_file)
-        self.file_name = self.path_to_file.stem
-        self.file_dir = self.path_to_file.parents[0]
-        self.input = ""
-        with open(self.path_to_file, "r") as file:
-            for line in file:
-                self.input += line
-        self.xml_tree = ET.fromstring(self.input)
-        self.data = xmltodict.parse(self.input)
+    def __init__(self, path_to_file: Path | str):
+        super().__init__(path_to_file)
+        self.settings_part = self.data["SeasaveProgramSetup"]["Settings"]
 
-    def to_xml(self, file_name=None, file_path=None):
-        file_path = self.file_dir if file_path is None else file_path
-        file_name = self.file_name if file_name is None else file_name
-        with open(
-            Path(file_path).joinpath(file_name + self.path_to_file.suffix), "w"
-        ) as file:
-            file.write(xmltodict.unparse(self.data, pretty=True))
+    def set_metadata_header(self, metadata_list, header_prompt: bool = False):
+        """
+        Creates metadata entries from a list of pre-formated metadata points.
 
-    def to_json(self, file_name=None, file_path=None):
-        """Writes the dictionary representation of the XML input to a json
-        file.
+        The list is expected to look like this:
+        ['key0 = value0', 'key1 = value1', ...]
+        and will produce header entries that SeaSave understands and will
+        prefix with '** '.
+
+        Additionally, the 'HeaderChoice' can be configured by usage of the
+        'header_prompt' parameter. It supports two values, 1, which will prompt
+        the user the currently set metadata header for confirmation. And 2,
+        which is calles 'autostart' in this software, as it will start data
+        aquisition upon opening SeaSave. The value 2 skips any confirmation
+        concerning the metadata header and will just use it to produce .hex
+        and .hdr files.
 
         Parameters
         ----------
-        file_name : str :
-            the original files name (Default value = self.file_name)
-        file_path : pathlib.Path :
-            the directory of the file (Default value = self.file_dir)
+        metadata_list : str :
+            A list of metadata points to include in the header.
+
+        header_prompt: bool = False:
+             Whether to prompt for confirmation on the metadata header.
 
         Returns
         -------
 
         """
-        file_path = self.file_dir if file_path is None else file_path
-        file_name = self.file_name if file_name is None else file_name
-        with open(Path(file_path).joinpath(file_name + ".json"), "w") as file:
-            json.dump(self.data, file, indent=4)
-        logger.info(f"Wrote {self.path_to_file} to {file_name}.json.")
-
-
-class XMLCONFile(XMLFile):
-
-    def __init__(self, path_to_file):
-        super().__init__(path_to_file)
-
-
-class PsaFile(XMLFile):
-
-    def __init__(self, path_to_file):
-        super().__init__(path_to_file)
-
-
-class SeasavePsa(PsaFile):
-
-    def __init__(self, path_to_file):
-        super().__init__(path_to_file)
-        self.settings_part = self.data["SeasaveProgramSetup"]["Settings"]
-
-    def set_metadata_header(self, metadata_list, header_prompt: bool = False):
         headerform = self.settings_part["HeaderForm"]
         header_dict = {}
         if header_prompt:
@@ -99,6 +73,20 @@ class SeasavePsa(PsaFile):
         self.data["SeasaveProgramSetup"]["Settings"]["HeaderForm"] = headerform
 
     def map_umlauts_for_seasave(self, header_line: str) -> str:
+        """
+        Basic mapping of all german umlauts to asci compatible replacements.
+        SeaSave can not handle non-asci symbols inside of the .psa files.
+
+        Parameters
+        ----------
+        header_line: str :
+            The metadata header line to 'sanitize'.
+
+        Returns
+        -------
+        A header line that SeaSave can work with.
+
+        """
         return (
             header_line
             .replace("ä", "ae")
@@ -110,7 +98,33 @@ class SeasavePsa(PsaFile):
             .replace("Ü", "Ue")
         )
 
-    def set_bottle_fire_info(self, bottle_info={}, number_of_bottles=13):
+    def set_bottle_fire_info(
+        self,
+        bottle_info: dict = {},
+        number_of_bottles: int = 13,
+    ):
+        """
+        Handles automatic bottle firing using pre-set depths.
+
+        Takes a dictionary that maps bottle numbers to their specific depth
+        values and uses these to produce the format needed inside the .psa so
+        that the individual bottle closes at the respective depth. All positive
+        numbers are taken as they are, other values (including strings) are
+        mapped to 0, which for SeaSave means no autofiring, but will save the
+        bottle as 'want to close'. In the bottle firing tab of SeaSave, this
+        results in offering the lowest of these bottle numbers as next to close,
+        when all autofiring bottles are already closed.
+
+        Sets all other parameters that are needed for this procedure to work to
+        the needed values.
+
+        Parameters
+        ----------
+        bottle_info: dict = {}:
+            Bottle number to water depth mapping.
+        number_of_bottles: int = 13 :
+             The number of water bottles that are set up.
+        """
         watersampler = self.settings_part["WaterSamplerConfiguration"]
         for row in watersampler["AutoFireData"]["DataTable"]["Row"]:
             bottle_number = int(row["@BottleNumber"])
@@ -132,8 +146,26 @@ class SeasavePsa(PsaFile):
             "WaterSamplerConfiguration"
         ] = watersampler
 
-    def set_xmlcon_file_path(self, xmlcon_path):
+    def set_xmlcon_file_path(self, xmlcon_path: str):
+        """
+        Sets the correct XMLCON path.
+
+        Parameters
+        ----------
+        xmlcon_path: str :
+            Path to XMLCON.
+
+        """
         self.settings_part["ConfigurationFilePath"]["@value"] = xmlcon_path
 
-    def set_hex_file_path(self, hex_path):
+    def set_hex_file_path(self, hex_path: str):
+        """
+        Sets the correct path to the newly created hex file.
+
+        Parameters
+        ----------
+        hex_path: str :
+            New path of the hex.
+
+        """
         self.settings_part["DataFilePath"]["@value"] = hex_path

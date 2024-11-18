@@ -40,6 +40,7 @@ steps:
       - git remote set-url origin git@git.io-warnemuende.de:CTD-Software/CTD-Client.git
       - git fetch
       - git checkout -B pages
+      - git pull
       - rm -rf *
       - cp -r /mnt/html-volume/* .
       - git config --global user.email "emil.michels@io-warnemuende.de"

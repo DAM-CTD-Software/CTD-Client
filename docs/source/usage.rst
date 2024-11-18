@@ -8,4 +8,4 @@ interface is the automated metadata addition to data and about the processing
 process. Additionally, it allows the programable closure of CTD water bottles
 by specification of target depth values.
 
-.. include:: ../../usage.rst
+.. include:: ../../how_to.rst

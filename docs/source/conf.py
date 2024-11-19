@@ -13,7 +13,11 @@ extensions = [
     'sphinx.ext.autosummary',
     "sphinx_autodoc_typehints",
     'sphinx.ext.todo',
+    'myst_parser',
 ]
+
+html_logo = '../../icon/BrnBld_CtdRosette_256.png'
+html_favicon = '../../icon.ico'
 
 autodoc_member_order = 'bysource'
 templates_path = ['_templates']

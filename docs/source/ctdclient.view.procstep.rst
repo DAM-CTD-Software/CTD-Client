@@ -1,7 +1,7 @@
-mig.backend.dshipcaller module
+ctdclient.view.procstep module
 ==============================
 
-.. automodule:: mig.backend.dshipcaller
+.. automodule:: ctdclient.view.procstep
    :members:
    :undoc-members:
    :show-inheritance:

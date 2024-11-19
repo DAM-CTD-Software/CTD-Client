@@ -1,0 +1,50 @@
+kind: pipeline
+type: docker
+name: deploy-sphinx-docs
+
+trigger:
+  branch:
+  - main
+
+volumes:
+- name: html-volume
+  temp: {}
+
+steps:
+  - name: build-docs
+    image: python:3.12
+    pull: if-not-exists
+    volumes:
+    - name: html-volume
+      path: /mnt/html-volume
+    commands:
+      - pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser
+      # autodoc needs to import the full python dependencies
+      - pip install -r requirements.txt
+      - sphinx-build -b html docs/source /mnt/html-volume/
+
+  - name: deploy-docs
+    image: alpine/git
+    pull: if-not-exists
+    volumes:
+    - name: html-volume
+      path: /mnt/html-volume
+    environment:
+     SSH_KEY:
+      from_secret: ssh_key
+    commands:
+      - mkdir -p ~/.ssh
+      - echo "$SSH_KEY" > ~/.ssh/id_rsa
+      - chmod 600 ~/.ssh/id_rsa
+      - ssh-keyscan -t rsa git.io-warnemuende.de >> ~/.ssh/known_hosts
+      - git remote set-url origin git@git.io-warnemuende.de:CTD-Software/CTD-Client.git
+      - git fetch
+      - git checkout pages
+      - rm -rf *
+      - cp -r /mnt/html-volume/* .
+      - git config --global user.email "emil.michels@io-warnemuende.de"
+      - git config --global user.name "Emil Michels"
+      - git add .
+      - git commit -m "Update Sphinx documentation"
+      - git push -u origin pages
+

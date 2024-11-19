@@ -1,19 +1,26 @@
 ctdclient package
 =================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ctdclient.controller
+   ctdclient.model
+   ctdclient.view
+
 Submodules
 ----------
 
 .. toctree::
    :maxdepth: 4
 
-   ctdclient.batchprocessing
-   ctdclient.bottles
    ctdclient.configurationhandler
-   ctdclient.controller
-   ctdclient.dshipcaller
-   ctdclient.runseasave
-   ctdclient.view
+   ctdclient.definitions
+   ctdclient.main
+   ctdclient.utils
 
 Module contents
 ---------------

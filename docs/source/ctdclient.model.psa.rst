@@ -1,7 +1,7 @@
-mig.backend.bottles module
+ctdclient.model.psa module
 ==========================
 
-.. automodule:: mig.backend.bottles
+.. automodule:: ctdclient.model.psa
    :members:
    :undoc-members:
    :show-inheritance:

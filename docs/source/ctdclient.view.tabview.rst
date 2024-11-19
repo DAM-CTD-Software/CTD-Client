@@ -1,7 +1,7 @@
-mig.backend.runseasave module
+ctdclient.view.tabview module
 =============================
 
-.. automodule:: mig.backend.runseasave
+.. automodule:: ctdclient.view.tabview
    :members:
    :undoc-members:
    :show-inheritance:

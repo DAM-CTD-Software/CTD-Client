@@ -1,15 +1,18 @@
-.. mig documentation master file, created by
-   sphinx-quickstart on Fri Jan 26 14:49:27 2024.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to the documentation of the CTD-Client!
+===============================================
 
-Welcome to mig's documentation!
-===============================
+
+
+.. include:: ../../README.md
+   :parser: myst_parser.sphinx_
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
+   installing
+   usage
+   API <modules>
 
 
 Indices and tables

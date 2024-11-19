@@ -1,7 +1,7 @@
-mig
-===
+ctdclient
+=========
 
 .. toctree::
    :maxdepth: 4
 
-   mig
+   ctdclient

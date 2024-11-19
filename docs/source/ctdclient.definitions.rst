@@ -1,7 +1,7 @@
-ctdclient.dshipcaller module
+ctdclient.definitions module
 ============================
 
-.. automodule:: ctdclient.dshipcaller
+.. automodule:: ctdclient.definitions
    :members:
    :undoc-members:
    :show-inheritance:

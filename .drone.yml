@@ -21,6 +21,7 @@ steps:
       - pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints myst-parser
       # autodoc needs to import the full python dependencies
       - pip install -r requirements.txt
+      - sphinx-apidoc -f -e -o docs/source src/ctdclient
       - sphinx-build -b html docs/source /mnt/html-volume/
 
   - name: deploy-docs

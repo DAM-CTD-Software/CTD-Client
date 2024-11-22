@@ -74,8 +74,8 @@ class SeasavePsa(PsaFile):
 
     def map_umlauts_for_seasave(self, header_line: str) -> str:
         """
-        Basic mapping of all german umlauts to asci compatible replacements.
-        SeaSave can not handle non-asci symbols inside of the .psa files.
+        Basic mapping of all german umlauts to ascii compatible replacements.
+        SeaSave can not handle non-ascii symbols inside of the .psa files.
 
         Parameters
         ----------

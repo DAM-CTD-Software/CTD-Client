@@ -105,10 +105,6 @@ class RunController(Controller):
 
     def run_processing(self, target_file: str):
         self.processing.run(target_file)
-        self.configuration.last_processing_file = (
-            self.processing.current_config
-        )
-        self.configuration.write()
 
     def cancel_processing(self):
         self.processing.cancel()

@@ -10,6 +10,7 @@ server_address = "http://localhost:8000/"
 use_dship_values = true
 generate_processing_fingerprint = ""
 file_type_dir = ""
+debugging = 'False'
 
 [dship]
 ip='dship1'
@@ -36,15 +37,17 @@ op4 = ""
 op5 = ""
 last = ""
 
+[near_real_time]
+
 [ctd]
 
 [ctd.paths]
-seasave_psa = ""
-output_directory = ""
-xmlcon = ""
+seasave_psa = "."
+output_directory = "."
+xmlcon = "."
 number_of_bottles = 13
 
 [ctd.memory]
 last_cast = 0
-last_filename = ""
-last_processing_file = ""
+last_filename = "."
+last_processing_file = "templates/processing_template.toml"

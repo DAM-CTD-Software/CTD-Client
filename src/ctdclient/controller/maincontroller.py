@@ -4,8 +4,10 @@ from ctdclient.controller.configcontroller import ConfigurationController
 from ctdclient.controller.dshipcontroller import DshipController
 from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
+from ctdclient.eventmanager import EventManager
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
+from ctdclient.model.near_real_time_publication import DailyPublication, NearRealTimeTarget, instantiate_near_real_time_target
 from ctdclient.model.processing import Processing
 from ctdclient.view.mainwindow import MainWindow
 
@@ -23,8 +25,16 @@ class MainController:
         self.tabs = mainwindow.tabs
         self.measurement = self.tabs.measurement
         self.configuration_view = self.tabs.configuration
+        event_manager = EventManager()
 
-        self.processing = Processing()
+        # processing
+        self.processing = Processing(configuration, event_manager)
+        self.near_real_time_publications = [
+            instantiate_near_real_time_target(
+                **item, event_manager=event_manager)
+            for item in configuration.near_real_time.values()
+        ]
+
         # bottles
         self.bottles = BottleClosingDepths(configuration)
         self.bottle_view = self.measurement.bottle_frame
@@ -76,3 +86,6 @@ class MainController:
 
     def kill_threads(self):
         self.dship_controller.kill_threads()
+        for item in self.near_real_time_publications:
+            if isinstance(item, DailyPublication):
+                item.stop()

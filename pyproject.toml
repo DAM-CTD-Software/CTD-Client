@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ctdclient"
-version = "1.5.28"
+version = "1.5.29"
 description = ""
 authors = ["Emil Michels <emil.michels@io-warnemuende.de>"]
 readme = "README.md"

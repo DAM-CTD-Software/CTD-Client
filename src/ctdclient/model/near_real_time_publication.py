@@ -5,6 +5,8 @@ from datetime import datetime, timedelta, date
 import shutil
 import multiprocessing as mp
 import time
+import geopandas as gpd
+from shapely.geometry import Point, Polygon
 from code_tools.logging import get_logger
 
 from ctdclient.eventmanager import EventManager
@@ -83,6 +85,22 @@ class NearRealTimeTarget(ABC):
         ]
         self.files_already_sent = [*self.files_already_sent, *target_files]
         return target_files
+
+    def geographic_filter(
+        self,
+        coordinate_pair: tuple,
+        polygon_data_to_check_against: Path | str,
+    ) -> bool:
+        """
+        Checks, whether we are inside of a certain polygon.
+        The polygon will usually be the EEZ of a certain country.
+        """
+        try:
+            polygon = gpd.read_file(polygon_data_to_check_against)
+            point_to_test = Point(coordinate_pair)
+        except (FileNotFoundError, AttributeError):
+            return False
+        return polygon.contains(point_to_test)[0]
 
 
 class DailyPublication(NearRealTimeTarget):

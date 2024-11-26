@@ -1,5 +1,5 @@
 from pathlib import Path
-import datetime
+from datetime import datetime, timedelta
 import time
 from ctdclient.eventmanager import EventManager
 from ctdclient.model.near_real_time_publication import DailyPublication, EachProcessingPublication, instantiate_near_real_time_target
@@ -44,8 +44,8 @@ def test_email_identification():
 
 
 def test_daily_call():
-    now = datetime.datetime.now()
-    target = now + datetime.timedelta(seconds=1)
+    now = datetime.now()
+    target = now + timedelta(seconds=1)
     DailyPublication(
         time_to_run_at=target.strftime('%H:%M:%S'),
         single_run=True,
@@ -56,3 +56,10 @@ def test_daily_call():
         'basic_emb_4coriolis.cnv')
     assert moved_file.exists()
     moved_file.unlink()
+
+
+def test_geo_filter():
+    pubs = EachProcessingPublication(
+        **each_processing_copy_test_info, event_manager=event_manager)
+    assert pubs.geographic_filter((11, 54), 'maps/germany.xml')
+    assert not pubs.geographic_filter((50, 20), 'maps/germany.xml')

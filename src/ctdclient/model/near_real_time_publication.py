@@ -1,39 +1,42 @@
 from __future__ import annotations
-from abc import ABC
-from pathlib import Path
-from datetime import datetime, timedelta, date
-import shutil
-import multiprocessing as mp
-import time
-import geopandas as gpd
-from shapely.geometry import Point, Polygon
-from code_tools.logging import get_logger
 
+import multiprocessing as mp
+import shutil
+import smtplib
+import time
+from abc import ABC
+from datetime import date
+from datetime import datetime
+from datetime import timedelta
+from email.message import EmailMessage
+from pathlib import Path
+
+import geopandas as gpd
+from code_tools.logging import get_logger
 from ctdclient.eventmanager import EventManager
+from shapely.geometry import Point
 
 logger = get_logger(__name__)
 
 
 def instantiate_near_real_time_target(
     *args,
-    frequency_of_action: str = 'daily',
+    frequency_of_action: str = "daily",
     **kwargs,
 ) -> NearRealTimeTarget:
-    if frequency_of_action == 'daily':
+    if frequency_of_action == "daily":
         class_to_instantiate = DailyPublication
-    elif frequency_of_action == 'each_processing':
+    elif frequency_of_action == "each_processing":
         class_to_instantiate = EachProcessingPublication
     else:
         raise AttributeError(
             f"Unknown frequency for near-real-time publication: {
-                frequency_of_action}")
-    return class_to_instantiate(
-        *args,
-        **kwargs
-    )
+                frequency_of_action}"
+        )
+    return class_to_instantiate(*args, **kwargs)
 
 
-class NearRealTimeTarget(ABC):
+class NearRealTimeTarget:
     """
     Stores information for near-real-time distribution of latest CTD data files.
     Can work in two modes: email or rsync/copy. Will distinguish between these
@@ -45,26 +48,60 @@ class NearRealTimeTarget(ABC):
         recipient_name: str,
         recipient_address: str,
         target_file_suffix: str,
-        target_file_directory: Path | str = '',
+        target_file_directory: Path | str = "",
+        email_info: dict = {},
         **kwargs,
     ):
         self.name = recipient_name
         self.address = recipient_address
         self.dir = Path(target_file_directory)
         self.suffix = target_file_suffix
+        self.email_info = email_info
         self.files_already_sent = []
 
     def _is_email(self, target: str = "") -> bool:
         """Basic check, whether we are dealing with email or not."""
         target = str(self.address) if len(target) == 0 else target
-        return '@' in target
+        return "@" in target
 
     def run(self):
         """Will move the recent files to the target location."""
 
-    def send_email(self, target_files: list[Path]):
+    def send_email(
+        self,
+        target_files: list[Path],
+        to_address: str = "",
+        from_address: str = "",
+        subject: str = "",
+        body: str = "",
+        smtp_server: str = "localhost",
+        smtp_port: int = 587,
+        smtp_user: str = "",
+        smtp_pass: str = "",
+    ):
         """Sends an email with target files to the given address."""
-        # TODO: implement
+        if len(target_files) == 0:
+            return
+        to_address = self.address if to_address == "" else to_address
+        from_address = (
+            self.email_info["sender_address"]
+            if from_address == ""
+            else from_address
+        )
+        subject = self.email_info["subject"] if subject == "" else subject
+        body = self.email_info["body"] if body == "" else body
+        msg = EmailMessage()
+        msg.set_content(body)
+
+        msg["Subject"] = subject
+        msg["From"] = from_address
+        msg["To"] = to_address
+        for file in target_files:
+            msg.add_attachment(str(file))
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_pass)
+            server.send_message(msg)
 
     def copy_files(self, target_file: Path):
         """Copies target files to given location."""
@@ -73,7 +110,7 @@ class NearRealTimeTarget(ABC):
             target_dir.mkdir(parents=True)
         source_dir = target_file.parent
         file_name = target_file.stem
-        for file in source_dir.glob(f'{file_name}{self.suffix}*'):
+        for file in source_dir.glob(f"{file_name}{self.suffix}*"):
             shutil.copy(file, target_dir)
 
     def get_target_files(self) -> list[Path]:
@@ -108,7 +145,7 @@ class DailyPublication(NearRealTimeTarget):
     def __init__(
         self,
         *args,
-        time_to_run_at: str = '23:59:00',
+        time_to_run_at: str = "23:59:00",
         single_run: bool = False,
         **kwargs,
     ):
@@ -119,7 +156,8 @@ class DailyPublication(NearRealTimeTarget):
     def calculate_delay(self):
         now = datetime.now()
         target_time = datetime.combine(
-            date.today(), self.time_to_run_at.time())
+            date.today(), self.time_to_run_at.time()
+        )
         if now > target_time:
             # move target time to the next day
             target_time += timedelta(days=1)
@@ -142,7 +180,8 @@ class DailyPublication(NearRealTimeTarget):
             for file in list_to_process:
                 # ensure, that file has been modified today
                 file_modification_date = datetime.fromtimestamp(
-                    file.stat().st_mtime).date()
+                    file.stat().st_mtime
+                ).date()
                 if file_modification_date == datetime.today().date():
                     self.copy_files(file)
 
@@ -156,15 +195,13 @@ class DailyPublication(NearRealTimeTarget):
 
 class EachProcessingPublication(NearRealTimeTarget):
 
-    def __init__(self, *args, event_manager: EventManager, ** kwargs):
+    def __init__(self, *args, event_manager: EventManager, **kwargs):
         super().__init__(*args, **kwargs)
         self.event_manager = event_manager
-        self.event_manager.subscribe(
-            'processing_successful', self.run
-        )
+        self.event_manager.subscribe("processing_successful", self.run)
         self.address = Path(self.address)
 
-    def run(self, target_file: Path = Path('.')):
+    def run(self, target_file: Path = Path(".")):
         if self._is_email():
             pass
         else:

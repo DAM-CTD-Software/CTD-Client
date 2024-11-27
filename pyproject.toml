@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ctdclient"
-version = "1.5.30"
+version = "1.5.31"
 description = ""
 authors = ["Emil Michels <emil.michels@io-warnemuende.de>"]
 readme = "README.md"
@@ -19,8 +19,6 @@ processing = {version = ">=1.0.35", source = "gitea"}
 # processing = {path = "../processing", develop = true}
 ctklistbox = "^1.4"
 geopandas = "^1.0.1"
-matplotlib = "^3.9.2"
-cartopy = "^0.24.1"
 
 [tool.poetry.group.install.dependencies]
 pyinstaller = "^6.7.0"
@@ -38,6 +36,7 @@ jupyterlab = "^4.1.0"
 black = "^24.2.0"
 parameterized = "^0.9.0"
 myst-parser = "^4.0.0"
+pytest-mock = "^3.14.0"
 
 
 [[tool.poetry.source]]

@@ -3,6 +3,7 @@ from __future__ import annotations
 import multiprocessing as mp
 import os
 import platform
+import re
 import shutil
 import smtplib
 import subprocess
@@ -16,6 +17,7 @@ from pathlib import Path
 import geopandas as gpd
 from code_tools.logging import get_logger
 from ctdclient.eventmanager import EventManager
+from seabirdfilehandler import SeaBirdFile
 from shapely.geometry import Point
 
 logger = get_logger(__name__)
@@ -51,6 +53,7 @@ class NearRealTimeTarget:
         recipient_address: str,
         target_file_suffix: str,
         target_file_directory: Path | str = "",
+        geo_filter: Path | str = "",
         email_info: dict = {},
         **kwargs,
     ):
@@ -58,6 +61,7 @@ class NearRealTimeTarget:
         self.address = recipient_address
         self.dir = Path(target_file_directory)
         self.suffix = target_file_suffix
+        self.map_data = geo_filter
         self.email_info = email_info
         self.files_already_sent = []
 
@@ -108,10 +112,7 @@ class NearRealTimeTarget:
         programs.
         """
         file_path = (
-            Path(
-                f"draft_email_to_{
-            msg['to']}.eml"
-            )
+            Path(f"draft_email_to_{msg['to']}.eml")
             if file_path == ""
             else Path(file_path)
         )
@@ -129,6 +130,15 @@ class NearRealTimeTarget:
             subprocess.run(["xdg-open", file_path])
         else:
             raise OSError("Unsupported operating system")
+
+    def run_email_logic(self, files_to_attach: list):
+        email_message = self.create_email_message(files_to_attach)
+        assert isinstance(email_message, EmailMessage)
+        if self.email_info["send_directly"]:
+            self.send_email(email_message)
+        else:
+            draft_path = self.create_email_draft(email_message)
+            self.open_draft_msg(draft_path)
 
     def send_email(
         self,
@@ -159,23 +169,48 @@ class NearRealTimeTarget:
 
     def get_target_files(self) -> list[Path]:
         """Creates a list of paths to files that are meant to be published."""
-        target_files = [
-            file
-            for file in self.dir.iterdir()
-            if file not in self.files_already_sent
-        ]
+        target_files = []
+        for file in self.dir.glob("*.cnv"):
+            # check, whether file already sent
+            if file in self.files_already_sent:
+                continue
+            file_metadata = SeaBirdFile(file).metadata
+            try:
+                coordinates = (
+                    self.deg_min_to_deg_decimal(file_metadata["GPS_Lon"]),
+                    self.deg_min_to_deg_decimal(file_metadata["GPS_Lat"]),
+                )
+            except KeyError:
+                coordinates = (0, 0)
+            finally:
+                if self.geographic_filter(coordinates):
+                    target_files.append(file)
         self.files_already_sent = [*self.files_already_sent, *target_files]
         return target_files
+
+    def deg_min_to_deg_decimal(self, value: str) -> float:
+        deg, minutes, direction = re.split(r"\s+", value)
+        return (float(deg) + float(minutes) / 60) * (
+            -1 if direction in ["W", "S"] else 1
+        )
 
     def geographic_filter(
         self,
         coordinate_pair: tuple,
-        polygon_data_to_check_against: Path | str,
+        polygon_data_to_check_against: str = "",
     ) -> bool:
         """
         Checks, whether we are inside of a certain polygon.
-        The polygon will usually be the EEZ of a certain country.
+        The polygon will usually be the EEZ of a certain country. Does support
+        all data formats that geopandas can handle.
         """
+        if len(polygon_data_to_check_against) == 0:
+            polygon_data_to_check_against = str(self.map_data)
+        # if no polygon is given, no geo filter can be applied and thus, we
+        # just return true and skip the rest of the method
+        if len(polygon_data_to_check_against) == 0:
+            logger.error(f"map poygon given: {self.map_data}")
+            return True
         try:
             polygon = gpd.read_file(polygon_data_to_check_against)
             point_to_test = Point(coordinate_pair)
@@ -219,13 +254,7 @@ class DailyPublication(NearRealTimeTarget):
         if len(list_to_process) == 0:
             return
         if self._is_email():
-            email_message = self.create_email_message(list_to_process)
-            assert isinstance(email_message, EmailMessage)
-            if self.email_info["send_directly"]:
-                self.send_email(email_message)
-            else:
-                draft_path = self.create_email_draft(email_message)
-                self.open_draft_msg(draft_path)
+            self.run_email_logic(list_to_process)
         else:
             for file in list_to_process:
                 # ensure, that file has been modified today
@@ -253,6 +282,6 @@ class EachProcessingPublication(NearRealTimeTarget):
 
     def run(self, target_file: Path = Path(".")):
         if self._is_email():
-            pass
+            self.run_email_logic([target_file])
         else:
             self.copy_files(target_file)

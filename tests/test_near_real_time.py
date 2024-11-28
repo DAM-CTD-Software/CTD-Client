@@ -4,7 +4,6 @@ from datetime import timedelta
 from pathlib import Path
 
 import pytest
-from _pytest.capture import DontReadFromInput
 from ctdclient.eventmanager import EventManager
 from ctdclient.model.near_real_time_publication import DailyPublication
 from ctdclient.model.near_real_time_publication import (
@@ -22,6 +21,7 @@ daily_email_test_info = {
     "target_file_directory": "tests/data/out",
     "target_file_suffix": "_4coriolis",
     "frequency_of_action": "daily",
+    "geo_filter": "maps/germany.xml",
     "email_info": {
         "send_directly": True,
         "sender_address": "from@example.com",
@@ -36,6 +36,7 @@ daily_copy_test_info = {
     "target_file_directory": "seabird_example_data/cnv",
     "target_file_suffix": "_4coriolis",
     "frequency_of_action": "daily",
+    "geo_filter": "maps/germany.xml",
 }
 
 each_processing_copy_test_info = {
@@ -109,3 +110,10 @@ def test_send_email(mocker):
     draft = pubs.create_email_draft(msg)
     assert draft.exists()
     draft.unlink()
+
+
+def test_correct_target_files():
+    assert NearRealTimeTarget(**daily_copy_test_info).get_target_files() == [
+        Path("seabird_example_data/cnv/basic_emb.cnv"),
+        Path("seabird_example_data/cnv/basic_emb_4coriolis.cnv"),
+    ]

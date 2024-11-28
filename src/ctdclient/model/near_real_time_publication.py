@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import multiprocessing as mp
+import os
+import platform
 import shutil
 import smtplib
+import subprocess
 import time
-from abc import ABC
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
@@ -67,19 +69,15 @@ class NearRealTimeTarget:
     def run(self):
         """Will move the recent files to the target location."""
 
-    def send_email(
+    def create_email_message(
         self,
         target_files: list[Path],
         to_address: str = "",
         from_address: str = "",
         subject: str = "",
         body: str = "",
-        smtp_server: str = "localhost",
-        smtp_port: int = 587,
-        smtp_user: str = "",
-        smtp_pass: str = "",
     ):
-        """Sends an email with target files to the given address."""
+        """Creates an email with target files attached."""
         if len(target_files) == 0:
             return
         to_address = self.address if to_address == "" else to_address
@@ -98,6 +96,52 @@ class NearRealTimeTarget:
         msg["To"] = to_address
         for file in target_files:
             msg.add_attachment(str(file))
+        return msg
+
+    def create_email_draft(
+        self,
+        msg: EmailMessage,
+        file_path: Path | str = "",
+    ) -> Path:
+        """
+        Creates an email .eml draft file, that can be opened by common email
+        programs.
+        """
+        file_path = (
+            Path(
+                f"draft_email_to_{
+            msg['to']}.eml"
+            )
+            if file_path == ""
+            else Path(file_path)
+        )
+        with open(file_path, "w") as f:
+            f.write(msg.as_string())
+        return file_path
+
+    def open_draft_msg(self, file_path: Path | str):
+        """Open an .eml file using the default email program."""
+        if platform.system() == "Windows":
+            os.startfile(file_path)
+        elif platform.system() == "Darwin":
+            subprocess.run(["open", file_path])
+        elif platform.system() == "Linux":
+            subprocess.run(["xdg-open", file_path])
+        else:
+            raise OSError("Unsupported operating system")
+
+    def send_email(
+        self,
+        msg: EmailMessage,
+        smtp_server: str = "localhost",
+        smtp_port: int = 587,
+        smtp_user: str = "",
+        smtp_pass: str = "",
+    ):
+        """
+        Sends the email message using the given smtp server configuration.
+        """
+        assert isinstance(msg, EmailMessage)
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
             server.login(smtp_user, smtp_pass)
@@ -175,7 +219,13 @@ class DailyPublication(NearRealTimeTarget):
         if len(list_to_process) == 0:
             return
         if self._is_email():
-            self.send_email(list_to_process)
+            email_message = self.create_email_message(list_to_process)
+            assert isinstance(email_message, EmailMessage)
+            if self.email_info["send_directly"]:
+                self.send_email(email_message)
+            else:
+                draft_path = self.create_email_draft(email_message)
+                self.open_draft_msg(draft_path)
         else:
             for file in list_to_process:
                 # ensure, that file has been modified today

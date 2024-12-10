@@ -13,7 +13,8 @@ file_type_dir = ""
 debugging = 'False'
 
 [dship]
-ip='dship1'
+ip = 'dship1'
+url_part = ":8080/dship-web/service/samples"
 # timeout between individual API calls in seconds
 fetch_intervall = 1
 

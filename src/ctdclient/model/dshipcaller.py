@@ -3,9 +3,10 @@ import random
 import time
 
 import requests
-import xmltodict
 from code_tools.logging import get_logger
+from ctdclient.definitions import config
 from ctdclient.model.metadataheader import MetadataHeader
+from ctdclient.utils import individual_dship_api_call
 
 logger = get_logger(__name__)
 
@@ -19,13 +20,15 @@ class DshipCaller:
     def __init__(
         self,
         config,
-        dship_url_part=":8080/dship-web/service/samples",
     ):
         # will hold the dship info
         self.data: dict
         # loads the key values we want to fetch from DSHIP
         if config.debugging:
-            extra_dict = {"Last_CTD_Station": "", "Current_Station_Read_Out": ""}
+            extra_dict = {
+                "Last_CTD_Station": "",
+                "Current_Station_Read_Out": "",
+            }
         else:
             extra_dict = {}
         self.dict_of_samples = {**config.dship_api_target_names, **extra_dict}
@@ -34,7 +37,7 @@ class DshipCaller:
         # the values fetched from dship with corresponding header names
         self.dship_values = {}
         # the URL of the API
-        self.source = f"http://{self.ip}{dship_url_part}"
+        self.source = f"http://{self.ip}{config.dship_url_part}"
         # configuration file representation
         self.config = config
         # counts repeated failed API calls
@@ -86,12 +89,11 @@ class DshipCaller:
         )
         timeout = self.fetch_timeout / (len(dict_of_samples) + 1)
         for sample, url_name in dict_of_samples.items():
-            response = self.individual_call(f"{url}/{url_name}")
+            response = individual_dship_api_call(f"{url}/{url_name}")
             if response:
-                value = response["sample"]["value"]
                 try:
                     self.dship_values[sample] = (
-                        MetadataHeader.format_dship_response(sample, value)
+                        MetadataHeader.format_dship_response(sample, response)
                     )
                 except IndexError:
                     pass
@@ -107,83 +109,54 @@ class DshipCaller:
             time.sleep(timeout)
         return self.dship_values
 
-    def individual_call(self, url) -> dict | None:
-        """
-        One single request to the API, which takes the full URL and returns
-        the calls' response.
-        Does also stop the API listener upon repeated failed API calls.
 
-        Parameters
-        ----------
-        url : str: full URL to the specific API method with argument
-
-
-        Returns
-        -------
-        a dictionary with the API response
-
-        """
-        try:
-            response = requests.get(url, timeout=1)
-        except (
-            requests.exceptions.ConnectTimeout,
-            requests.exceptions.ConnectionError,
-            OSError,
-        ):
-            return None
-        # handle response
-        if response.status_code in ["200", 200]:
-            data = response.text
-            try:
-                return xmltodict.parse(data)
-            except ValueError as error:
-                logger.error(
-                    f"Could not unpack payload of call {url}: {error}"
-                )
-                return None
-        else:
-            return None
-
-    def get_station_log(self, cruise_id: str) -> None | str:
-        manida_url = f"http://{self.ip}:8080/manida-v3/"
-        station_log_url = f"{manida_url}station?expeditionId={
-            cruise_id}&format=JSON"
-        try:
-            call = requests.get(station_log_url)
-        except (
-            requests.exceptions.ConnectTimeout,
-            requests.exceptions.ConnectionError,
-            OSError,
-        ) as error:
-            logger.error(f"Could not reach the manida interface: {error}")
-            return None
-        else:
-            if call.status_code in ["200", 200]:
-                return call.text
-            else:
-                return None
-
-    def get_ctd_last_event(self, station_log_json: str) -> dict:
-        stations_info = json.loads(station_log_json)
-        last_ctd_entry = {}
-        for entry in stations_info["list"]:
-            if entry["Device"] == "CTD":
-                last_ctd_entry = entry
-        return last_ctd_entry
-
-    def get_station_id(self, event_json: dict) -> str:
-        station_id = event_json["Device Operation"]
-        return station_id.replace("/", "_")
-
-    def retrieve_station_and_event_info(self) -> str | None:
-        try:
-            station_log = self.get_station_log(self.dship_values["Cruise"])
-        except KeyError as error:
-            # TODO: handle this situation properly
-            return None
-        if station_log:
-            last_event = self.get_ctd_last_event(station_log)
-            station_event_info = self.get_station_id(last_event)
-            if len(station_event_info) > 0:
-                return station_event_info
+def get_station_log(cruise_id: str) -> None | str:
+    manida_url = f"http://{config.dship_ip}:8080/manida-v3/"
+    station_log_url = f"{manida_url}station?expeditionId={
+        cruise_id}&format=JSON"
+    try:
+        call = requests.get(station_log_url)
+    except (
+        requests.exceptions.ConnectTimeout,
+        requests.exceptions.ConnectionError,
+        OSError,
+    ) as error:
+        logger.error(f"Could not reach the manida interface: {error}")
         return None
+    else:
+        if call.status_code in ["200", 200]:
+            return call.text
+        else:
+            return None
+
+
+def get_ctd_last_event(station_log_json: str) -> dict:
+    stations_info = json.loads(station_log_json)
+    last_ctd_entry = {}
+    for entry in stations_info["list"]:
+        if entry["Device Shortname"].lower() == "ctd":
+            last_ctd_entry = entry
+    return last_ctd_entry
+
+
+def get_station_id(event_json: dict) -> str:
+    station_id = event_json["Device Operation"]
+    return station_id.replace("/", "_")
+
+
+def retrieve_station_and_event_info() -> str | None:
+    try:
+        url_to_get_cruise_id = (
+            f"{config.dship_ip}/{config.dship_api_target_names['Cruise']}"
+        )
+        cruise_id = individual_dship_api_call(url_to_get_cruise_id)
+        station_log = get_station_log(cruise_id["sample"]["value"])
+    except (KeyError, AttributeError) as error:
+        # TODO: handle this situation properly
+        return None
+    if station_log:
+        last_event = get_ctd_last_event(station_log)
+        station_event_info = get_station_id(last_event)
+        if len(station_event_info) > 0:
+            return station_event_info
+    return None

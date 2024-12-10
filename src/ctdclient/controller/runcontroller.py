@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from ctdclient.controller.Controller import Controller
+from ctdclient.model.dshipcaller import retrieve_station_and_event_info
 from ctdclient.model.fileupdater import UpdateFiles
 from ctdclient.model.metadataheader import MetadataHeader
 from ctdclient.model.psa import SeasavePsa
@@ -10,21 +11,17 @@ from ctdclient.view.runframe import RunFrame
 
 
 class RunController(Controller):
-
     def __init__(
         self,
         *args,
         bottles,
-        dship,
         processing,
         **kwargs,
     ):
-
         super().__init__(*args, **kwargs)
         self.view: RunFrame
         self.variables: MeasurementView = self.view.master  # pyright: ignore
         self.bottles = bottles
-        self.dship = dship
         self.processing = processing
         # set exe path in view
         self.view.path_to_seasave = self.configuration.path_to_seasave
@@ -95,7 +92,7 @@ class RunController(Controller):
             self.update_file_information()
 
     def update_file_information(self):
-        station_and_event_info = self.dship.retrieve_station_and_event_info()
+        station_and_event_info = retrieve_station_and_event_info()
         if station_and_event_info:
             UpdateFiles(
                 self.last_filename.get(),

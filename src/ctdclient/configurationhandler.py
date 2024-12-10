@@ -53,6 +53,7 @@ class ConfigurationFile:
             self.file_type_dir: str = self.data["base"]["file_type_dir"]
             self.debugging: bool = self.data["base"]["debugging"]
             self.dship_ip: str = self.data["dship"]["ip"]
+            self.dship_url_part: str = self.data["dship"]["url_part"]
             self.dhsip_fetch_intervall: float = float(
                 self.data["dship"]["fetch_intervall"]
             )

@@ -1,25 +1,32 @@
+from code_tools.logging import get_logger
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.controller.bottlecontroller import BottleController
 from ctdclient.controller.configcontroller import ConfigurationController
 from ctdclient.controller.dshipcontroller import DshipController
 from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
+from ctdclient.definitions import ROOT_PATH
 from ctdclient.eventmanager import EventManager
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
-from ctdclient.model.near_real_time_publication import DailyPublication, NearRealTimeTarget, instantiate_near_real_time_target
+from ctdclient.model.near_real_time_publication import DailyPublication
+from ctdclient.model.near_real_time_publication import (
+    instantiate_near_real_time_target,
+)
+from ctdclient.model.near_real_time_publication import NearRealTimeTarget
 from ctdclient.model.processing import Processing
 from ctdclient.view.mainwindow import MainWindow
+from tomlkit.toml_file import TOMLFile
+
+logger = get_logger(__name__)
 
 
 class MainController:
-
     def __init__(
         self,
         configuration: ConfigurationFile,
         mainwindow: MainWindow,
     ):
-
         self.configuration = configuration
         self.mainwindow = mainwindow
         self.tabs = mainwindow.tabs
@@ -29,11 +36,20 @@ class MainController:
 
         # processing
         self.processing = Processing(configuration, event_manager)
-        self.near_real_time_publications = [
-            instantiate_near_real_time_target(
-                **item, event_manager=event_manager)
-            for item in configuration.near_real_time.values()
-        ]
+        self.near_real_time_publications = []
+        for path in ROOT_PATH.glob("nrt_*.toml"):
+            try:
+                self.near_real_time_publications.append(
+                    instantiate_near_real_time_target(
+                        **TOMLFile(path).read(), event_manager=event_manager
+                    )
+                )
+            except Exception as error:
+                logger.error(
+                    f"Could not instantiate nrt, using {
+                        path}: {error}"
+                )
+                continue
 
         # bottles
         self.bottles = BottleClosingDepths(configuration)
@@ -60,7 +76,6 @@ class MainController:
             None,
             self.run_view,
             bottles=self.bottles,
-            dship=self.dship,
             processing=self.processing,
         )
 

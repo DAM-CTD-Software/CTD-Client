@@ -15,29 +15,29 @@ code-tools = {version = ">=0.2.6", source = "gitea"}
 ctkmessagebox = "^2.5"
 psutil = "^5.9.8"
 tufup = "^0.9.0"
-processing = {version = ">=1.0.35", source = "gitea"}
-# processing = {path = "../processing", develop = true}
+# processing = {version = ">=1.0.35", source = "gitea"}
 ctklistbox = "^1.4"
 geopandas = "^1.0.1"
+seabirdfilehandler = {version = "^0.3.9", source = "gitea"}
+keyring = "^25.5.0"
+processing = {path = "../processing", develop = true}
 
 [tool.poetry.group.install.dependencies]
 pyinstaller = "^6.7.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"
-coverage = "^7.4.0"
+pytest-mock = "^3.14.0"
+pytest-cov = "^6.0.0"
+pytest-xdist = "^3.6.1"
 sphinx = "^7.2.6"
 sphinx-rtd-theme = "^2.0.0"
 sphinx-autodoc-typehints = "^1.25.2"
+myst-parser = "^4.0.0"
 pyment = "^0.3.3"
 twine = "^4.0.2"
 pre-commit = "^3.6.0"
-jupyterlab = "^4.1.0"
 black = "^24.2.0"
-parameterized = "^0.9.0"
-myst-parser = "^4.0.0"
-pytest-mock = "^3.14.0"
-
 
 [[tool.poetry.source]]
 name = "gitea"
@@ -48,6 +48,7 @@ priority = "supplemental"
 pythonpath = [".",
              "src",
              "src/ctdclient"]
+addopts = '-n auto --cov=ctdclient.model --log-format="%(asctime)s %(levelname)s %(message)s" --log-date-format="%Y-%m-%d %H:%M:%S"'
 filterwarnings = [
     "error",
     "ignore::UserWarning",

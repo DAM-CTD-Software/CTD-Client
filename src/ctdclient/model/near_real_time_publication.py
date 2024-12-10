@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import mimetypes
 import multiprocessing as mp
 import os
 import platform
@@ -11,11 +12,15 @@ import time
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 from email.message import EmailMessage
 from pathlib import Path
 
 import geopandas as gpd
+import keyring
 from code_tools.logging import get_logger
+from ctdclient.definitions import cruise_head
+from ctdclient.definitions import cruise_name
 from ctdclient.eventmanager import EventManager
 from seabirdfilehandler import SeaBirdFile
 from shapely.geometry import Point
@@ -85,21 +90,44 @@ class NearRealTimeTarget:
         if len(target_files) == 0:
             return
         to_address = self.address if to_address == "" else to_address
-        from_address = (
-            self.email_info["sender_address"]
-            if from_address == ""
-            else from_address
-        )
+        smtp_email = self.email_info["smtp_email"]
+        if smtp_email.startswith("$"):
+            smtp_email = os.getenv(smtp_email[1:])
+        if not smtp_email:
+            smtp_email = "Anonymous"
+        from_address = smtp_email if from_address == "" else from_address
         subject = self.email_info["subject"] if subject == "" else subject
         body = self.email_info["body"] if body == "" else body
+        timestamp = datetime.now(tz=timezone.utc).strftime("%y-%m-%d %H:%M:%S")
         msg = EmailMessage()
-        msg.set_content(body)
+        msg.set_content(
+            body.format(
+                cruise_name=cruise_name,
+                date=timestamp,
+                cruise_head=cruise_head,
+            )
+        )
 
-        msg["Subject"] = subject
+        msg["Subject"] = subject.format(
+            cruise_name=cruise_name, date=timestamp
+        )
         msg["From"] = from_address
         msg["To"] = to_address
+
         for file in target_files:
-            msg.add_attachment(str(file))
+            # for some reason, one cannot attach files without specifying a
+            # mime type
+            mime_type, _ = mimetypes.guess_type(file)
+            if mime_type is None:
+                mime_type = "application/octet-stream"
+            main_type, sub_type = mime_type.split("/", 1)
+            with open(file, "rb") as data:
+                msg.add_attachment(
+                    data.read(),
+                    maintype=main_type,
+                    subtype=sub_type,
+                    filename=file.name,
+                )
         return msg
 
     def create_email_draft(
@@ -143,16 +171,32 @@ class NearRealTimeTarget:
     def send_email(
         self,
         msg: EmailMessage,
-        smtp_server: str = "localhost",
-        smtp_port: int = 587,
-        smtp_user: str = "",
-        smtp_pass: str = "",
     ):
         """
         Sends the email message using the given smtp server configuration.
         """
+        try:
+            smtp_server = self.email_info["smtp_server"]
+            smtp_port = self.email_info["smtp_port"]
+            smtp_user = self.email_info["smtp_user"]
+            smtp_pass = self.email_info["smtp_pass"]
+        except KeyError as error:
+            logger.error(
+                f"Could not send email, because of missing information: {
+                    error}"
+            )
+            return
+        if smtp_user.startswith("$"):
+            smtp_user = os.getenv(smtp_user[1:])
+            smtp_pass = os.getenv(smtp_pass[1:])
+        else:
+            smtp_user = keyring.get_password("CTD-Client", smtp_user)
+            smtp_pass = keyring.get_password("CTD-Client", smtp_pass)
+        if not smtp_user or not smtp_pass:
+            logger.error("Could not send email: Credentials not found.")
+            return
         assert isinstance(msg, EmailMessage)
-        with smtplib.SMTP(smtp_server, smtp_port) as server:
+        with smtplib.SMTP(smtp_server, int(smtp_port)) as server:
             server.starttls()
             server.login(smtp_user, smtp_pass)
             server.send_message(msg)
@@ -170,7 +214,7 @@ class NearRealTimeTarget:
     def get_target_files(self) -> list[Path]:
         """Creates a list of paths to files that are meant to be published."""
         target_files = []
-        for file in self.dir.glob("*.cnv"):
+        for file in self.dir.glob(f"*{self.suffix}.cnv"):
             # check, whether file already sent
             if file in self.files_already_sent:
                 continue
@@ -209,7 +253,6 @@ class NearRealTimeTarget:
         # if no polygon is given, no geo filter can be applied and thus, we
         # just return true and skip the rest of the method
         if len(polygon_data_to_check_against) == 0:
-            logger.error(f"map poygon given: {self.map_data}")
             return True
         try:
             polygon = gpd.read_file(polygon_data_to_check_against)
@@ -220,7 +263,6 @@ class NearRealTimeTarget:
 
 
 class DailyPublication(NearRealTimeTarget):
-
     def __init__(
         self,
         *args,
@@ -273,7 +315,6 @@ class DailyPublication(NearRealTimeTarget):
 
 
 class EachProcessingPublication(NearRealTimeTarget):
-
     def __init__(self, *args, event_manager: EventManager, **kwargs):
         super().__init__(*args, **kwargs)
         self.event_manager = event_manager

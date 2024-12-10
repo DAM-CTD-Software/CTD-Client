@@ -18,15 +18,19 @@ from ctdclient.model.near_real_time_publication import NearRealTimeTarget
 daily_email_test_info = {
     "recipient_name": "coriolis",
     "recipient_address": "to@example.com",
-    "target_file_directory": "tests/data/out",
+    "target_file_directory": "seabird_example_data/cnv",
     "target_file_suffix": "_4coriolis",
     "frequency_of_action": "daily",
     "geo_filter": "maps/germany.xml",
     "email_info": {
         "send_directly": True,
-        "sender_address": "from@example.com",
-        "subject": "CTD-Data of cruise {} on {}",
-        "body": "Hello, \nthis is an automatically generated email containing the CTD data files of cruise {} from {}. If you have any questions regarding this email, do not hesitate to contact the current head of cruise {}, using {}.\n\nHave a good day!",
+        "smtp_server": "localhost",
+        "smtp_port": 587,
+        "smtp_email": "$MAIL",
+        "smtp_user": "$IOWNAME",
+        "smtp_pass": "$PASS",
+        "subject": "CTD-Data of cruise {cruise_name} on {date}",
+        "body": "Hello, \nthis is an automatically generated email containing the CTD data files of cruise {cruise_name} from {date}. If you have any questions regarding this email, do not hesitate to contact the current head of cruise {cruise_head}.\n\nHave a good day!",
     },
 }
 
@@ -92,11 +96,11 @@ def test_geo_filter():
 
 
 def test_send_email(mocker):
-    target_files = [Path(str(number)) for number in range(10)]
     mock_smtp = mocker.patch("smtplib.SMTP")
     pubs = NearRealTimeTarget(
         **daily_email_test_info,
     )
+    target_files = pubs.get_target_files()
     msg = pubs.create_email_message(target_files)
     # test basic sending
     pubs.send_email(msg)
@@ -109,11 +113,9 @@ def test_send_email(mocker):
     # test creating a draft message
     draft = pubs.create_email_draft(msg)
     assert draft.exists()
-    draft.unlink()
 
 
 def test_correct_target_files():
     assert NearRealTimeTarget(**daily_copy_test_info).get_target_files() == [
-        Path("seabird_example_data/cnv/basic_emb.cnv"),
         Path("seabird_example_data/cnv/basic_emb_4coriolis.cnv"),
     ]

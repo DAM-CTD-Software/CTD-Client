@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from code_tools.logging import get_logger
 from seabirdfilehandler import PsaFile
 
@@ -88,8 +89,7 @@ class SeasavePsa(PsaFile):
 
         """
         return (
-            header_line
-            .replace("ä", "ae")
+            header_line.replace("ä", "ae")
             .replace("ö", "oe")
             .replace("ü", "ue")
             .replace("ß", "ss")
@@ -129,12 +129,14 @@ class SeasavePsa(PsaFile):
         for row in watersampler["AutoFireData"]["DataTable"]["Row"]:
             bottle_number = int(row["@BottleNumber"])
             if bottle_number <= number_of_bottles:
+                user_input = bottle_info[bottle_number].replace(",", ".")
                 try:
-                    row["@FireAt"] = str(float(bottle_info[bottle_number]))
-                except (KeyError, ValueError):
+                    row["@FireAt"] = str(float(user_input))
+                    assert not row["@FireAt"].startswith("-")
+                except (KeyError, ValueError, AssertionError):
                     row["@FireAt"] = "0.0"
                 except TypeError:
-                    row["@FireAt"] = str(bottle_info[bottle_number])
+                    row["@FireAt"] = str(user_input)
         if len(bottle_info) == 0:
             watersampler["AutoFireData"]["@MaxPressureOrDepth"] = "0.000000"
         else:

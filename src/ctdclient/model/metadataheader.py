@@ -1,12 +1,10 @@
-from ctdclient.model.psa import SeasavePsa
 from code_tools.logging import get_logger
-from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.model.psa import SeasavePsa
 
 logger = get_logger(__name__)
 
 
 class MetadataHeader:
-
     dship_values = {}
 
     @classmethod
@@ -53,9 +51,14 @@ class MetadataHeader:
             ),
         )
         if pos_alias:
-            header_list[-1] = cls.create_metadata_header_line(
-                "Pos_Alias", pos_alias
-            )
+            header_list = [
+                (
+                    cls.create_metadata_header_line("Pos_Alias", pos_alias)
+                    if element.startswith("Pos_Alias")
+                    else element
+                )
+                for element in header_list
+            ]
         psa.set_metadata_header(header_list, autostart)
         header_print = "\n".join(header_list)
         return header_print
@@ -86,9 +89,8 @@ class MetadataHeader:
                     gap = "  "
                 else:
                     gap = " "
-                formatted_value = (
-                    f"{first_part}{gap}{float(second_part):2.3f} E"
-                )
+                formatted_value = f"{first_part}{
+                    gap}{float(second_part):2.3f} E"
             except ValueError:
                 formatted_value = f"{float(value):2.3f} E"
         elif name == "Echo_Depth":
@@ -126,4 +128,5 @@ class MetadataHeader:
         }
         # save the current dship metadata every time a file name is created (every second)
         MetadataHeader.dship_values = dship_values
-        return f"{cruise}_{station}_{platform_name_mapper[platform]}_{cast_number:04d}.hex"
+        return f"{cruise}_{station}_{platform_name_mapper[platform]}_{
+            cast_number:04d}.hex"

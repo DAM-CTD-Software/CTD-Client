@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Type
 
 import customtkinter as ctk
+import psutil
 from code_tools.logging import configure_logging
 from code_tools.logging import get_logger
 from ctdclient.configurationhandler import ConfigurationFile
@@ -36,6 +37,9 @@ UPDATED = False
 
 
 def main():
+    """The main entry point of the software."""
+    if check_if_running():
+        sys.exit("CTD-Client is already running.")
     configuration_file = config
     # set ctk options
     root = ctk.CTk()
@@ -85,6 +89,24 @@ def main():
     root.mainloop()
     # clean up for shutdown
     main_controller.kill_threads()
+
+
+def check_if_running() -> bool:
+    """Checks, whether CTD-Client is already running"""
+    current_process_name = "ctdclient"
+    current_process_name += ".exe" if sys.platform.startswith("win") else ""
+    for process in psutil.process_iter():
+        try:
+            # skip the process if its this one (using the process' creation
+            # time here, as this software is multithreaded and spans three
+            # processes upon starting, so PID would not be enough.)
+            if process.create_time() != psutil.Process().create_time():
+                if current_process_name == process.name():
+                    return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            pass
+
+    return False
 
 
 def inform_about_bad_config(main_window):
@@ -173,9 +195,7 @@ def installation_procedure(src_dir: Path, dst_dir: Path, **kwargs):
     new_temp_name = ROOT_PATH.joinpath(".old.exe")
     if new_temp_name.exists():
         new_temp_name.unlink()
-    shutil.move(
-        ROOT_PATH.joinpath("ctdclient.exe"), new_temp_name
-    )
+    shutil.move(ROOT_PATH.joinpath("ctdclient.exe"), new_temp_name)
     # move extracted new files into root dir
     for file in src_dir.iterdir():
         if file.name in ("ctdclient.exe", "update_fixer.bat"):
@@ -214,6 +234,7 @@ if __name__ == "__main__":
 
     if UPDATED:
         import os
+
         old_path = RESSOURCES_PATH.joinpath("update_clean_up.bat")
         if not old_path.is_absolute():
             old_path = old_path.absolute()
@@ -224,7 +245,7 @@ if __name__ == "__main__":
             target_dir.joinpath("update_clean_up.bat"),
             operation="open",
             arguments=str(ROOT_PATH.joinpath(".old.exe")),
-            )
+        )
         # option to start a batch script for special update needs
         # needs to be deployed with the update
         update_fixing_script = ROOT_PATH.joinpath("update_fixer.bat")

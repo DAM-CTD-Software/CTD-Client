@@ -5,14 +5,12 @@ from ctdclient.view.measurement import MeasurementView
 
 
 class ConfigurationController(Controller):
-
     def __init__(
         self,
         *args,
         measurementview: MeasurementView,
         **kwargs,
     ):
-
         super().__init__(*args, **kwargs)
 
         self.model: ConfigurationFile
@@ -20,9 +18,7 @@ class ConfigurationController(Controller):
         self.measurementview = measurementview
 
         # set callbacks
-        self.view.tabs.basic_settings.add_callback(
-            "save", self.save_configuration
-        )
+        self.view.base_settings.add_callback("save", self.save_configuration)
 
     def save_configuration(self):
         self.measurementview.info_frame.initialize()

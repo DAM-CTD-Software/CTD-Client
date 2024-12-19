@@ -23,23 +23,23 @@ class ProcessingView(CtkFrame):
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=1)
 
-    def populate(self, custom_script: bool, steps: list[tuple] = [], file_path = None):
+    def populate(
+        self, custom_script: bool, steps: list[tuple] = [], file_path=None
+    ):
         if len(self.winfo_children()) > 0:
             for child in self.winfo_children():
                 child.kill()
         if custom_script:
             self.steps_frame = ProcessingCustomScriptFrame(
-                self, configuration=self.configuration, file_path=file_path
+                self, file_path=file_path
             )
         else:
             self.steps_header = HeaderFrame(
                 self,
-                configuration=self.configuration,
                 header_text="Processing steps",
             )
             self.steps_frame = ProcessingStepFrame(
                 self.steps_header,
-                configuration=self.configuration,
                 steps=steps,
             )
         self.grid()

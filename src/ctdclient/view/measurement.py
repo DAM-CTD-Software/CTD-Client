@@ -51,13 +51,11 @@ class MeasurementView(CtkFrame, ViewMixin):
                 child.kill()
 
         # children frames set-up
-        self.bottle_frame = BottleFrame(self, configuration=self.configuration)
-        self.dship_frame = DshipFrame(self, configuration=self.configuration)
-        self.info_frame = InfoFrame(self, configuration=self.configuration)
-        self.stopwatch_frame = StopwatchFrame(
-            self, configuration=self.configuration
-        )
-        self.run_frame = RunFrame(self, configuration=self.configuration)
+        self.bottle_frame = BottleFrame(self)
+        self.dship_frame = DshipFrame(self)
+        self.info_frame = InfoFrame(self)
+        self.stopwatch_frame = StopwatchFrame(self)
+        self.run_frame = RunFrame(self)
 
         # TODO: where to put this?
         self.configuration.read_ctd_config(self.platform.lower())

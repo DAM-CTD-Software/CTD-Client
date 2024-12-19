@@ -6,6 +6,7 @@ from tkinter import filedialog as fd
 from tkinter import ttk
 
 import customtkinter as ctk
+from ctdclient.definitions import config
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.tabview import TabView
 from ctdclient.view.View import ViewMixin
@@ -22,14 +23,16 @@ class ConfigurationView(ViewMixin, CtkFrame):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+        self.base_settings = BaseSettings(self)
+        self.expert_settings = ExpertSettings(self)
+        self.contact_view = ContactView(self)
         self.tabs = TabView(
             window=self,
-            configuration=self.configuration,
             tabs={
-                "basic settings": BaseSettings,
-                "expert settings": ExpertSettings,
+                "basic settings": self.base_settings,
+                "expert settings": self.expert_settings,
                 # "about": AboutView,
-                "contact": ContactView,
+                "contact": self.contact_view,
             },
             width=600,
             height=700,
@@ -38,7 +41,6 @@ class ConfigurationView(ViewMixin, CtkFrame):
 
 
 class BaseSettings(ViewMixin, CtkFrame):
-
     def __init__(
         self,
         *args,
@@ -191,21 +193,19 @@ class BaseSettings(ViewMixin, CtkFrame):
 
 
 class ExpertSettings(ctk.CTkScrollableFrame):
-
     def __init__(
         self,
         *args,
-        configuration,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.configuration = configuration
+        self.configuration = config
         self.configure(
-            height = 500,
-            width = 600,
+            height=500,
+            width=600,
             border_width=1,
             border_color="gray10",
-            fg_color="transparent"
+            fg_color="transparent",
         )
         self.padx = 5
         self.pady = 5
@@ -381,7 +381,6 @@ class ExpertSettings(ctk.CTkScrollableFrame):
 
 
 class AboutView(CtkFrame):
-
     def __init__(
         self,
         *args,
@@ -396,7 +395,6 @@ class AboutView(CtkFrame):
 
 
 class ContactView(CtkFrame):
-
     def __init__(
         self,
         *args,

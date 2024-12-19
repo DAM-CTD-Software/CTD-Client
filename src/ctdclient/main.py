@@ -2,13 +2,11 @@ import shutil
 import sys
 import tkinter.font as tkFont
 from pathlib import Path
-from typing import Type
 
 import customtkinter as ctk
 import psutil
 from code_tools.logging import configure_logging
 from code_tools.logging import get_logger
-from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.controller.maincontroller import MainController
 from ctdclient.definitions import config
 from ctdclient.definitions import ICON_PATH
@@ -21,11 +19,7 @@ from ctdclient.definitions import TUFUP_METADATA
 from ctdclient.definitions import TUFUP_TARGET
 from ctdclient.definitions import VERSION
 from ctdclient.definitions import WRONG_CONFIG
-from ctdclient.view.configuration import ConfigurationView
-from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
-from ctdclient.view.measurement import MeasurementView
-from ctdclient.view.processing import ProcessingView
 from CTkMessagebox import CTkMessagebox
 from tufup.client import Client
 
@@ -57,12 +51,8 @@ def main():
     ctk.set_default_color_theme(str(THEMES_PATH))
     root.geometry("700x780")
     # initialize objects
-    main_window = MainWindow(
-        parent=root,
-        config=configuration_file,
-        tab_dict=create_tabs(configuration_file),
-    )
-    main_controller = MainController(configuration_file, main_window)
+    main_controller = MainController(root)
+    main_window = main_controller.mainwindow
 
     # check for update upon start
     if configuration_file.updating:
@@ -85,7 +75,7 @@ def main():
     if WRONG_CONFIG:
         main_window.after(2000, inform_about_bad_config, main_window)
 
-    main_window.grid(row=0, column=0, sticky="nsew")
+    # main_window.grid(row=0, column=0, sticky="nsew")
     root.grid_rowconfigure(0, weight=1)
     root.grid_columnconfigure(0, weight=1)
     root.mainloop()
@@ -213,16 +203,6 @@ def update_progress(bytes_downloaded: int, bytes_expected: int):
     progress_in_percent = bytes_downloaded / bytes_expected * 100
     # TODO: use ctk progress bar here
     print(progress_in_percent)
-
-
-def create_tabs(config: ConfigurationFile) -> dict[str, Type[CtkFrame]]:
-    # TODO: implement config part to allow tab selection
-    tab_dict = {
-        "measurement": MeasurementView,
-        "processing": ProcessingView,
-        "configuration": ConfigurationView,
-    }
-    return tab_dict
 
 
 if __name__ == "__main__":

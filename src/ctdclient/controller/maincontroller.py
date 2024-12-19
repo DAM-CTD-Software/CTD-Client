@@ -1,69 +1,59 @@
+from typing import Type
+
+import customtkinter as ctk
 from code_tools.logging import get_logger
-from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.controller.bottlecontroller import BottleController
 from ctdclient.controller.configcontroller import ConfigurationController
 from ctdclient.controller.dshipcontroller import DshipController
+from ctdclient.controller.nrtcontroller import NRTController
 from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
-from ctdclient.definitions import ROOT_PATH
+from ctdclient.definitions import config
 from ctdclient.eventmanager import EventManager
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
 from ctdclient.model.near_real_time_publication import DailyPublication
-from ctdclient.model.near_real_time_publication import (
-    instantiate_near_real_time_target,
-)
-from ctdclient.model.near_real_time_publication import NearRealTimeTarget
+from ctdclient.model.near_real_time_publication import NRTList
 from ctdclient.model.processing import Processing
+from ctdclient.view.configuration import ConfigurationView
+from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
-from tomlkit.toml_file import TOMLFile
+from ctdclient.view.measurement import MeasurementView
+from ctdclient.view.nrtcontrol import NRTControlFrame
+from ctdclient.view.processing import ProcessingView
 
 logger = get_logger(__name__)
 
 
 class MainController:
-    def __init__(
-        self,
-        configuration: ConfigurationFile,
-        mainwindow: MainWindow,
-    ):
-        self.configuration = configuration
-        self.mainwindow = mainwindow
-        self.tabs = mainwindow.tabs
-        self.measurement = self.tabs.measurement
-        self.configuration_view = self.tabs.configuration
+    def __init__(self, root_window: ctk.CTk):
+        self.measurement = MeasurementView(root_window)
+        self.config_view = ConfigurationView(root_window)
         event_manager = EventManager()
 
         # processing
-        self.processing = Processing(configuration, event_manager)
-        self.near_real_time_publications = []
-        for path in ROOT_PATH.glob("nrt_*.toml"):
-            try:
-                self.near_real_time_publications.append(
-                    instantiate_near_real_time_target(
-                        **TOMLFile(path).read(), event_manager=event_manager
-                    )
-                )
-            except Exception as error:
-                logger.error(
-                    f"Could not instantiate nrt, using {
-                        path}: {error}"
-                )
-                continue
+        self.processing = Processing(config, event_manager)
+
+        # nrt
+        self.nrt = NRTList(event_manager)
+        self.nrt_control_view = NRTControlFrame(root_window)
+        self.nrt_controller = NRTController(
+            config, self.nrt, self.nrt_control_view
+        )
 
         # bottles
-        self.bottles = BottleClosingDepths(configuration)
+        self.bottles = BottleClosingDepths(config)
         self.bottle_view = self.measurement.bottle_frame
         self.bottle_controller = BottleController(
-            configuration, self.bottles, self.bottle_view
+            config, self.bottles, self.bottle_view
         )
 
         # dship
         self.info_frame = self.measurement.info_frame
-        self.dship = DshipCaller(configuration)
+        self.dship = DshipCaller(config)
         self.dship_view = self.measurement.dship_frame
         self.dship_controller = DshipController(
-            configuration,
+            config,
             self.dship,
             self.dship_view,
             info_frame=self.info_frame,
@@ -72,7 +62,7 @@ class MainController:
         # run Seasave
         self.run_view = self.measurement.run_frame
         self.run_controller = RunController(
-            configuration,
+            config,
             None,
             self.run_view,
             bottles=self.bottles,
@@ -81,26 +71,43 @@ class MainController:
 
         # processing
         try:
-            self.processing_view = self.tabs.processing
+            self.processing_view = ProcessingView(root_window)
         except AttributeError:
             pass
         else:
             self.processing_controller = ProcessingController(
-                configuration,
+                config,
                 self.processing,
                 self.processing_view,
             )
 
-        # configuration
+        # config
         self.config_controller = ConfigurationController(
-            configuration,
-            configuration,
-            self.configuration_view,
+            config,
+            config,
+            self.config_view,
             measurementview=self.measurement,
         )
+        self.mainwindow = MainWindow(
+            parent=root_window,
+            tab_dict=self.create_tabs(),
+        )
+        self.mainwindow.grid(row=0, column=0, sticky="nsew")
+        self.mainwindow.grid_rowconfigure(0, weight=1)
+        self.mainwindow.grid_columnconfigure(0, weight=1)
+
+    def create_tabs(self) -> dict[str, CtkFrame]:
+        # TODO: implement config part to allow tab selection
+        tab_dict = {
+            "measurement": self.measurement,
+            "processing": self.processing_view,
+            "nrt publication": self.nrt_control_view,
+            # "config": self.config_view,
+        }
+        return tab_dict
 
     def kill_threads(self):
         self.dship_controller.kill_threads()
-        for item in self.near_real_time_publications:
+        for item in self.nrt:
             if isinstance(item, DailyPublication):
                 item.stop()

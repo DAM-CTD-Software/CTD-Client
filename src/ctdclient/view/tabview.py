@@ -1,11 +1,9 @@
-from typing import Type
-
 import customtkinter as ctk
-from ctdclient.configurationhandler import ConfigurationFile
+from code_tools.logging import get_logger
 from ctdclient.view.ctkframe import CtkFrame
-from ctdclient.view.measurement import MeasurementView
-from ctdclient.view.processing import ProcessingView
 from CTkMessagebox import CTkMessagebox
+
+logger = get_logger(__name__)
 
 
 class TabView(ctk.CTkTabview):
@@ -14,41 +12,23 @@ class TabView(ctk.CTkTabview):
     def __init__(
         self,
         window: ctk.CTkFrame,
-        configuration: ConfigurationFile,
-        tabs: dict[str, Type[CtkFrame]],
+        tabs: dict[str, CtkFrame],
         *args,
         **kwargs,
     ):
         super().__init__(window, *args, **kwargs)
+        self.grid()
 
         for name, view in tabs.items():
             self.add(name)
-            if name == "measurement":
-                self.measurement = MeasurementView(
-                    self.tab(name), configuration=configuration
-                )
-                self.measurement.grid(row=0, column=0, sticky="nsew")
-                self.measurement.grid_rowconfigure(0, weight=1)
-                self.measurement.grid_columnconfigure(0, weight=1)
-            elif name == "processing":
-                self.processing = ProcessingView(
-                    self.tab(name), configuration=configuration
-                )
-                self.processing.grid()
-            elif name == "configuration":
-                self.configuration = view(
-                    self.tab(name), configuration=configuration
-                )
-                self.configuration.grid()
-            elif name == "basic settings":
-                self.basic_settings = view(
-                    self.tab(name), configuration=configuration
-                )
-                self.basic_settings.grid()
-            else:
-                tab = view(master=self.tab(name), configuration=configuration)
-                tab.grid()
+            self.reparent_to_tab(view, name)
         self.configure(command=self.on_tab_change)
+
+    def reparent_to_tab(self, view, tab_name):
+        """Move a view's widgets to a specific tab."""
+        tab = self.tab(tab_name)
+        view.master = tab
+        view.grid()
 
     def on_tab_change(self):
         if self.get() == "expert settings":

@@ -1,17 +1,16 @@
 import customtkinter as ctk
 from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.definitions import config
 
 
 class CtkFrame(ctk.CTkFrame):
-
     def __init__(
         self,
         *args,
-        configuration: ConfigurationFile,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.configuration = configuration
+        self.configuration = config
         self.padx = 5
         self.pady = 5
         self.configure(fg_color="transparent")

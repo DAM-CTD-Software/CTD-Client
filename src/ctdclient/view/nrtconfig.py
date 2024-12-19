@@ -1,3 +1,4 @@
+from pathlib import Path
 from tkinter import ttk
 
 import customtkinter as ctk
@@ -18,7 +19,7 @@ class NRTConfigurator(ViewMixin, TomlEditor):
             "frequency_of_action",
             "geo_filter",
         ],
-        config_file: str = "",
+        config_file: Path | str = "",
         title_size: int = 20,
         possible_email_parameters: list[str] = [
             "send_directly",

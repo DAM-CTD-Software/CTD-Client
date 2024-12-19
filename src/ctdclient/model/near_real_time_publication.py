@@ -9,6 +9,7 @@ import shutil
 import smtplib
 import subprocess
 import time
+from collections import UserList
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
@@ -21,9 +22,11 @@ import keyring
 from code_tools.logging import get_logger
 from ctdclient.definitions import cruise_head
 from ctdclient.definitions import cruise_name
+from ctdclient.definitions import ROOT_PATH
 from ctdclient.eventmanager import EventManager
 from seabirdfilehandler import SeaBirdFile
 from shapely.geometry import Point
+from tomlkit.toml_file import TOMLFile
 
 logger = get_logger(__name__)
 
@@ -45,6 +48,30 @@ def instantiate_near_real_time_target(
     return class_to_instantiate(*args, **kwargs)
 
 
+class NRTList(UserList):
+    def __init__(self, event_manager: EventManager):
+        self.data = []
+        self.event_manager = event_manager
+        self.update_nrt_data()
+
+    def update_nrt_data(self):
+        for path in ROOT_PATH.glob("nrt_*.toml"):
+            try:
+                self.data.append(
+                    instantiate_near_real_time_target(
+                        **TOMLFile(path).read(),
+                        file_path=path,
+                        event_manager=self.event_manager,
+                    )
+                )
+            except Exception as error:
+                logger.error(
+                    f"Could not instantiate nrt, using {
+                        path}: {error}"
+                )
+                continue
+
+
 class NearRealTimeTarget:
     """
     Stores information for near-real-time distribution of latest CTD data files.
@@ -60,6 +87,7 @@ class NearRealTimeTarget:
         target_file_directory: Path | str = "",
         geo_filter: Path | str = "",
         email_info: dict = {},
+        file_path: Path | str = "",
         **kwargs,
     ):
         self.name = recipient_name
@@ -68,7 +96,9 @@ class NearRealTimeTarget:
         self.suffix = target_file_suffix
         self.map_data = geo_filter
         self.email_info = email_info
+        self.file_path = Path(file_path)
         self.files_already_sent = []
+        self.active = True
 
     def _is_email(self, target: str = "") -> bool:
         """Basic check, whether we are dealing with email or not."""

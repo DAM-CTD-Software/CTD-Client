@@ -27,7 +27,9 @@ class TabView(ctk.CTkTabview):
                 self.measurement = MeasurementView(
                     self.tab(name), configuration=configuration
                 )
-                self.measurement.grid()
+                self.measurement.grid(row=0, column=0, sticky="nsew")
+                self.measurement.grid_rowconfigure(0, weight=1)
+                self.measurement.grid_columnconfigure(0, weight=1)
             elif name == "processing":
                 self.processing = ProcessingView(
                     self.tab(name), configuration=configuration

@@ -7,7 +7,6 @@ from ctdclient.view.tabview import TabView
 
 
 class MainWindow(ctk.CTkFrame):
-
     def __init__(
         self,
         parent: ctk.CTk,
@@ -20,8 +19,7 @@ class MainWindow(ctk.CTkFrame):
             window=self,
             configuration=config,
             tabs=tab_dict,
-            width=600,
-            height=700,
-            # command=self.update_config_values,
         )
-        self.tabs.grid()
+        self.tabs.grid(row=0, column=0, sticky="nsew")
+        self.tabs.grid_rowconfigure(0, weight=1)
+        self.tabs.grid_columnconfigure(0, weight=1)

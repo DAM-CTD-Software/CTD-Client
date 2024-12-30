@@ -110,7 +110,10 @@ class DshipController(Controller):
         # clean up after kill signal send
         global alive
         alive = False
-        self.calling_dship.terminate()
+        try:
+            self.calling_dship.terminate()
+        except ValueError:
+            pass
         time.sleep(self.configuration.dhsip_fetch_intervall)
         self.queue.close()
         self.queue.join_thread()

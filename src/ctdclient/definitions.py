@@ -25,9 +25,8 @@ except InvalidConfigFile as error:
 VERSION = importlib.metadata.version("ctdclient")
 THEMES_PATH = RESSOURCES_PATH.joinpath("ctktheme.json")
 ICON_PATH = RESSOURCES_PATH.joinpath("icon.ico")
-PROCESSING_TEMPLATE_PATH = RESSOURCES_PATH.joinpath(
-    "templates", "processing_template.toml"
-)
+TEMPLATE_PATH = RESSOURCES_PATH.joinpath("templates")
+PROCESSING_TEMPLATE_PATH = TEMPLATE_PATH.joinpath("processing_template.toml")
 
 # update specifics
 INSTALL_DIR = RESSOURCES_PATH.joinpath("updates")

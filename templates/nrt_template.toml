@@ -1,0 +1,16 @@
+recipient_name = "someone"
+recipient_address = "to@example.com"
+target_file_directory = "seabird_example_data/cnv"
+target_file_suffix = "_4coriolis"
+frequency_of_action = "each_processing"
+geo_filter = "maps/germany.xml"
+
+[email_info]
+send_directly = true
+smtp_server = "localhost"
+smtp_port = 587
+smtp_email = "$MAIL"
+smtp_user = "$IOWNAME"
+smtp_pass = "$PASS"
+subject = "CTD-Data of cruise {cruise_name} on {date}"
+body = "Hello, \nthis is an automatically generated email containing the CTD data files of cruise {cruise_name} from {date}. If you have any questions regarding this email, do not hesitate to contact the current head of cruise {cruise_head}.\n\nHave a good day!"

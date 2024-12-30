@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import abstractmethod
 import mimetypes
 import multiprocessing as mp
 import os
@@ -23,6 +24,7 @@ from code_tools.logging import get_logger
 from ctdclient.definitions import cruise_head
 from ctdclient.definitions import cruise_name
 from ctdclient.definitions import ROOT_PATH
+from ctdclient.definitions import TEMPLATE_PATH
 from ctdclient.eventmanager import EventManager
 from seabirdfilehandler import SeaBirdFile
 from shapely.geometry import Point
@@ -53,23 +55,39 @@ class NRTList(UserList):
         self.data = []
         self.event_manager = event_manager
         self.update_nrt_data()
+        self.template = self.get_template()
 
-    def update_nrt_data(self):
+    def update_nrt_data(self, clear_data: bool = True):
+        if clear_data:
+            self.data = []
+        # TODO: make this flexible? eg allow dir selection
         for path in ROOT_PATH.glob("nrt_*.toml"):
             try:
-                self.data.append(
-                    instantiate_near_real_time_target(
-                        **TOMLFile(path).read(),
-                        file_path=path,
-                        event_manager=self.event_manager,
-                    )
-                )
+                self.data.append(self.create_nrt_instance(path))
             except Exception as error:
                 logger.error(
                     f"Could not instantiate nrt, using {
                         path}: {error}"
                 )
                 continue
+
+    def create_nrt_instance(self, path: Path):
+        return instantiate_near_real_time_target(
+            **TOMLFile(path).read(),
+            file_path=path,
+            event_manager=self.event_manager,
+        )
+
+    def get_template(
+        self, template_path: Path = TEMPLATE_PATH.joinpath("nrt_template.toml")
+    ):
+        if not template_path.exists():
+            return None
+        return self.create_nrt_instance(template_path)
+
+    def toggle_activity(self, nrt: NearRealTimeTarget):
+        if nrt in self.data:
+            nrt.toggle_activity()
 
 
 class NearRealTimeTarget:
@@ -100,11 +118,16 @@ class NearRealTimeTarget:
         self.files_already_sent = []
         self.active = True
 
+    @abstractmethod
+    def toggle_activity(self):
+        pass
+
     def _is_email(self, target: str = "") -> bool:
         """Basic check, whether we are dealing with email or not."""
         target = str(self.address) if len(target) == 0 else target
         return "@" in target
 
+    @abstractmethod
     def run(self):
         """Will move the recent files to the target location."""
 
@@ -343,6 +366,13 @@ class DailyPublication(NearRealTimeTarget):
     def stop(self):
         self.process.kill()
 
+    def toggle_activity(self):
+        self.active = not self.active
+        if self.active:
+            self.start()
+        else:
+            self.stop()
+
 
 class EachProcessingPublication(NearRealTimeTarget):
     def __init__(self, *args, event_manager: EventManager, **kwargs):
@@ -350,6 +380,13 @@ class EachProcessingPublication(NearRealTimeTarget):
         self.event_manager = event_manager
         self.event_manager.subscribe("processing_successful", self.run)
         self.address = Path(self.address)
+
+    def toggle_activity(self):
+        self.active = not self.active
+        if self.active:
+            self.event_manager.subscribe("processing_successful", self.run)
+        else:
+            self.event_manager.unsubscribe("processing_successful", self.run)
 
     def run(self, target_file: Path = Path(".")):
         if self._is_email():

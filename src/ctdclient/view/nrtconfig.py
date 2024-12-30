@@ -3,13 +3,14 @@ from tkinter import ttk
 
 import customtkinter as ctk
 from ctdclient.view.View import ViewMixin
+from ctdclient.definitions import event_manager
 from processing.gui.toml_editor import TomlEditor
 
 
 class NRTConfigurator(ViewMixin, TomlEditor):
     def __init__(
         self,
-        master: ctk.CTkFrame,
+        master,
         title: str = "NRT Configuration",
         possible_parameters: list[str] = [
             "recipient_name",
@@ -40,6 +41,16 @@ class NRTConfigurator(ViewMixin, TomlEditor):
             title_size,
         )
         self.possible_email_parameters = possible_email_parameters
+        master.protocol("WM_DELETE_WINDOW", self.cancel)
+
+    def cancel(self):
+        for frame in self.winfo_children():
+            try:
+                frame.grid_forget()
+            except AttributeError:
+                pass
+            frame.destroy()
+        event_manager.publish("kill_nrt_config")
 
     def load_config_specific_data(self, row=0):
         frame = ctk.CTkFrame(self.content_frame, fg_color="transparent")

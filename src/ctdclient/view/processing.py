@@ -12,12 +12,8 @@ class ProcessingView(CtkFrame):
     respective psas.
     """
 
-    def __init__(
-        self,
-        *args,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    def initialize(self, root):
+        super().__init__(master=root)
 
         # layout
         self.columnconfigure(0, weight=1)

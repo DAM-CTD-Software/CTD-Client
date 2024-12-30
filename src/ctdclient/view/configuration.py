@@ -17,12 +17,8 @@ from CTkMessagebox import CTkMessagebox
 class ConfigurationView(ViewMixin, CtkFrame):
     """ """
 
-    def __init__(
-        self,
-        *args,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    def initialize(self, root):
+        super().__init__(master=root)
         self.base_settings = BaseSettings(self)
         self.expert_settings = ExpertSettings(self)
         self.contact_view = ContactView(self)
@@ -31,7 +27,6 @@ class ConfigurationView(ViewMixin, CtkFrame):
             tabs={
                 "basic settings": self.base_settings,
                 "expert settings": self.expert_settings,
-                # "about": AboutView,
                 "contact": self.contact_view,
             },
             width=600,
@@ -41,12 +36,9 @@ class ConfigurationView(ViewMixin, CtkFrame):
 
 
 class BaseSettings(ViewMixin, CtkFrame):
-    def __init__(
-        self,
-        *args,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+
+    def initialize(self, root):
+        super().__init__(master=root)
         self.values_to_set = self.get_values_to_set()
         for index, (instrument, inner_dict) in enumerate(
             self.values_to_set.items()
@@ -193,12 +185,8 @@ class BaseSettings(ViewMixin, CtkFrame):
 
 
 class ExpertSettings(ctk.CTkScrollableFrame):
-    def __init__(
-        self,
-        *args,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    def initialize(self, root):
+        super().__init__(master=root)
         self.configuration = config
         self.configure(
             height=500,
@@ -395,12 +383,8 @@ class AboutView(CtkFrame):
 
 
 class ContactView(CtkFrame):
-    def __init__(
-        self,
-        *args,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    def initialize(self, root):
+        super().__init__(master=root)
 
         ctk.CTkLabel(
             self,

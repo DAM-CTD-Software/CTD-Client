@@ -1,5 +1,3 @@
-from typing import Type
-
 import customtkinter as ctk
 from code_tools.logging import get_logger
 from ctdclient.controller.bottlecontroller import BottleController
@@ -31,23 +29,35 @@ class MainController:
         self.processing_view = ProcessingView(root_window)
         self.nrt_control_view = NRTControlFrame(root_window)
 
+        self.mainwindow = MainWindow(
+            parent=root_window,
+            tab_dict=self.create_tabs(),
+        )
         # processing
         self.processing = Processing(config, event_manager)
-
+        self.processing_controller = ProcessingController(
+            config,
+            self.processing,
+            self.processing_view,
+        )
         # nrt
         self.nrt = NRTList(event_manager)
-        self.nrt_control_view = NRTControlFrame(root_window)
         self.nrt_controller = NRTController(
             config, self.nrt, self.nrt_control_view
         )
-
+        # config
+        self.config_controller = ConfigurationController(
+            config,
+            config,
+            self.config_view,
+            measurementview=self.measurement,
+        )
         # bottles
         self.bottles = BottleClosingDepths(config)
         self.bottle_view = self.measurement.bottle_frame
         self.bottle_controller = BottleController(
             config, self.bottles, self.bottle_view
         )
-
         # dship
         self.info_frame = self.measurement.info_frame
         self.dship = DshipCaller(config)
@@ -58,7 +68,6 @@ class MainController:
             self.dship_view,
             info_frame=self.info_frame,
         )
-
         # run Seasave
         self.run_view = self.measurement.run_frame
         self.run_controller = RunController(
@@ -69,29 +78,6 @@ class MainController:
             processing=self.processing,
         )
 
-        # processing
-        try:
-            self.processing_view = ProcessingView(root_window)
-        except AttributeError:
-            pass
-        else:
-            self.processing_controller = ProcessingController(
-                config,
-                self.processing,
-                self.processing_view,
-            )
-
-        # config
-        self.config_controller = ConfigurationController(
-            config,
-            config,
-            self.config_view,
-            measurementview=self.measurement,
-        )
-        self.mainwindow = MainWindow(
-            parent=root_window,
-            tab_dict=self.create_tabs(),
-        )
         self.mainwindow.grid(row=0, column=0, sticky="nsew")
         self.mainwindow.grid_rowconfigure(0, weight=1)
         self.mainwindow.grid_columnconfigure(0, weight=1)
@@ -102,11 +88,12 @@ class MainController:
             "measurement": self.measurement,
             "processing": self.processing_view,
             "nrt publication": self.nrt_control_view,
-            # "config": self.config_view,
+            "config": self.config_view,
         }
         return tab_dict
 
     def kill_threads(self):
+        # TODO: does this gracefully stop everything?
         self.dship_controller.kill_threads()
         for item in self.nrt:
             if isinstance(item, DailyPublication):

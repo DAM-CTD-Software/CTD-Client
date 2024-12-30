@@ -21,13 +21,12 @@ class TabView(ctk.CTkTabview):
 
         for name, view in tabs.items():
             self.add(name)
-            self.reparent_to_tab(view, name)
+            self.initialize_views(name, view)
         self.configure(command=self.on_tab_change)
 
-    def reparent_to_tab(self, view, tab_name):
-        """Move a view's widgets to a specific tab."""
-        tab = self.tab(tab_name)
-        view.master = tab
+    def initialize_views(self, name, view):
+        tab = self.tab(name)
+        view.initialize(tab)
         view.grid()
 
     def on_tab_change(self):

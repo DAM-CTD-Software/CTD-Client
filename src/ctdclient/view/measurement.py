@@ -22,11 +22,12 @@ class MeasurementView(CtkFrame, ViewMixin):
         platform: str = "CTD",
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        self.platform = platform
 
+    def initialize(self, root):
+        super().__init__(master=root)
         # setting variables according to configuration file
         # TODO: add option to set the platform
-        self.platform = platform
         self.downcast_option = self.configuration.downcast_option
         self.last_filename = tk.StringVar(
             value=self.configuration.last_filename.name
@@ -39,7 +40,6 @@ class MeasurementView(CtkFrame, ViewMixin):
             value=self.configuration.operators["last"]
         )
         self.station = tk.StringVar(value="")
-
         # configure window layout
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=3)

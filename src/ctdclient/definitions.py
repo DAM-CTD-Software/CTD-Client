@@ -6,6 +6,7 @@ from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.configurationhandler import InvalidConfigFile
 from ctdclient.utils import get_config_path
 from ctdclient.utils import individual_dship_api_call
+from ctdclient.eventmanager import EventManager
 
 if getattr(sys, "frozen", False):
     ROOT_PATH = Path(sys.executable).parent
@@ -54,3 +55,5 @@ cruise_head = "unknown"
 
 global last_ctd_station
 last_ctd_station = ""
+
+event_manager = EventManager()

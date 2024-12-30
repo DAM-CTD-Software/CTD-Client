@@ -8,8 +8,7 @@ from ctdclient.controller.dshipcontroller import DshipController
 from ctdclient.controller.nrtcontroller import NRTController
 from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
-from ctdclient.definitions import config
-from ctdclient.eventmanager import EventManager
+from ctdclient.definitions import config, event_manager
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
 from ctdclient.model.near_real_time_publication import DailyPublication
@@ -29,7 +28,8 @@ class MainController:
     def __init__(self, root_window: ctk.CTk):
         self.measurement = MeasurementView(root_window)
         self.config_view = ConfigurationView(root_window)
-        event_manager = EventManager()
+        self.processing_view = ProcessingView(root_window)
+        self.nrt_control_view = NRTControlFrame(root_window)
 
         # processing
         self.processing = Processing(config, event_manager)

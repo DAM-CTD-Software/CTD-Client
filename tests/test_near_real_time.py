@@ -4,6 +4,9 @@ from datetime import timedelta
 from pathlib import Path
 
 import pytest
+from conftest import data_dir
+from conftest import output_name
+from conftest import target_file
 from ctdclient.eventmanager import EventManager
 from ctdclient.model.near_real_time_publication import DailyPublication
 from ctdclient.model.near_real_time_publication import (
@@ -13,6 +16,7 @@ from ctdclient.model.near_real_time_publication import (
     instantiate_near_real_time_target,
 )
 from ctdclient.model.near_real_time_publication import NearRealTimeTarget
+from ctdclient.model.processing import Processing
 
 
 daily_email_test_info = {
@@ -40,7 +44,6 @@ daily_copy_test_info = {
     "target_file_directory": "seabird_example_data/cnv",
     "target_file_suffix": "_4coriolis",
     "frequency_of_action": "daily",
-    "geo_filter": "maps/germany.xml",
 }
 
 each_processing_copy_test_info = {
@@ -69,7 +72,7 @@ def test_email_identification():
 
 
 @pytest.mark.skip("fails and takes long")
-def test_daily_call():
+def test_daily_call(fresh_target_file: Path):
     now = datetime.now()
     target = now + timedelta(seconds=1)
     DailyPublication(
@@ -80,11 +83,12 @@ def test_daily_call():
     time.sleep(1.5)
     moved_file = (
         Path(daily_copy_test_info["recipient_address"])
-        .joinpath("test_4coriolis.cnv")
+        .joinpath(fresh_target_file.name)
         .absolute()
     )
     assert moved_file.exists()
     moved_file.unlink()
+    fresh_target_file.unlink()
 
 
 def test_geo_filter():
@@ -95,7 +99,7 @@ def test_geo_filter():
     assert not pubs.geographic_filter((50, 20), "maps/germany.xml")
 
 
-def test_send_email(mocker):
+def test_send_email(mocker, fresh_target_file):
     mock_smtp = mocker.patch("smtplib.SMTP")
     pubs = NearRealTimeTarget(
         **daily_email_test_info,
@@ -113,9 +117,40 @@ def test_send_email(mocker):
     # test creating a draft message
     draft = pubs.create_email_draft(msg)
     assert draft.exists()
+    draft.unlink()
+    fresh_target_file.unlink()
 
 
-def test_correct_target_files():
+def test_correct_target_files(fresh_target_file: Path):
     assert NearRealTimeTarget(**daily_copy_test_info).get_target_files() == [
         Path("seabird_example_data/cnv/basic_emb_4coriolis.cnv"),
+        Path("seabird_example_data/cnv/test_4coriolis.cnv"),
     ]
+    fresh_target_file.unlink()
+
+
+def test_active_state_each_proc(simple_processing: Processing):
+    pubs = EachProcessingPublication(
+        **each_processing_copy_test_info,
+        event_manager=simple_processing.event_manager,
+    )
+    # set activity to false
+    pubs.active = True
+    pubs.toggle_activity()
+    simple_processing.run(target_file)
+    expected_path = Path(
+        each_processing_copy_test_info["recipient_address"]
+    ).joinpath(output_name)
+    if expected_path.exists():
+        expected_path.unlink()
+        assert False
+    else:
+        assert True
+    # set activity to true
+    pubs.toggle_activity()
+    simple_processing.run(target_file)
+    if expected_path.exists():
+        expected_path.unlink()
+        assert True
+    else:
+        assert False

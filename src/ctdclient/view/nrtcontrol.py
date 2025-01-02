@@ -1,14 +1,14 @@
 import tkinter.font as tkFont
+
 import customtkinter as ctk
+from ctdclient.definitions import event_manager
 from ctdclient.model.near_real_time_publication import NearRealTimeTarget
 from ctdclient.view.ctkframe import CtkFrame
-from ctdclient.view.View import ViewMixin
 from ctdclient.view.nrtconfig import NRTConfigurator
-from ctdclient.definitions import event_manager
+from ctdclient.view.View import ViewMixin
 
 
 class NRTControlFrame(ViewMixin, CtkFrame):
-
     def initialize(self, root):
         super().__init__(master=root)
         event_manager.subscribe("kill_nrt_config", self.reload)
@@ -79,6 +79,13 @@ class NRTControlFrame(ViewMixin, CtkFrame):
             ),
         )
         toggle_status.grid(row=0, column=3, padx=self.padx, pady=self.pady)
+
+        send_mail = ctk.CTkButton(
+            frame,
+            text="Send mail",
+            command=lambda: self.callbacks["send_email"](nrt),
+        )
+        send_mail.grid(row=0, column=4, padx=self.padx, pady=self.pady)
 
     def toggle_activity_state(
         self,

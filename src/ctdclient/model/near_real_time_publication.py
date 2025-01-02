@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from abc import abstractmethod
 import mimetypes
 import multiprocessing as mp
 import os
@@ -10,6 +9,7 @@ import shutil
 import smtplib
 import subprocess
 import time
+from abc import abstractmethod
 from collections import UserList
 from datetime import date
 from datetime import datetime
@@ -140,8 +140,6 @@ class NearRealTimeTarget:
         body: str = "",
     ):
         """Creates an email with target files attached."""
-        if len(target_files) == 0:
-            return
         to_address = self.address if to_address == "" else to_address
         smtp_email = self.email_info["smtp_email"]
         if smtp_email.startswith("$"):
@@ -162,7 +160,8 @@ class NearRealTimeTarget:
         )
 
         msg["Subject"] = subject.format(
-            cruise_name=cruise_name, date=timestamp
+            cruise_name=cruise_name,
+            date=timestamp,
         )
         msg["From"] = from_address
         msg["To"] = to_address
@@ -192,6 +191,7 @@ class NearRealTimeTarget:
         Creates an email .eml draft file, that can be opened by common email
         programs.
         """
+        msg.add_header("X-Unsent", "1")
         file_path = (
             Path(f"draft_email_to_{msg['to']}.eml")
             if file_path == ""
@@ -212,14 +212,19 @@ class NearRealTimeTarget:
         else:
             raise OSError("Unsupported operating system")
 
-    def run_email_logic(self, files_to_attach: list):
+    def run_email_logic(
+        self,
+        files_to_attach: list,
+        run_manually: bool = False,
+    ):
+        if not run_manually and len(files_to_attach) == 0:
+            return
         email_message = self.create_email_message(files_to_attach)
-        assert isinstance(email_message, EmailMessage)
-        if self.email_info["send_directly"]:
-            self.send_email(email_message)
-        else:
+        if run_manually or bool(self.email_info["open_draft"]):
             draft_path = self.create_email_draft(email_message)
             self.open_draft_msg(draft_path)
+        else:
+            self.send_email(email_message)
 
     def send_email(
         self,
@@ -280,7 +285,9 @@ class NearRealTimeTarget:
             except KeyError:
                 coordinates = (0, 0)
             finally:
-                if self.geographic_filter(coordinates):
+                if self.geographic_filter(coordinates) and self.time_filter(
+                    file
+                ):
                     target_files.append(file)
         self.files_already_sent = [*self.files_already_sent, *target_files]
         return target_files
@@ -313,6 +320,13 @@ class NearRealTimeTarget:
         except (FileNotFoundError, AttributeError):
             return False
         return polygon.contains(point_to_test)[0]
+
+    def time_filter(self, file: Path) -> bool:
+        """Ensure, that file has been modified today."""
+        file_modification_date = datetime.fromtimestamp(
+            file.stat().st_mtime
+        ).date()
+        return file_modification_date == datetime.today().date()
 
 
 class DailyPublication(NearRealTimeTarget):
@@ -352,12 +366,7 @@ class DailyPublication(NearRealTimeTarget):
             self.run_email_logic(list_to_process)
         else:
             for file in list_to_process:
-                # ensure, that file has been modified today
-                file_modification_date = datetime.fromtimestamp(
-                    file.stat().st_mtime
-                ).date()
-                if file_modification_date == datetime.today().date():
-                    self.copy_files(file)
+                self.copy_files(file)
 
     def start(self, single_run: bool = False):
         self.process = mp.Process(target=self.run_task, args=(single_run,))

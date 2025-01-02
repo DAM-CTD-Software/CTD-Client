@@ -2,8 +2,8 @@ from pathlib import Path
 from tkinter import ttk
 
 import customtkinter as ctk
-from ctdclient.view.View import ViewMixin
 from ctdclient.definitions import event_manager
+from ctdclient.view.View import ViewMixin
 from processing.gui.toml_editor import TomlEditor
 
 
@@ -83,13 +83,16 @@ class NRTConfigurator(ViewMixin, TomlEditor):
 
         if key == "body":
             value_entry = ctk.CTkTextbox(frame, height=200, width=300)
+            value_entry.insert(1.0, value)
+            args = {"index1": "1.0", "index2": "end"}
         else:
             value_entry = ctk.CTkEntry(frame, width=300)
+            value_entry.insert(0, value)
+            args = {}
         value_entry.grid(row=0, column=1)  # , padx=5, pady=5)
-        value_entry.insert(1.0 if key == "body" else 0, value)
 
         def update_param(event):
-            self.config_data["email_info"][key] = value_entry
+            self.config_data["email_info"][key] = value_entry.get(**args)
 
         key_label.bind("<FocusOut>", update_param)
         value_entry.bind("<FocusOut>", update_param)

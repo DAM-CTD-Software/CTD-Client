@@ -6,7 +6,7 @@ frequency_of_action = "each_processing"
 geo_filter = "maps/germany.xml"
 
 [email_info]
-send_directly = true
+open_draft = "false"
 smtp_server = "localhost"
 smtp_port = 587
 smtp_email = "$MAIL"

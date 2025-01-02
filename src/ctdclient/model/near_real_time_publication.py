@@ -17,6 +17,7 @@ from datetime import timedelta
 from datetime import timezone
 from email.message import EmailMessage
 from pathlib import Path
+from typing import Callable
 
 import geopandas as gpd
 import keyring
@@ -35,11 +36,12 @@ logger = get_logger(__name__)
 
 def instantiate_near_real_time_target(
     *args,
-    frequency_of_action: str = "daily",
+    frequency_of_action: str = "23:59",
     **kwargs,
 ) -> NearRealTimeTarget:
-    if frequency_of_action == "daily":
+    if ":" in frequency_of_action:
         class_to_instantiate = DailyPublication
+        kwargs["time_to_run_at"] = frequency_of_action
     elif frequency_of_action == "each_processing":
         class_to_instantiate = EachProcessingPublication
     else:
@@ -54,11 +56,11 @@ class NRTList(UserList):
     def __init__(self, event_manager: EventManager):
         self.data = []
         self.event_manager = event_manager
-        self.update_nrt_data()
         self.template = self.get_template()
 
     def update_nrt_data(self, clear_data: bool = True):
         if clear_data:
+            self.kill_processes()
             self.data = []
         # TODO: make this flexible? eg allow dir selection
         for path in ROOT_PATH.glob("nrt_*.toml"):
@@ -88,6 +90,13 @@ class NRTList(UserList):
     def toggle_activity(self, nrt: NearRealTimeTarget):
         if nrt in self.data:
             nrt.toggle_activity()
+
+    def kill_processes(self):
+        for nrt in self.data:
+            try:
+                nrt.stop()
+            except Exception:
+                pass
 
 
 class NearRealTimeTarget:
@@ -333,47 +342,36 @@ class DailyPublication(NearRealTimeTarget):
     def __init__(
         self,
         *args,
-        time_to_run_at: str = "23:59:00",
+        time_to_run_at: str = "23:59:30",
         single_run: bool = False,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-        self.time_to_run_at = datetime.strptime(time_to_run_at, "%H:%M:%S")
-        self.start(single_run)
-
-    def calculate_delay(self):
-        now = datetime.now()
-        target_time = datetime.combine(
-            date.today(), self.time_to_run_at.time()
-        )
-        if now > target_time:
-            # move target time to the next day
-            target_time += timedelta(days=1)
-        return (target_time - now).total_seconds()
-
-    def run_task(self, single_run: bool = False):
-        while True:
-            time.sleep(self.calculate_delay())
-            self.action()
-            if single_run:
-                break
+        self.single_run = single_run
+        try:
+            self.time_to_run_at = datetime.strptime(time_to_run_at, "%H:%M:%S")
+        except ValueError:
+            logger.error(f"Could not parse the given time: {time_to_run_at}")
+        self.start()
 
     def action(self):
         list_to_process = self.get_target_files()
-        if len(list_to_process) == 0:
-            return
         if self._is_email():
             self.run_email_logic(list_to_process)
         else:
             for file in list_to_process:
                 self.copy_files(file)
 
-    def start(self, single_run: bool = False):
-        self.process = mp.Process(target=self.run_task, args=(single_run,))
+    def start(self):
+        self.process = mp.Process(
+            target=timer,
+            args=[self.time_to_run_at, self.action, self.single_run],
+        )
         self.process.start()
 
     def stop(self):
-        self.process.kill()
+        self.process.terminate()
+        self.process.join(timeout=2)
 
     def toggle_activity(self):
         self.active = not self.active
@@ -381,6 +379,27 @@ class DailyPublication(NearRealTimeTarget):
             self.start()
         else:
             self.stop()
+
+
+def timer(time_to_run_at: datetime, function: Callable, single_run: bool):
+    def calculate_delay():
+        now = datetime.now()
+        target_time = datetime.combine(date.today(), time_to_run_at.time())
+        if now > target_time:
+            # move target time to the next day
+            target_time += timedelta(days=1)
+        delay = (target_time - now).total_seconds()
+        return delay
+
+    time_left = calculate_delay()
+    while True:
+        time.sleep(1)
+        time_left -= 1
+        if time_left <= 0:
+            function()
+            if single_run:
+                break
+            time_left = calculate_delay()
 
 
 class EachProcessingPublication(NearRealTimeTarget):

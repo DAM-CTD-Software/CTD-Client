@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ctdclient"
-version = "1.5.47"
+version = "1.6.1"
 description = ""
 authors = ["Emil Michels <emil.michels@io-warnemuende.de>"]
 readme = "README.md"
@@ -28,7 +28,6 @@ pyinstaller = ">=6.7.0"
 pytest = ">=7.4.4"
 pytest-mock = ">=3.14.0"
 pytest-cov = ">=6.0.0"
-pytest-xdist = ">=3.6.1"
 sphinx = ">=7.2.6"
 sphinx-rtd-theme = ">=2.0.0"
 sphinx-autodoc-typehints = ">=1.25.2"
@@ -44,7 +43,7 @@ url = "https://git.io-warnemuende.de/api/packages/CTD-Software/pypi/simple/"
 priority = "supplemental"
 
 [tool.pytest.ini_options]
-addopts = '-n auto --cov=ctdclient.model --log-format="%(asctime)s %(levelname)s %(message)s" --log-date-format="%Y-%m-%d %H:%M:%S"'
+addopts = '--cov=ctdclient.model --log-format="%(asctime)s %(levelname)s %(message)s" --log-date-format="%Y-%m-%d %H:%M:%S"'
 filterwarnings = [
     "error",
     "ignore::UserWarning",

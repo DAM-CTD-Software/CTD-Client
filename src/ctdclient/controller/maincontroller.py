@@ -1,3 +1,5 @@
+import time
+
 import customtkinter as ctk
 from code_tools.logging import get_logger
 from ctdclient.controller.bottlecontroller import BottleController
@@ -6,7 +8,8 @@ from ctdclient.controller.dshipcontroller import DshipController
 from ctdclient.controller.nrtcontroller import NRTController
 from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
-from ctdclient.definitions import config, event_manager
+from ctdclient.definitions import config
+from ctdclient.definitions import event_manager
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
 from ctdclient.model.near_real_time_publication import DailyPublication
@@ -93,8 +96,5 @@ class MainController:
         return tab_dict
 
     def kill_threads(self):
-        # TODO: does this gracefully stop everything?
         self.dship_controller.kill_threads()
-        for item in self.nrt:
-            if isinstance(item, DailyPublication):
-                item.stop()
+        self.nrt.kill_processes()

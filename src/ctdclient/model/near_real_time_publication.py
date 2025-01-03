@@ -22,6 +22,7 @@ from typing import Callable
 import geopandas as gpd
 import keyring
 from code_tools.logging import get_logger
+from ctdclient.definitions import config
 from ctdclient.definitions import cruise_head
 from ctdclient.definitions import cruise_name
 from ctdclient.definitions import ROOT_PATH
@@ -74,10 +75,18 @@ class NRTList(UserList):
                 continue
 
     def create_nrt_instance(self, path: Path):
+        toml_file = TOMLFile(path).read()
+        name = toml_file["recipient_name"]
+        active = (
+            config.near_real_time[name]
+            if name in config.near_real_time
+            else False
+        )
         return instantiate_near_real_time_target(
-            **TOMLFile(path).read(),
+            **toml_file,
             file_path=path,
             event_manager=self.event_manager,
+            active=active,
         )
 
     def get_template(
@@ -115,6 +124,7 @@ class NearRealTimeTarget:
         geo_filter: Path | str = "",
         email_info: dict = {},
         file_path: Path | str = "",
+        active: bool = False,
         **kwargs,
     ):
         self.name = recipient_name
@@ -125,7 +135,7 @@ class NearRealTimeTarget:
         self.email_info = email_info
         self.file_path = Path(file_path)
         self.files_already_sent = []
-        self.active = True
+        self.active = active
 
     @abstractmethod
     def toggle_activity(self):

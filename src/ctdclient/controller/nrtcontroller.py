@@ -1,4 +1,5 @@
 from ctdclient.controller.Controller import Controller
+from ctdclient.definitions import config
 from ctdclient.model.near_real_time_publication import NearRealTimeTarget
 from ctdclient.model.near_real_time_publication import NRTList
 from ctdclient.view.nrtcontrol import NRTControlFrame
@@ -38,6 +39,8 @@ class NRTController(Controller):
     ):
         self.model.toggle_activity(nrt)
         self.view.toggle_activity_state(nrt, *args, **kwargs)
+        config.near_real_time[nrt.name] = nrt.active
+        config.write()
 
     def send_email(self, nrt: NearRealTimeTarget):
         files_to_attach = nrt.get_target_files()

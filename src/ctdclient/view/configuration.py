@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.font as tkFont
+import webbrowser
 from functools import partial
 from pathlib import Path
 from tkinter import filedialog as fd
@@ -7,6 +8,7 @@ from tkinter import ttk
 
 import customtkinter as ctk
 from ctdclient.definitions import config
+from ctdclient.definitions import RESSOURCES_PATH
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.tabview import TabView
 from ctdclient.view.View import ViewMixin
@@ -36,7 +38,6 @@ class ConfigurationView(ViewMixin, CtkFrame):
 
 
 class BaseSettings(ViewMixin, CtkFrame):
-
     def initialize(self, root):
         super().__init__(master=root)
         self.values_to_set = self.get_values_to_set()
@@ -369,17 +370,50 @@ class ExpertSettings(ctk.CTkScrollableFrame):
 
 
 class AboutView(CtkFrame):
-    def __init__(
-        self,
-        *args,
-        **kwargs,
-    ):
-        super().__init__(*args, **kwargs)
+    def initialize(self, root):
+        super().__init__(master=root)
 
         ctk.CTkLabel(
             self,
-            text="This is the CTD-Client developed at the IOW for the DAM. Its purpos...",
+            text="This is the CTD-Client developed at the IOW for the DAM.\nIt is meant to help in and streamline the CTD-Data-Acquisition.\nThe online documentation can be found here:",
         ).grid()
+        online_link = ctk.CTkLabel(
+            self,
+            text="https://ctd-software.pages.io-warnemuende.de/CTD-Client/usage.html",
+            text_color="#1f538d",
+        )
+        online_link.grid()
+        online_link.bind(
+            "<Button-1>",
+            lambda e: webbrowser.open_new_tab(
+                "https://ctd-software.pages.io-warnemuende.de/CTD-Client/usage.html"
+            ),
+        )
+        # text hover color
+        online_link.bind(
+            "<Enter>", lambda e: online_link.configure(text_color="#14375e")
+        )
+        online_link.bind(
+            "<Leave>", lambda e: online_link.configure(text_color="#1f538d")
+        )
+        offline_link = ctk.CTkLabel(
+            self,
+            text="To open the offline version of the documentation, click here",
+            text_color="#1f538d",
+        )
+        offline_link.grid()
+        offline_link.bind(
+            "<Button-1>",
+            lambda e: webbrowser.open_new_tab(
+                f"file://{RESSOURCES_PATH}/docs/build/usage.html"
+            ),
+        )
+        offline_link.bind(
+            "<Enter>", lambda e: offline_link.configure(text_color="#14375e")
+        )
+        offline_link.bind(
+            "<Leave>", lambda e: offline_link.configure(text_color="#1f538d")
+        )
 
 
 class ContactView(CtkFrame):

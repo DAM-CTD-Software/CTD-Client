@@ -12,9 +12,9 @@ from ctdclient.definitions import config
 from ctdclient.definitions import event_manager
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
-from ctdclient.model.near_real_time_publication import DailyPublication
 from ctdclient.model.near_real_time_publication import NRTList
 from ctdclient.model.processing import Processing
+from ctdclient.view.configuration import AboutView
 from ctdclient.view.configuration import ConfigurationView
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
@@ -31,6 +31,7 @@ class MainController:
         self.config_view = ConfigurationView(root_window)
         self.processing_view = ProcessingView(root_window)
         self.nrt_control_view = NRTControlFrame(root_window)
+        self.about_view = AboutView(root_window)
 
         self.mainwindow = MainWindow(
             parent=root_window,
@@ -92,6 +93,7 @@ class MainController:
             "processing": self.processing_view,
             "nrt publication": self.nrt_control_view,
             "config": self.config_view,
+            "help": self.about_view,
         }
         return tab_dict
 

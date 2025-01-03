@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 from tkinter import ttk
 
@@ -94,9 +95,31 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         def update_param(event):
             self.config_data["email_info"][key] = value_entry.get(**args)
 
-        key_label.bind("<FocusOut>", update_param)
-        value_entry.bind("<FocusOut>", update_param)
+        key_label.bind("<Leave>", update_param)
+        value_entry.bind("<Leave>", update_param)
         frame.grid(row=row + 1, column=0, columnspan=3, sticky="ew")
+
+    def check_input(self) -> bool:
+        # check frequency_of_action
+        input = self.config_data["frequency_of_action"]
+        if not input == "each_processing":
+            try:
+                datetime.strptime(input, "%H:%M:%S")
+            except Exception:
+                self.bad_input_warning(
+                    f'Incorrect frequency of action format: {
+                        input}. Expected either each_processing or "HH:MM:SS"'
+                )
+                return False
+        # check open_draft
+        input = self.config_data["email_info"]["open_draft"]
+        if input.lower() not in ["true", "false"]:
+            self.bad_input_warning(
+                f"Incorrect open_draft format: {
+                    input}. Expected either True or False as strings."
+            )
+            return False
+        return True
 
 
 if __name__ == "__main__":

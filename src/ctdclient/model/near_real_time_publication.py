@@ -102,10 +102,8 @@ class NRTList(UserList):
 
     def kill_processes(self):
         for nrt in self.data:
-            try:
+            if isinstance(nrt, DailyPublication):
                 nrt.stop()
-            except Exception:
-                pass
 
 
 class NearRealTimeTarget:

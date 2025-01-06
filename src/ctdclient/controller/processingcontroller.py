@@ -20,7 +20,11 @@ class ProcessingController(Controller):
         # variables
         self.use_custom_script = False
         self.target_file: Path
-        self.load_processing(self.configuration.last_processing_file)
+        try:
+            self.load_processing(self.configuration.last_processing_file)
+        except FileNotFoundError:
+            self.load_processing("")
+
 
     def reload_view(self):
         # initialize view data

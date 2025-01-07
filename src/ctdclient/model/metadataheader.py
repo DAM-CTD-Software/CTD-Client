@@ -74,7 +74,7 @@ class MetadataHeader:
                 _, action_log_info = value.split("_")
                 station, event = action_log_info.split("-")
                 formatted_value = f"{int(station):03d}-{int(event):02d}"
-            except AttributeError:
+            except (AttributeError, ValueError):
                 formatted_value = "000-00"
         elif name == "GPS_Lat":
             try:

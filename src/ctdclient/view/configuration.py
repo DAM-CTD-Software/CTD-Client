@@ -372,48 +372,21 @@ class ExpertSettings(ctk.CTkScrollableFrame):
 class AboutView(CtkFrame):
     def initialize(self, root):
         super().__init__(master=root)
+        root.grid_rowconfigure(0, weight=1)
+        root.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
             self,
-            text="This is the CTD-Client developed at the IOW for the DAM.\nIt is meant to help in and streamline the CTD-Data-Acquisition.\nThe online documentation can be found here:",
-        ).grid()
-        online_link = ctk.CTkLabel(
+            text="This is the CTD-Client developed at the IOW for the DAM.\nIt is meant to help in and streamline the CTD-Data-Acquisition.\nThe documentation can be found here:",
+        ).grid(row=0, column=0, padx=self.padx, pady=self.pady)
+        offline_link = ctk.CTkButton(
             self,
-            text="https://ctd-software.pages.io-warnemuende.de/CTD-Client/usage.html",
-            text_color="#1f538d",
-        )
-        online_link.grid()
-        online_link.bind(
-            "<Button-1>",
-            lambda e: webbrowser.open_new_tab(
-                "https://ctd-software.pages.io-warnemuende.de/CTD-Client/usage.html"
-            ),
-        )
-        # text hover color
-        online_link.bind(
-            "<Enter>", lambda e: online_link.configure(text_color="#14375e")
-        )
-        online_link.bind(
-            "<Leave>", lambda e: online_link.configure(text_color="#1f538d")
-        )
-        offline_link = ctk.CTkLabel(
-            self,
-            text="To open the offline version of the documentation, click here",
-            text_color="#1f538d",
-        )
-        offline_link.grid()
-        offline_link.bind(
-            "<Button-1>",
-            lambda e: webbrowser.open_new_tab(
+            text="Open documentation in browser",
+            command=lambda: webbrowser.open_new_tab(
                 f"file://{RESSOURCES_PATH}/docs/build/usage.html"
             ),
         )
-        offline_link.bind(
-            "<Enter>", lambda e: offline_link.configure(text_color="#14375e")
-        )
-        offline_link.bind(
-            "<Leave>", lambda e: offline_link.configure(text_color="#1f538d")
-        )
+        offline_link.grid(row=1, column=0)
 
 
 class ContactView(CtkFrame):

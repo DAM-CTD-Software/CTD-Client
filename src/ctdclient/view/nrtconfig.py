@@ -113,10 +113,10 @@ class NRTConfigurator(ViewMixin, TomlEditor):
                 return False
         # check open_draft
         input = self.config_data["email_info"]["open_draft"]
-        if input.lower() not in ["true", "false"]:
+        if input.lower() not in ["true", "false", ""]:
             self.bad_input_warning(
                 f"Incorrect open_draft format: {
-                    input}. Expected either True or False as strings."
+                    input}. Expected either true or false as strings."
             )
             return False
         return True

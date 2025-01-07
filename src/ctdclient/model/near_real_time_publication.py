@@ -237,7 +237,8 @@ class NearRealTimeTarget:
         if not run_manually and len(files_to_attach) == 0:
             return
         email_message = self.create_email_message(files_to_attach)
-        if run_manually or bool(self.email_info["open_draft"]):
+        open_draft = True if self.email_info["open_draft"] == "true" else False
+        if run_manually or open_draft:
             draft_path = self.create_email_draft(email_message)
             self.open_draft_msg(draft_path)
         else:
@@ -253,28 +254,36 @@ class NearRealTimeTarget:
         try:
             smtp_server = self.email_info["smtp_server"]
             smtp_port = self.email_info["smtp_port"]
-            smtp_user = self.email_info["smtp_user"]
-            smtp_pass = self.email_info["smtp_pass"]
         except KeyError as error:
             logger.error(
                 f"Could not send email, because of missing information: {
                     error}"
             )
             return
-        if smtp_user.startswith("$"):
-            smtp_user = os.getenv(smtp_user[1:])
-            smtp_pass = os.getenv(smtp_pass[1:])
+        # use authentication credentials when present
+        try:
+            smtp_user = self.email_info["smtp_user"]
+            smtp_pass = self.email_info["smtp_pass"]
+        except KeyError:
+            pass
         else:
-            smtp_user = keyring.get_password("CTD-Client", smtp_user)
-            smtp_pass = keyring.get_password("CTD-Client", smtp_pass)
-        if not smtp_user or not smtp_pass:
-            logger.error("Could not send email: Credentials not found.")
-            return
+            if smtp_user.startswith("$"):
+                smtp_user = os.getenv(smtp_user[1:])
+                smtp_pass = os.getenv(smtp_pass[1:])
+            else:
+                smtp_user = keyring.get_password("CTD-Client", smtp_user)
+                smtp_pass = keyring.get_password("CTD-Client", smtp_pass)
         assert isinstance(msg, EmailMessage)
         with smtplib.SMTP(smtp_server, int(smtp_port)) as server:
             server.starttls()
-            server.login(smtp_user, smtp_pass)
-            server.send_message(msg)
+            try:
+                server.login(smtp_user, smtp_pass)
+            except (AttributeError, UnboundLocalError):
+                pass
+            try:
+                server.send_message(msg)
+            except smtplib.SMTPRecipientsRefused as error:
+                logger.error(f"Credentials needed to send email: {error}")
 
     def copy_files(self, target_file: Path):
         """Copies target files to given location."""

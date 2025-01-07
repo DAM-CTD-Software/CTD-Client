@@ -2,11 +2,12 @@
 from PyInstaller.utils.hooks import copy_metadata
 
 datas=[('.venv/Lib/site-packages/customtkinter', 'customtkinter/'),
-        ('updates/metadata/root.json', 'updates/metadata'),
+        #('updates/metadata/root.json', 'updates/metadata'),
         ('templates', 'templates'),
         ('icon.ico', '.'),
         ('ctktheme.json', '.'),
-        ('update_clean_up.bat', '.')]
+        ('update_clean_up.bat', '.'),
+        ('docs', 'docs')]
 datas += copy_metadata('ctdclient')
 
 a = Analysis(

@@ -1,16 +1,14 @@
 recipient_name = "someone"
 recipient_address = "to@example.com"
-target_file_directory = "seabird_example_data/cnv"
-target_file_suffix = "_4coriolis"
-frequency_of_action = "each_processing"
-geo_filter = "maps/germany.xml"
+target_file_directory = "EMBXXX"
+target_file_suffix = "_2"
+frequency_of_action = "23:59:30"
+geo_filter = ""
 
 [email_info]
 open_draft = "false"
-smtp_server = "localhost"
-smtp_port = 587
-smtp_email = "$MAIL"
-smtp_user = "$IOWNAME"
-smtp_pass = "$PASS"
-subject = "CTD-Data of cruise {cruise_name} on {date}"
-body = "Hello, \nthis is an automatically generated email containing the CTD data files of cruise {cruise_name} from {date}. If you have any questions regarding this email, do not hesitate to contact the current head of cruise {cruise_head}.\n\nHave a good day!"
+smtp_server = "192.168.236.240"
+smtp_port = 25
+smtp_email = "ctd@borgese.briese-research.de"
+subject = "CTD-Data of {date}"
+body = "Hello, \n\nthis is an automatically generated email containing the CTD data files from {date}. If you have any questions regarding this email, do not hesitate to contact the current head of cruise.\n\nHave a good day!"

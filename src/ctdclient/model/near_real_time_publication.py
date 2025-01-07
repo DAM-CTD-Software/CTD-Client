@@ -57,7 +57,6 @@ class NRTList(UserList):
     def __init__(self, event_manager: EventManager):
         self.data = []
         self.event_manager = event_manager
-        self.template = self.get_template()
 
     def update_nrt_data(self, clear_data: bool = True):
         if clear_data:
@@ -94,7 +93,9 @@ class NRTList(UserList):
     ):
         if not template_path.exists():
             return None
-        return self.create_nrt_instance(template_path)
+        template = self.create_nrt_instance(template_path)
+        self.data.append(template)
+        return template
 
     def toggle_activity(self, nrt: NearRealTimeTarget):
         if nrt in self.data:
@@ -369,7 +370,8 @@ class DailyPublication(NearRealTimeTarget):
             self.time_to_run_at = datetime.strptime(time_to_run_at, "%H:%M:%S")
         except ValueError:
             logger.error(f"Could not parse the given time: {time_to_run_at}")
-        self.start()
+        if self.active:
+            self.start()
 
     def action(self):
         list_to_process = self.get_target_files()

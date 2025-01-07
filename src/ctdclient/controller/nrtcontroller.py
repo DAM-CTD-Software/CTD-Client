@@ -26,10 +26,10 @@ class NRTController(Controller):
         self.view.instantiate(self.model.data)
 
     def fetch_template(self):
-        return self.model.template
+        return self.model.get_template()
 
     def add_new_nrt_pub(self):
-        return self.model.template
+        return self.model.get_template()
 
     def toggle_activity(
         self,

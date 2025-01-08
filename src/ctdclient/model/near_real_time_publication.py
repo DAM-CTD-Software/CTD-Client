@@ -106,6 +106,13 @@ class NRTList(UserList):
             if isinstance(nrt, DailyPublication):
                 nrt.stop()
 
+    def delete_nrt(self, nrt: NearRealTimeTarget):
+        self.data.remove(nrt)
+        if isinstance(nrt, DailyPublication):
+            nrt.stop()
+        if nrt.file_path.exists():
+            nrt.file_path.unlink()
+
 
 class NearRealTimeTarget:
     """
@@ -388,8 +395,11 @@ class DailyPublication(NearRealTimeTarget):
         self.process.start()
 
     def stop(self):
-        self.process.terminate()
-        self.process.join(timeout=2)
+        try:
+            self.process.terminate()
+            self.process.join(timeout=2)
+        except AttributeError:
+            pass
 
     def toggle_activity(self):
         self.active = not self.active

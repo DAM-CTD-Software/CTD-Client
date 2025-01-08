@@ -19,6 +19,7 @@ class NRTController(Controller):
         self.view.add_callback("update_nrts", self.update)
         self.view.add_callback("toggle_activity", self.toggle_activity)
         self.view.add_callback("send_email", self.send_email)
+        self.view.add_callback("delete_nrt", self.delete)
         self.update()
 
     def update(self):
@@ -45,3 +46,7 @@ class NRTController(Controller):
     def send_email(self, nrt: NearRealTimeTarget):
         files_to_attach = nrt.get_target_files()
         nrt.run_email_logic(files_to_attach=files_to_attach, run_manually=True)
+
+    def delete(self, nrt: NearRealTimeTarget):
+        self.model.delete_nrt(nrt)
+        self.view.instantiate(self.model.data)

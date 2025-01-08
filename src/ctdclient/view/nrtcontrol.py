@@ -88,6 +88,12 @@ class NRTControlFrame(ViewMixin, CtkFrame):
             command=lambda: self.callbacks["send_email"](nrt),
         )
         send_mail.grid(row=0, column=4, padx=self.padx, pady=self.pady)
+        delete = ctk.CTkButton(
+            frame,
+            text="Delete",
+            command=lambda: self.callbacks["delete_nrt"](nrt),
+        )
+        delete.grid(row=0, column=5, padx=self.padx, pady=self.pady)
 
     def toggle_activity_state(
         self,

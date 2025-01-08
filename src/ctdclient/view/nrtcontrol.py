@@ -1,7 +1,9 @@
+import sys
 import tkinter.font as tkFont
 
 import customtkinter as ctk
 from ctdclient.definitions import event_manager
+from ctdclient.definitions import ICON_PATH
 from ctdclient.model.near_real_time_publication import NearRealTimeTarget
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.nrtconfig import NRTConfigurator
@@ -122,5 +124,12 @@ class NRTControlFrame(ViewMixin, CtkFrame):
         config_window.protocol(
             "WM_DELETE_WINDOW", self.callbacks["update_nrts"]
         )
+        config_window.title(f"NRT configuration of {nrt.file_path}")
+        if sys.platform.startswith("win"):
+            config_window.after(
+                200, lambda: config_window.iconbitmap(ICON_PATH)
+            )
+        config_window.lift()
+        config_window.focus_force()
         config_window.grid_rowconfigure(0, weight=1)
         config_window.grid_columnconfigure(0, weight=1)

@@ -123,7 +123,6 @@ def test_send_email(mocker, fresh_target_file):
 
 def test_correct_target_files(fresh_target_file: Path):
     assert NearRealTimeTarget(**daily_copy_test_info).get_target_files() == [
-        Path("seabird_example_data/cnv/basic_emb_4coriolis.cnv"),
         Path("seabird_example_data/cnv/test_4coriolis.cnv"),
     ]
     fresh_target_file.unlink()

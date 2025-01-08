@@ -59,6 +59,6 @@ def empty_processing(processing: Processing) -> Processing:
 @pytest.fixture
 def fresh_target_file() -> Path:
     file_name = "test_4coriolis.cnv"
-    target_file = data_dir.joinpath(file_name)
-    target_file.touch()
-    return target_file
+    fresh_file = data_dir.joinpath(file_name)
+    fresh_file.touch()
+    return fresh_file

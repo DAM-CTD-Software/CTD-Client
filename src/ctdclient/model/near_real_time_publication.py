@@ -349,11 +349,10 @@ class NearRealTimeTarget:
         return polygon.contains(point_to_test)[0]
 
     def time_filter(self, file: Path) -> bool:
-        """Ensure, that file has been modified today."""
-        file_modification_date = datetime.fromtimestamp(
-            file.stat().st_mtime
-        ).date()
-        return file_modification_date == datetime.today().date()
+        """Ensure, that file has been modified in the last 24 hours."""
+        last_twenty_four_hours = datetime.now() + timedelta(days=-1)
+        file_modification_time = datetime.fromtimestamp(file.stat().st_mtime)
+        return datetime.now() > file_modification_time > last_twenty_four_hours
 
 
 class DailyPublication(NearRealTimeTarget):

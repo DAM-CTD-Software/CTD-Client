@@ -3,19 +3,17 @@ import subprocess
 from pathlib import Path
 from time import sleep
 
-from ctdclient.configurationhandler import ConfigurationFile
 from code_tools.logging import get_logger
+from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.eventmanager import EventManager
 from processing.procedure import Procedure
 from processing.settings import Configuration
-
-from ctdclient.eventmanager import EventManager
 
 
 logger = get_logger(__name__)
 
 
 class Processing:
-
     current_config: Path
     procedure: Procedure | list
     process: mp.Process | subprocess.Popen
@@ -31,8 +29,8 @@ class Processing:
     def update_config(
         self,
         path_to_config: Path | str,
-        procedure_fingerprint_directory: str = '',
-        file_type_dir: str = '',
+        procedure_fingerprint_directory: str = "",
+        file_type_dir: str = "",
     ):
         new_config = Path(path_to_config)
         config_suffix = new_config.suffix
@@ -62,10 +60,10 @@ class Processing:
         else:
             self._run_custom_script(Path(file))
         if not self.killed:
-            self.configuration.last_processing_file = (self.current_config)
+            self.configuration.last_processing_file = self.current_config
             self.configuration.write()
             self.event_manager.publish(
-                'processing_successful', target_file=Path(file).absolute()
+                "processing_successful", target=Path(file).absolute()
             )
 
     def _run_custom_script(self, file: Path):

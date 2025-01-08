@@ -303,10 +303,11 @@ class NearRealTimeTarget:
         for file in source_dir.glob(f"{file_name}{self.suffix}*"):
             shutil.copy(file, target_dir)
 
-    def get_target_files(self) -> list[Path]:
+    def get_target_files(self, target_file: Path = Path(".")) -> list[Path]:
         """Creates a list of paths to files that are meant to be published."""
+        file_name = "" if target_file == Path(".") else str(target_file.stem)
         target_files = []
-        for file in self.dir.glob(f"*{self.suffix}.cnv"):
+        for file in self.dir.glob(f"*{file_name}{self.suffix}*"):
             # check, whether file already sent
             if file in self.files_already_sent:
                 continue
@@ -429,13 +430,13 @@ def timer(time_to_run_at: datetime, function: Callable, single_run: bool):
                 break
             time_left = calculate_delay()
 
-        if self.active:
-            self.event_manager.subscribe("processing_successful", self.run)
 
+class EachProcessingPublication(NearRealTimeTarget):
     def __init__(self, *args, event_manager: EventManager, **kwargs):
         super().__init__(*args, **kwargs)
         self.event_manager = event_manager
-        self.event_manager.subscribe("processing_successful", self.run)
+        if self.active:
+            self.event_manager.subscribe("processing_successful", self.run)
         self.address = Path(self.address)
 
     def toggle_activity(self):
@@ -445,8 +446,10 @@ def timer(time_to_run_at: datetime, function: Callable, single_run: bool):
         else:
             self.event_manager.unsubscribe("processing_successful", self.run)
 
-    def run(self, target_file: Path = Path(".")):
+    def run(self, target: Path = Path(".")):
+        target_files = self.get_target_files(target)
         if self._is_email():
-            self.run_email_logic([target_file])
+            self.run_email_logic(target_files)
         else:
-            self.copy_files(target_file)
+            for file in target_files:
+                self.copy_files(file)

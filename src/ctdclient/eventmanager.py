@@ -19,7 +19,10 @@ class EventManager:
     def unsubscribe(self, event_name: str, callback: Callable):
         """Remove a listener for a specific event."""
         if event_name in self._listeners:
-            self._listeners[event_name].remove(callback)
+            try:
+                self._listeners[event_name].remove(callback)
+            except ValueError:
+                pass
             if not self._listeners[event_name]:
                 del self._listeners[event_name]
 

@@ -429,8 +429,9 @@ def timer(time_to_run_at: datetime, function: Callable, single_run: bool):
                 break
             time_left = calculate_delay()
 
+        if self.active:
+            self.event_manager.subscribe("processing_successful", self.run)
 
-class EachProcessingPublication(NearRealTimeTarget):
     def __init__(self, *args, event_manager: EventManager, **kwargs):
         super().__init__(*args, **kwargs)
         self.event_manager = event_manager

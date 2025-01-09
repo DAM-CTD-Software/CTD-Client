@@ -35,6 +35,7 @@ class ConfigurationView(ViewMixin, CtkFrame):
             height=700,
         )
         self.tabs.grid()
+        self.tabs.configure(fg_color="transparent")
 
 
 class BaseSettings(ViewMixin, CtkFrame):
@@ -192,9 +193,7 @@ class ExpertSettings(ctk.CTkScrollableFrame):
         self.configure(
             height=500,
             width=600,
-            border_width=1,
-            border_color="gray10",
-            fg_color="transparent",
+            fg_color="gray16",
         )
         self.padx = 5
         self.pady = 5

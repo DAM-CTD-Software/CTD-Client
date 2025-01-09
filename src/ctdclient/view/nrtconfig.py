@@ -40,8 +40,10 @@ class NRTConfigurator(ViewMixin, TomlEditor):
             possible_parameters,
             config_file,
             title_size,
+            fg_color = "gray16",
         )
         self.possible_email_parameters = possible_email_parameters
+        self.configure(fg_color="gray16")
         master.protocol("WM_DELETE_WINDOW", self.cancel)
 
     def cancel(self):
@@ -54,7 +56,7 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         event_manager.publish("kill_nrt_config")
 
     def load_config_specific_data(self, row=0):
-        frame = ctk.CTkFrame(self.content_frame, fg_color="transparent")
+        frame = ctk.CTkFrame(self.content_frame, fg_color="gray16")
         frame.grid(row=row, column=0, sticky="ew", padx=5, pady=5)
         frame.grid_columnconfigure(0, weight=1)
         ttk.Separator(frame, orient="horizontal").grid(

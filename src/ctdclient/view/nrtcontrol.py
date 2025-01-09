@@ -135,7 +135,7 @@ class NRTControlFrame(ViewMixin, CtkFrame):
             config_window.after(
                 200, lambda: config_window.iconbitmap(ICON_PATH)
             )
-        config_window.lift()
-        config_window.focus_force()
         config_window.grid_rowconfigure(0, weight=1)
         config_window.grid_columnconfigure(0, weight=1)
+        config_window.geometry("700x850")
+        config_window.grab_set()

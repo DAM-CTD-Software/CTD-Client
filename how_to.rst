@@ -112,6 +112,38 @@ To create a new NRT, click on the 'create new NRT publication' button. This
 opens a new window that allows to enter the necessary information. It will be
 pre-filled with template information.
 
+NRT Configurator
+""""""""""""""""
+.. image:: ../images/nrt_config.png
+
+Short description of the individual field values and their uses:
+
+**recipient_name**: plain desriptor for the overview table
+
+**recipient_address**: either a target path for copying or a list of email addresses, comma-separated
+
+**target_file_directory**: the directory to scan for new files to publish
+
+**target_file_suffix**: a file descriptor that can occur anywhere in the files that are meant to be published
+
+**frequency_of_action**: either "each_processing" for NRT publications after each successful processing, or a timepoint in "HH:MM:SS" format
+
+**geo_filter**: a path to a file that contains polygon coordinates in a geopandas-compatible format, eg. .shp
+
+
+**open_draft**: whether to open the email message as a draft inside an email client instead of directly sending the email blindly
+
+**smtp_server**: the email server to use for sending
+
+**smtp_port**: the port to use for sending
+
+**smtp_email**: the email address to send from
+
+**subject**: the email messages subject
+
+**body**: the text of the email message. Does take a placeholder {date} that will be substituted by a timestamp
+
+
 .. important:: When creating a new NRT that is going to send emails, make sure
    to test the email settings by setting the 'open_draft' option to true. That
    way, instead of sending the emails directly, the draft will be opened in the system

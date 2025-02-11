@@ -20,7 +20,6 @@ from pathlib import Path
 from typing import Callable
 
 import geopandas as gpd
-import keyring
 from code_tools.logging import get_logger
 from ctdclient.definitions import config
 from ctdclient.definitions import cruise_head
@@ -268,26 +267,9 @@ class NearRealTimeTarget:
                     error}"
             )
             return
-        # use authentication credentials when present
-        try:
-            smtp_user = self.email_info["smtp_user"]
-            smtp_pass = self.email_info["smtp_pass"]
-        except KeyError:
-            pass
-        else:
-            if smtp_user.startswith("$"):
-                smtp_user = os.getenv(smtp_user[1:])
-                smtp_pass = os.getenv(smtp_pass[1:])
-            else:
-                smtp_user = keyring.get_password("CTD-Client", smtp_user)
-                smtp_pass = keyring.get_password("CTD-Client", smtp_pass)
         assert isinstance(msg, EmailMessage)
         with smtplib.SMTP(smtp_server, int(smtp_port)) as server:
             server.starttls()
-            try:
-                server.login(smtp_user, smtp_pass)
-            except (AttributeError, UnboundLocalError):
-                pass
             try:
                 server.send_message(msg)
             except smtplib.SMTPRecipientsRefused as error:

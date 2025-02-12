@@ -26,7 +26,8 @@ from ctdclient.definitions import cruise_head
 from ctdclient.definitions import cruise_name
 from ctdclient.definitions import ROOT_PATH
 from ctdclient.definitions import TEMPLATE_PATH
-from ctdclient.eventmanager import EventManager
+from ctdclient.definitions import event_manager
+from ctdclient.model.Model import ModelMixin
 from seabirdfilehandler import SeaBirdFile
 from shapely.geometry import Point
 from tomlkit.toml_file import TOMLFile
@@ -52,10 +53,10 @@ def instantiate_near_real_time_target(
     return class_to_instantiate(*args, **kwargs)
 
 
-class NRTList(UserList):
-    def __init__(self, event_manager: EventManager):
+class NRTList(ModelMixin, UserList):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.data = []
-        self.event_manager = event_manager
 
     def update_nrt_data(self, clear_data: bool = True):
         if clear_data:
@@ -83,8 +84,8 @@ class NRTList(UserList):
         return instantiate_near_real_time_target(
             **toml_file,
             file_path=path,
-            event_manager=self.event_manager,
             active=active,
+            error_callback=self.error_callback,
         )
 
     def get_template(
@@ -130,6 +131,7 @@ class NearRealTimeTarget:
         email_info: dict = {},
         file_path: Path | str = "",
         active: bool = False,
+        error_callback: Callable = None,
         **kwargs,
     ):
         self.name = recipient_name
@@ -141,6 +143,7 @@ class NearRealTimeTarget:
         self.file_path = Path(file_path)
         self.files_already_sent = []
         self.active = active
+        self.raise_error_message = error_callback
 
     @abstractmethod
     def toggle_activity(self):
@@ -293,19 +296,25 @@ class NearRealTimeTarget:
             # check, whether file already sent
             if file in self.files_already_sent:
                 continue
-            file_metadata = SeaBirdFile(file).metadata
             try:
-                coordinates = (
-                    self.deg_min_to_deg_decimal(file_metadata["GPS_Lon"]),
-                    self.deg_min_to_deg_decimal(file_metadata["GPS_Lat"]),
-                )
-            except KeyError:
-                coordinates = (0, 0)
-            finally:
-                if self.geographic_filter(coordinates) and self.time_filter(
-                    file
-                ):
-                    target_files.append(file)
+                file_metadata = SeaBirdFile(file).metadata
+            except PermissionError as error:
+                message = f"Insufficient permissions to read {file}: {error}"
+                logger.error(message)
+                self.raise_error_message(message=message)
+            else:
+                try:
+                    coordinates = (
+                        self.deg_min_to_deg_decimal(file_metadata["GPS_Lon"]),
+                        self.deg_min_to_deg_decimal(file_metadata["GPS_Lat"]),
+                    )
+                except KeyError:
+                    coordinates = (0, 0)
+                finally:
+                    if self.geographic_filter(coordinates) and self.time_filter(
+                        file
+                    ):
+                        target_files.append(file)
         self.files_already_sent = [*self.files_already_sent, *target_files]
         return target_files
 
@@ -414,7 +423,7 @@ def timer(time_to_run_at: datetime, function: Callable, single_run: bool):
 
 
 class EachProcessingPublication(NearRealTimeTarget):
-    def __init__(self, *args, event_manager: EventManager, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.event_manager = event_manager
         if self.active:

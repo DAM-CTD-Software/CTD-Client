@@ -1,4 +1,5 @@
 from typing import Callable
+from CTkMessagebox import CTkMessagebox
 
 
 class ViewMixin:
@@ -29,3 +30,11 @@ class ViewMixin:
         """
 
         return self.callbacks[callback]
+
+    def error_message(self, message: str):
+        CTkMessagebox(
+            title="Error",
+            message=message,
+            icon="cancel",
+            option_1="Ok",
+        )

@@ -21,6 +21,9 @@ class Controller:
         self.configuration = configuration
         self.model = model
         self.view = view
+        # instance check until all models migrated to using the mixin
+        if hasattr(model, "error_callback"):
+            self.register_error_message()
 
     def register_callback(
         self,
@@ -33,3 +36,6 @@ class Controller:
         holding an instance of this class.
         """
         self.view.add_callback(key, method)
+
+    def register_error_message(self):
+        self.model.error_callback = self.view.error_message

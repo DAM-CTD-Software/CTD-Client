@@ -45,7 +45,7 @@ class MainController:
             self.processing_view,
         )
         # nrt
-        self.nrt = NRTList(event_manager)
+        self.nrt = NRTList()
         self.nrt_controller = NRTController(
             config, self.nrt, self.nrt_control_view
         )

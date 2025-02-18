@@ -27,7 +27,6 @@ from ctdclient.definitions import cruise_name
 from ctdclient.definitions import ROOT_PATH
 from ctdclient.definitions import TEMPLATE_PATH
 from ctdclient.definitions import event_manager
-from ctdclient.model.Model import ModelMixin
 from seabirdfilehandler import SeaBirdFile
 from shapely.geometry import Point
 from tomlkit.toml_file import TOMLFile
@@ -53,7 +52,7 @@ def instantiate_near_real_time_target(
     return class_to_instantiate(*args, **kwargs)
 
 
-class NRTList(ModelMixin, UserList):
+class NRTList(UserList):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.data = []
@@ -85,7 +84,6 @@ class NRTList(ModelMixin, UserList):
             **toml_file,
             file_path=path,
             active=active,
-            error_callback=self.error_callback,
         )
 
     def get_template(
@@ -131,7 +129,6 @@ class NearRealTimeTarget:
         email_info: dict = {},
         file_path: Path | str = "",
         active: bool = False,
-        error_callback: Callable = None,
         **kwargs,
     ):
         self.name = recipient_name
@@ -143,7 +140,6 @@ class NearRealTimeTarget:
         self.file_path = Path(file_path)
         self.files_already_sent = []
         self.active = active
-        self.raise_error_message = error_callback
 
     @abstractmethod
     def toggle_activity(self):
@@ -309,7 +305,6 @@ class NearRealTimeTarget:
                 except PermissionError as error:
                     message = f"Insufficient permissions to read {file}: {error}"
                     logger.error(message)
-                    self.raise_error_message(message=message)
                 else:
                     try:
                         coordinates = (

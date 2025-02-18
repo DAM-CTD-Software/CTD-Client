@@ -51,9 +51,7 @@ class Processing:
 
     def run(self, file: Path | str):
         if isinstance(self.procedure, Procedure):
-            self.process = mp.Process(
-                target=self.procedure.run, args=[Path(file)]
-            )
+            self.process = mp.Process(target=self.procedure.run, args=[Path(file)])
             self.process.start()
             while self.process.is_alive():
                 sleep(0.1)
@@ -65,6 +63,7 @@ class Processing:
             self.event_manager.publish(
                 "processing_successful", target=Path(file).absolute()
             )
+            logger.info(f"Processed {file} using {self.current_config}")
 
     def _run_custom_script(self, file: Path):
         assert isinstance(self.procedure, list)

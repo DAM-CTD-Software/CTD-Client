@@ -9,7 +9,7 @@ readme = "README.md"
 python = ">=3.12, <3.13"
 code-tools = { version = ">=0.2.6", source = "gitea" }
 processing = { version = ">=1.1.13", source = "gitea" }
-seabirdfilehandler = { version = ">=0.3.9", source = "gitea" }
+seabirdfilehandler = { version = ">=0.3.13", source = "gitea" }
 tomlkit = ">=0.12.3"
 xmltodict = ">=0.13.0"
 requests = ">=2.31.0"

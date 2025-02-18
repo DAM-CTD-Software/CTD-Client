@@ -245,6 +245,7 @@ class NearRealTimeTarget:
         run_manually: bool = False,
     ):
         if not run_manually and len(files_to_attach) == 0:
+            logger.info("Automatic email not sent because no files are available.")
             return
         email_message = self.create_email_message(files_to_attach)
         open_draft = True if self.email_info["open_draft"] == "true" else False
@@ -277,6 +278,8 @@ class NearRealTimeTarget:
                 server.send_message(msg)
             except smtplib.SMTPRecipientsRefused as error:
                 logger.error(f"Credentials needed to send email: {error}")
+            else:
+                logger.info(f'Email sent to {msg["To"]}')
 
     def copy_files(self, target_file: Path):
         """Copies target files to given location."""
@@ -287,6 +290,7 @@ class NearRealTimeTarget:
         file_name = target_file.stem
         for file in source_dir.glob(f"{file_name}{self.suffix}*"):
             shutil.copy(file, target_dir)
+            logger.info(f"Copied {file} to {target_dir}")
 
     def get_target_files(self, target_file: Path = Path(".")) -> list[Path]:
         """Creates a list of paths to files that are meant to be published."""

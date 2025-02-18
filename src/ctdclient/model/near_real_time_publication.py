@@ -298,27 +298,32 @@ class NearRealTimeTarget:
         target_files = []
         for file in self.dir.glob(f"*{file_name}{self.suffix}*"):
             # check, whether file already sent
-            if file in self.files_already_sent:
+            if (file in self.files_already_sent) or (file.is_dir()) or (file.name.startswith(".")):
                 continue
-            try:
-                file_metadata = SeaBirdFile(file).metadata
-            except PermissionError as error:
-                message = f"Insufficient permissions to read {file}: {error}"
-                logger.error(message)
-                self.raise_error_message(message=message)
-            else:
+            if len(self.map_data) > 0:
                 try:
-                    coordinates = (
-                        self.deg_min_to_deg_decimal(file_metadata["GPS_Lon"]),
-                        self.deg_min_to_deg_decimal(file_metadata["GPS_Lat"]),
-                    )
-                except KeyError:
-                    coordinates = (0, 0)
-                finally:
-                    if self.geographic_filter(coordinates) and self.time_filter(
-                        file
-                    ):
-                        target_files.append(file)
+                    file_metadata = SeaBirdFile(
+                        path_to_file=file,
+                        only_header=True,
+                    ).metadata
+                except PermissionError as error:
+                    message = f"Insufficient permissions to read {file}: {error}"
+                    logger.error(message)
+                    self.raise_error_message(message=message)
+                else:
+                    try:
+                        coordinates = (
+                            self.deg_min_to_deg_decimal(file_metadata["GPS_Lon"]),
+                            self.deg_min_to_deg_decimal(file_metadata["GPS_Lat"]),
+                        )
+                    except (KeyError, ValueError):
+                        coordinates = (0, 0)
+                    finally:
+                        if not self.geographic_filter(coordinates):
+                            continue
+                        
+            if self.time_filter(file):
+                target_files.append(file)
         self.files_already_sent = [*self.files_already_sent, *target_files]
         return target_files
 

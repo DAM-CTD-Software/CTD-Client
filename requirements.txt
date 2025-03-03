@@ -589,8 +589,6 @@ pytz==2024.2 ; python_version >= "3.12" and python_version < "3.13" \
 requests==2.32.3 ; python_version >= "3.12" and python_version < "3.13" \
     --hash=sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760 \
     --hash=sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6
-seabirdfilehandler==0.3.12 ; python_version >= "3.12" and python_version < "3.13" \
-    --hash=sha256:91b08fa7d022487092d11dd7219e86a4c70f546ebba6b725c46eca2435d0c226
 securesystemslib==0.31.0 ; python_version >= "3.12" and python_version < "3.13" \
     --hash=sha256:549d70f7be6460252d016f03edc5ec0128fee56af55d2b863a5db14541ddbf18 \
     --hash=sha256:c1594afbcd5db198ec90c487e1720154afb71743d9f4bccf3dfda84de650c478

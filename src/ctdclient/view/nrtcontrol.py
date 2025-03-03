@@ -2,7 +2,6 @@ import sys
 import tkinter.font as tkFont
 
 import customtkinter as ctk
-from ctdclient.definitions import event_manager
 from ctdclient.definitions import ICON_PATH
 from ctdclient.model.near_real_time_publication import NearRealTimeTarget
 from ctdclient.view.ctkframe import CtkFrame
@@ -13,7 +12,6 @@ from ctdclient.view.View import ViewMixin
 class NRTControlFrame(ViewMixin, CtkFrame):
     def initialize(self, root):
         super().__init__(master=root)
-        event_manager.subscribe("kill_nrt_config", self.reload)
 
     def reload(self):
         self.callbacks["update_nrts"]()
@@ -126,10 +124,11 @@ class NRTControlFrame(ViewMixin, CtkFrame):
             padx=self.padx,
             pady=self.pady,
         )
-
-        config_window.protocol(
-            "WM_DELETE_WINDOW", self.callbacks["update_nrts"]
+        editor.bind(
+            "<Destroy>",
+            command=lambda e: self.callbacks["update_nrts"](),
         )
+
         config_window.title(f"NRT configuration of {nrt.file_path}")
         if sys.platform.startswith("win"):
             config_window.after(

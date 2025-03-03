@@ -11,6 +11,7 @@ use_dship_values = true
 generate_processing_fingerprint = ""
 file_type_dir = ""
 debugging = false
+processing_dir = 'templates'
 
 [dship]
 ip = 'dship1'
@@ -51,4 +52,4 @@ number_of_bottles = 13
 [ctd.memory]
 last_cast = 0
 last_filename = "."
-last_processing_file = ""
+last_processing_file = "templates/processing_template.toml"

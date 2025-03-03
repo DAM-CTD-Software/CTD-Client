@@ -52,6 +52,9 @@ class ConfigurationFile:
             ]
             self.file_type_dir: str = self.data["base"]["file_type_dir"]
             self.debugging: bool = self.data["base"]["debugging"]
+            self.processing_dir: Path = Path(
+                self.data["base"]["processing_dir"]
+            )
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dship_url_part: str = self.data["dship"]["url_part"]
             self.dhsip_fetch_intervall: float = float(

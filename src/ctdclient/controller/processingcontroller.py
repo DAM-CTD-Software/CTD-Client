@@ -19,6 +19,7 @@ class ProcessingController(Controller):
         self.view.add_callback("new_processing", self.add_new_processing)
         self.view.add_callback("update_processing_workflows", self.update)
         self.view.add_callback("delete_processing", self.delete)
+        self.view.add_callback("toggle_active", self.toggle_active_state)
         self.update()
 
     def update(self):
@@ -33,6 +34,9 @@ class ProcessingController(Controller):
     def delete(self, processing_workflow: ProcessingConfig):
         self.model.remove_config(processing_workflow)
         self.view.populate(self.model.data)
+
+    def toggle_active_state(self, processing_workflow: ProcessingConfig):
+        self.model.toggle_config_activity_state(processing_workflow)
 
     # def reload_view(self):
     # initialize view data

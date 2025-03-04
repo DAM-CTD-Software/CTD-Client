@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import multiprocessing as mp
 import subprocess
+from abc import ABC
+from abc import abstractmethod
 from collections import UserList
 from pathlib import Path
 from time import sleep
@@ -17,8 +19,7 @@ logger = get_logger(__name__)
 
 
 class ProcessingList(UserList):
-    def __init__(self):
-        pass
+    data: list[ProcessingConfig]
 
     def read_processing_files(self):
         # reset processing configs
@@ -26,21 +27,28 @@ class ProcessingList(UserList):
         for file in config.processing_dir.glob("*proc*"):
             try:
                 self.data.append(self.create_new_processing_config(file))
-            except Exception as error:
+            except Exception:
                 continue
-        self.set_active_config()
 
-    def set_active_config(self, proc_config: ProcessingConfig | None = None):
-        processing = (
-            proc_config.path_to_config
-            if proc_config
-            else config.last_processing_file
-        )
+    def run(self, file: Path | str):
+        for proc_config in self.data:
+            if proc_config.active:
+                proc_config.run(Path(file))
+
+    def cancel(self):
+        for proc_config in self.data:
+            if proc_config.active:
+                proc_config.cancel()
+
+    def toggle_config_activity_state(self, proc_config: ProcessingConfig):
         for proc in self.data:
-            if proc.path_to_config.absolute() == processing:
-                proc.active = True
+            if proc == proc_config:
+                proc.active = not proc.active
                 return True
-        logger.error(f"Could not set active processing: {processing}")
+        logger.error(
+            f"Could not set active processing: {
+                     proc_config.path_to_config}"
+        )
         return False
 
     def create_new_processing_config(self, file: Path) -> ProcessingConfig:
@@ -67,7 +75,7 @@ class ProcessingList(UserList):
             config.path_to_config.unlink()
 
 
-class ProcessingConfig:
+class ProcessingConfig(ABC):
     current_config: Path
     process: mp.Process | subprocess.Popen
 
@@ -78,19 +86,25 @@ class ProcessingConfig:
         self.update_config(path_to_config)
         self.path_to_config = Path(path_to_config)
         self.name = self.path_to_config.name
-        self.active = False
+        self.active = (
+            True if self.name == config.last_processing_file.name else False
+        )
 
+    @abstractmethod
+    def run(self, file: Path):
+        pass
+
+    @abstractmethod
     def update_config(self, path_to_config: Path | str):
         pass
 
     def post_processing_clean_up(self, file):
         if not self.killed:
-            config.last_processing_file = self.current_config
+            config.last_processing_file = self.path_to_config.absolute()
             config.write()
             event_manager.publish(
                 "processing_successful", target=Path(file).absolute()
             )
-            logger.info(f"Processed {file} using {self.current_config}")
 
     def cancel(self):
         self.process.kill()
@@ -115,11 +129,10 @@ class ProcessingProcedure(ProcessingConfig):
             procedure_fingerprint_directory=procedure_fingerprint_directory,
             file_type_dir=file_type_dir,
         )
-        self.current_config = new_config
         self.killed = False
 
-    def run(self, file: Path | str):
-        self.process = mp.Process(target=self.procedure.run, args=[Path(file)])
+    def run(self, file: Path):
+        self.process = mp.Process(target=self.procedure.run, args=[file])
         self.process.start()
         while self.process.is_alive():
             sleep(0.1)
@@ -133,7 +146,6 @@ class ProcessingScript(ProcessingConfig):
     def update_config(self, path_to_config: Path | str):
         new_config = Path(path_to_config)
         self.procedure = [new_config]
-        self.current_config = new_config
         self.killed = False
 
     def run(self, file: Path):

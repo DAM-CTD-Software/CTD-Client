@@ -117,6 +117,9 @@ class ProcessingView(ViewMixin, CtkFrame):
         run = ctk.CTkSwitch(
             frame,
             text="",
+            command=lambda: self.callbacks["toggle_active"](
+                processing_workflow
+            ),
         )
         run.grid(row=0, column=4, padx=self.padx, pady=self.pady)
 

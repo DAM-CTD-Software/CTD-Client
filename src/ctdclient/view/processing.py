@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import os
+import platform
+import subprocess
 import sys
 import tkinter.font as tkFont
+from pathlib import Path
 
 import customtkinter as ctk
 from code_tools.logging import get_logger
@@ -70,14 +74,20 @@ class ProcessingView(ViewMixin, CtkFrame):
         name = ctk.CTkLabel(
             frame, text=processing_workflow.name, anchor="w", justify="left"
         )
-        name.grid(row=0, column=0, padx=self.padx, pady=self.pady)
+        name.grid(row=0, column=0, padx=self.padx, pady=self.pady, sticky="w")
 
         if isinstance(processing_workflow, ProcessingProcedure):
 
             def toggle_entry():
                 global hidden
                 if hidden:
-                    info.grid(row=1, column=0, padx=self.padx, pady=self.pady)
+                    info.grid(
+                        row=1,
+                        column=0,
+                        padx=self.padx,
+                        pady=self.pady,
+                        sticky="w",
+                    )
                 else:
                     info.grid_remove()
                 hidden = not hidden
@@ -98,12 +108,34 @@ class ProcessingView(ViewMixin, CtkFrame):
             )
             self.display_modules(info, processing_workflow)
 
-        config = ctk.CTkButton(
-            frame,
-            text="edit/details",
-            command=lambda: self.open_config(processing_workflow),
-        )
-        config.grid(row=0, column=2, padx=self.padx, pady=self.pady)
+            config = ctk.CTkButton(
+                frame,
+                text="edit/details",
+                command=lambda: self.open_config(processing_workflow),
+            )
+            config.grid(row=0, column=2, padx=self.padx, pady=self.pady)
+
+        else:
+
+            def call_editor(file_path: Path):
+                if platform.system() == "Windows":
+                    os.startfile(file_path, operation="edit")
+                elif platform.system() == "Darwin":
+                    subprocess.run(["open", file_path])
+                elif platform.system() == "Linux":
+                    editor = os.environ.get("EDITOR", "/usr/bin/vim")
+                    subprocess.call([editor, file_path])
+                else:
+                    raise OSError("Unsupported operating system")
+
+            open_editor = ctk.CTkButton(
+                frame,
+                text="open editor",
+                command=lambda: call_editor(
+                    processing_workflow.path_to_config
+                ),
+            )
+            open_editor.grid(row=0, column=2, padx=self.padx, pady=self.pady)
 
         delete = ctk.CTkButton(
             frame,
@@ -140,6 +172,10 @@ class ProcessingView(ViewMixin, CtkFrame):
         editor = ProcedureConfigView(
             master=config_window,
             config_file=processing_workflow.path_to_config,
+            possible_parameters=[
+                "psa_directory",
+                "output_dir",
+            ],
             title_size=35,
         )
         editor.grid(

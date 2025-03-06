@@ -1,8 +1,7 @@
+import logging
 import subprocess
 
-from code_tools.logging import get_logger
-
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class RunSeasave:

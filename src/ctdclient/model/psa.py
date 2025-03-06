@@ -1,9 +1,9 @@
+import logging
 from pathlib import Path
 
-from code_tools.logging import get_logger
 from seabirdfilehandler import PsaFile
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class SeasavePsa(PsaFile):

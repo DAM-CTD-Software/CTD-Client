@@ -1,3 +1,4 @@
+import logging
 import shutil
 import sys
 import tkinter.font as tkFont
@@ -5,8 +6,6 @@ from pathlib import Path
 
 import customtkinter as ctk
 import psutil
-from code_tools.logging import configure_logging
-from code_tools.logging import get_logger
 from ctdclient.controller.maincontroller import MainController
 from ctdclient.definitions import config
 from ctdclient.definitions import ICON_PATH
@@ -23,8 +22,7 @@ from ctdclient.view.mainwindow import MainWindow
 from CTkMessagebox import CTkMessagebox
 from tufup.client import Client
 
-configure_logging("ctdclient.log")
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 global UPDATED
 UPDATED = False
@@ -32,8 +30,8 @@ UPDATED = False
 
 def main():
     """The main entry point of the software."""
-    if check_if_running():
-        sys.exit("CTD-Client is already running.")
+    # if check_if_running():
+    #     sys.exit("CTD-Client is already running.")
     configuration_file = config
     # set ctk options
     root = ctk.CTk()
@@ -130,7 +128,8 @@ def check_for_update(tufup_client: Client, main_window: MainWindow):
             answer = CTkMessagebox(
                 title="Update available",
                 message=f"A new version of this software is available: v{
-                    check_update.version} . Do you want to update now? You will be able to use this software as normal during the process. For the changes to take effect, you will need to restart this software though.",
+                    check_update.version
+                } . Do you want to update now? You will be able to use this software as normal during the process. For the changes to take effect, you will need to restart this software though.",
                 option_1="Update now",
                 option_2="Update later",
                 # option_3="show update details",
@@ -138,8 +137,9 @@ def check_for_update(tufup_client: Client, main_window: MainWindow):
             if answer.get() == "Update now":
                 update(tufup_client)
                 logger.info(
-                    f"Updated succesfully from version {
-                        VERSION} to {check_update.version}"
+                    f"Updated succesfully from version {VERSION} to {
+                        check_update.version
+                    }"
                 )
             if answer.get() == "Update later":
                 return

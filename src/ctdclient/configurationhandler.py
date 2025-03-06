@@ -1,14 +1,14 @@
+import logging
 import sys
 from pathlib import Path
 
 import tomlkit
-from code_tools.logging import get_logger
 from tomlkit.exceptions import EmptyKeyError
 from tomlkit.exceptions import KeyAlreadyPresent
 from tomlkit.exceptions import NonExistentKey
 from tomlkit.exceptions import UnexpectedCharError
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ConfigurationFile:

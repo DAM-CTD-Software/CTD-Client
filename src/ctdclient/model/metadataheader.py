@@ -1,7 +1,8 @@
-from code_tools.logging import get_logger
+import logging
+
 from ctdclient.model.psa import SeasavePsa
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MetadataHeader:
@@ -47,7 +48,7 @@ class MetadataHeader:
         header_list.insert(
             10,
             cls.create_metadata_header_line(
-                "WsStartID", f"{int(cast)*25 + 1}"
+                "WsStartID", f"{int(cast) * 25 + 1}"
             ),
         )
         if pos_alias:
@@ -129,4 +130,4 @@ class MetadataHeader:
         # save the current dship metadata every time a file name is created (every second)
         MetadataHeader.dship_values = dship_values
         return f"{cruise}_{station}_{platform_name_mapper[platform]}_{
-            cast_number:04d}.hex"
+                cast_number:04d}.hex"

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import platform
 import subprocess
@@ -8,7 +9,6 @@ import tkinter.font as tkFont
 from pathlib import Path
 
 import customtkinter as ctk
-from code_tools.logging import get_logger
 from ctdclient.definitions import ICON_PATH
 from ctdclient.model.processing import ProcessingConfig
 from ctdclient.model.processing import ProcessingProcedure
@@ -16,7 +16,7 @@ from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.View import ViewMixin
 from processing.gui.procedure_config_view import ProcedureConfigView
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ProcessingView(ViewMixin, CtkFrame):

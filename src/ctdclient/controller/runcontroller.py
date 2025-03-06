@@ -1,9 +1,11 @@
 from pathlib import Path
 
 from ctdclient.controller.Controller import Controller
+from ctdclient.model.bottles import BottleClosingDepths
 from ctdclient.model.dshipcaller import retrieve_station_and_event_info
 from ctdclient.model.fileupdater import UpdateFiles
 from ctdclient.model.metadataheader import MetadataHeader
+from ctdclient.model.processing import ProcessingList
 from ctdclient.model.psa import SeasavePsa
 from ctdclient.model.runseasave import RunSeasave
 from ctdclient.view.measurement import MeasurementView
@@ -14,8 +16,8 @@ class RunController(Controller):
     def __init__(
         self,
         *args,
-        bottles,
-        processing,
+        bottles: BottleClosingDepths,
+        processing: ProcessingList,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)

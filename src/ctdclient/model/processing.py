@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import multiprocessing as mp
 import subprocess
 from abc import ABC
@@ -8,14 +9,13 @@ from collections import UserList
 from pathlib import Path
 from time import sleep
 
-from code_tools.logging import get_logger
 from ctdclient.definitions import config
 from ctdclient.definitions import event_manager
 from ctdclient.definitions import TEMPLATE_PATH
 from processing.procedure import Procedure
 from processing.settings import Configuration
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ProcessingList(UserList):

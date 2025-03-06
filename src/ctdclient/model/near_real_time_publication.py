@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import mimetypes
 import multiprocessing as mp
 import os
@@ -20,18 +21,17 @@ from pathlib import Path
 from typing import Callable
 
 import geopandas as gpd
-from code_tools.logging import get_logger
 from ctdclient.definitions import config
 from ctdclient.definitions import cruise_head
 from ctdclient.definitions import cruise_name
+from ctdclient.definitions import event_manager
 from ctdclient.definitions import ROOT_PATH
 from ctdclient.definitions import TEMPLATE_PATH
-from ctdclient.definitions import event_manager
 from seabirdfilehandler import SeaBirdFile
 from shapely.geometry import Point
 from tomlkit.toml_file import TOMLFile
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def instantiate_near_real_time_target(
@@ -68,7 +68,7 @@ class NRTList(UserList):
             except Exception as error:
                 logger.error(
                     f"Could not instantiate nrt, using {
-                        path}: {error}"
+                             path}: {error}"
                 )
                 continue
 
@@ -241,7 +241,9 @@ class NearRealTimeTarget:
         run_manually: bool = False,
     ):
         if not run_manually and len(files_to_attach) == 0:
-            logger.info("Automatic email not sent because no files are available.")
+            logger.info(
+                "Automatic email not sent because no files are available."
+            )
             return
         email_message = self.create_email_message(files_to_attach)
         open_draft = True if self.email_info["open_draft"] == "true" else False
@@ -275,7 +277,7 @@ class NearRealTimeTarget:
             except smtplib.SMTPRecipientsRefused as error:
                 logger.error(f"Credentials needed to send email: {error}")
             else:
-                logger.info(f'Email sent to {msg["To"]}')
+                logger.info(f"Email sent to {msg['To']}")
 
     def copy_files(self, target_file: Path):
         """Copies target files to given location."""
@@ -294,7 +296,11 @@ class NearRealTimeTarget:
         target_files = []
         for file in self.dir.glob(f"*{file_name}{self.suffix}*"):
             # check, whether file already sent
-            if (file in self.files_already_sent) or (file.is_dir()) or (file.name.startswith(".")):
+            if (
+                (file in self.files_already_sent)
+                or (file.is_dir())
+                or (file.name.startswith("."))
+            ):
                 continue
             if len(self.map_data) > 0:
                 try:
@@ -303,20 +309,25 @@ class NearRealTimeTarget:
                         only_header=True,
                     ).metadata
                 except PermissionError as error:
-                    message = f"Insufficient permissions to read {file}: {error}"
+                    message = f"Insufficient permissions to read {
+                        file}: {error}"
                     logger.error(message)
                 else:
                     try:
                         coordinates = (
-                            self.deg_min_to_deg_decimal(file_metadata["GPS_Lon"]),
-                            self.deg_min_to_deg_decimal(file_metadata["GPS_Lat"]),
+                            self.deg_min_to_deg_decimal(
+                                file_metadata["GPS_Lon"]
+                            ),
+                            self.deg_min_to_deg_decimal(
+                                file_metadata["GPS_Lat"]
+                            ),
                         )
                     except (KeyError, ValueError):
                         coordinates = (0, 0)
                     finally:
                         if not self.geographic_filter(coordinates):
                             continue
-                        
+
             if self.time_filter(file):
                 target_files.append(file)
         self.files_already_sent = [*self.files_already_sent, *target_files]

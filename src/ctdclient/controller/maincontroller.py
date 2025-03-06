@@ -1,5 +1,6 @@
+import logging
+
 import customtkinter as ctk
-from code_tools.logging import get_logger
 from ctdclient.controller.bottlecontroller import BottleController
 from ctdclient.controller.configcontroller import ConfigurationController
 from ctdclient.controller.dshipcontroller import DshipController
@@ -19,7 +20,7 @@ from ctdclient.view.measurement import MeasurementView
 from ctdclient.view.nrtcontrol import NRTControlFrame
 from ctdclient.view.processing import ProcessingView
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class MainController:

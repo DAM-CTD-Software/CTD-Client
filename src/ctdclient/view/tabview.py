@@ -1,9 +1,10 @@
+import logging
+
 import customtkinter as ctk
-from code_tools.logging import get_logger
 from ctdclient.view.ctkframe import CtkFrame
 from CTkMessagebox import CTkMessagebox
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class TabView(ctk.CTkTabview):

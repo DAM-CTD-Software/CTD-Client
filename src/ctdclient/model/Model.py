@@ -1,11 +1,9 @@
-from typing import Callable
-from code_tools.logging import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class ModelMixin:
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.error_callback = []
@@ -14,4 +12,8 @@ class ModelMixin:
         try:
             self.error_callback(message)
         except Exception as error:
-            logger.error(f"Error displaying error message: {error}. Original error was: {message}")
+            logger.error(
+                f"Error displaying error message: {error}. Original error was: {
+                    message
+                }"
+            )

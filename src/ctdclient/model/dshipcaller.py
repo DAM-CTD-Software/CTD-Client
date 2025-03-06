@@ -1,14 +1,14 @@
 import json
+import logging
 import random
 import time
 
 import requests
-from code_tools.logging import get_logger
 from ctdclient.definitions import config
 from ctdclient.model.metadataheader import MetadataHeader
 from ctdclient.utils import individual_dship_api_call
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class DshipCaller:

@@ -90,6 +90,6 @@ class InfoFrame(ViewMixin, CtkFrame):
                         self.platform,
                     )
                 )
-        except Exception as error:
+        except Exception:
             pass
         self.after(1000, self.update_filename, queue)

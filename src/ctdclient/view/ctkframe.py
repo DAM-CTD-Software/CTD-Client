@@ -1,5 +1,4 @@
 import customtkinter as ctk
-from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.definitions import config
 
 

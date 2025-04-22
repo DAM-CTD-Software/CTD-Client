@@ -46,8 +46,7 @@ def instantiate_near_real_time_target(
         class_to_instantiate = EachProcessingPublication
     else:
         raise AttributeError(
-            f"Unknown frequency for near-real-time publication: {
-                frequency_of_action}"
+            f"Unknown frequency for near-real-time publication: {frequency_of_action}"
         )
     return class_to_instantiate(*args, **kwargs)
 
@@ -67,8 +66,7 @@ class NRTList(UserList):
                 self.data.append(self.create_nrt_instance(path))
             except Exception as error:
                 logger.error(
-                    f"Could not instantiate nrt, using {
-                             path}: {error}"
+                    f"Could not instantiate nrt, using {path}: {error}"
                 )
                 continue
 
@@ -265,8 +263,7 @@ class NearRealTimeTarget:
             smtp_port = self.email_info["smtp_port"]
         except KeyError as error:
             logger.error(
-                f"Could not send email, because of missing information: {
-                    error}"
+                f"Could not send email, because of missing information: {error}"
             )
             return
         assert isinstance(msg, EmailMessage)
@@ -309,8 +306,9 @@ class NearRealTimeTarget:
                         only_header=True,
                     ).metadata
                 except PermissionError as error:
-                    message = f"Insufficient permissions to read {
-                        file}: {error}"
+                    message = (
+                        f"Insufficient permissions to read {file}: {error}"
+                    )
                     logger.error(message)
                 else:
                     try:
@@ -440,22 +438,20 @@ def timer(time_to_run_at: datetime, function: Callable, single_run: bool):
 class EachProcessingPublication(NearRealTimeTarget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.event_manager = event_manager
         if self.active:
-            self.event_manager.subscribe("processing_successful", self.run)
+            event_manager.subscribe("processing_successful", self.run)
         self.address = Path(self.address)
 
     def toggle_activity(self):
         self.active = not self.active
         if self.active:
-            self.event_manager.subscribe("processing_successful", self.run)
+            event_manager.subscribe("processing_successful", self.run)
         else:
-            self.event_manager.unsubscribe("processing_successful", self.run)
+            event_manager.unsubscribe("processing_successful", self.run)
 
     def run(self, target: Path = Path(".")):
         target_files = self.get_target_files(target)
         if self._is_email():
             self.run_email_logic(target_files)
         else:
-            for file in target_files:
-                self.copy_files(file)
+            self.copy_files(target)

@@ -227,7 +227,7 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                     padx=self.padx,
                     pady=self.pady,
                 )
-                if param_type == bool:
+                if param_type is bool:
                     variable = tk.BooleanVar(value=variable.get())
                     inner_dict[name] = (variable, param_type)
                     ctk.CTkSwitch(

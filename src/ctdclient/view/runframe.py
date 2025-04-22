@@ -92,7 +92,8 @@ class RunFrame(ViewMixin, CtkFrame):
             msg = CTkMessagebox(
                 title="Warning",
                 message=f"Caution! Do you really want to override the last filename {
-                    self.last_filename.get()}?",
+                    self.last_filename.get()
+                }?",
                 icon="warning",
                 option_1="Cancel",
                 option_2="Yes",

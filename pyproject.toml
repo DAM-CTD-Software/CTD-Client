@@ -35,7 +35,6 @@ myst-parser = ">=4.0.0"
 pyment = ">=0.3.3"
 twine = ">=4.0.2"
 pre-commit = ">=3.6.0"
-black = ">=24.2.0"
 
 [tool.pytest.ini_options]
 addopts = '--cov=ctdclient.model --log-format="%(asctime)s %(levelname)s %(message)s" --log-date-format="%Y-%m-%d %H:%M:%S"'
@@ -46,8 +45,12 @@ filterwarnings = [
     'ignore: datetime.datetime.utcfromtimestamp\(\) is deprecated:DeprecationWarning',
 ]
 
-[tool.black]
+[tool.ruff]
 line-length = 79
+exclude = ["tests", '__init__.py']
+
+[tool.ruff.lint]
+ignore = ["F403", "F821"]
 
 [build-system]
 requires = ["poetry-core"]

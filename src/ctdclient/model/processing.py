@@ -7,7 +7,6 @@ from abc import ABC
 from abc import abstractmethod
 from collections import UserList
 from pathlib import Path
-from time import sleep
 
 from ctdclient.definitions import config
 from ctdclient.definitions import event_manager
@@ -46,8 +45,7 @@ class ProcessingList(UserList):
                 proc.active = not proc.active
                 return True
         logger.error(
-            f"Could not set active processing: {
-                     proc_config.path_to_config}"
+            f"Could not set active processing: {proc_config.path_to_config}"
         )
         return False
 
@@ -132,10 +130,11 @@ class ProcessingProcedure(ProcessingConfig):
         self.killed = False
 
     def run(self, file: Path):
-        self.process = mp.Process(target=self.procedure.run, args=[file])
+        self.process = mp.Process(target=self.apply_procedure, args=[file])
         self.process.start()
-        while self.process.is_alive():
-            sleep(0.1)
+
+    def apply_procedure(self, file: Path):
+        self.procedure.run(file)
         self.post_processing_clean_up(file)
 
 

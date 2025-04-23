@@ -20,11 +20,12 @@ For a more detailed description check out the
 
 ## Release plan
 
-### v1.7
+### v1.9
 
-- test and improve Near-Real-Time publications
+- collect and implement usage feedback for Near-Real-Time and processing
+- work on making the program more fail safe
+- write general Coordinate handler, that also works with coordinates that are not in the northeast
 
 ### v2
 
 - implement seamless addition of other ctd devices
-- add GUI to customise processing

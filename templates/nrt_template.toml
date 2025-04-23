@@ -1,4 +1,3 @@
-recipient_name = "someone"
 recipient_address = "to@example.com"
 target_file_directory = "EMBXXX"
 target_file_suffix = "_2"

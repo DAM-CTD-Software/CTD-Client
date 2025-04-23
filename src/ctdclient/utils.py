@@ -1,10 +1,7 @@
 import logging
 import shutil
 import sys
-import tkinter as tk
 from pathlib import Path
-from tkinter import filedialog as fd
-from typing import Callable
 
 import requests
 import xmltodict
@@ -29,44 +26,6 @@ def get_config_path(
         )
     except FileNotFoundError:
         sys.exit("No configuration file found. Aborting.")
-
-
-def select_file(
-    file_type: str,
-    variable: tk.StringVar,
-    method_to_call: Callable | None = None,
-):
-    """
-    Generic file selection method, that opens a file browsing pop-up.
-    """
-    path = Path(variable.get())
-    filetypes = (
-        (f"{file_type} files", f"*.{file_type}"),
-        ("All files", "*.*"),
-    )
-
-    if file_type in ("psas", "xmlcons") or file_type.endswith("directory"):
-        directory = fd.askdirectory(
-            title=f"Path to {file_type}",
-            initialdir=path,
-        )
-        variable.set(directory)
-        if file_type == "psa_directory":
-            if isinstance(method_to_call, Callable):
-                method_to_call(directory)
-
-    else:
-        file = fd.askopenfilename(
-            title=f"Path to {file_type}",
-            initialdir=path.parent,
-            initialfile=path.name,
-            filetypes=filetypes,
-        )
-        if file:
-            variable.set(file)
-            return True
-        else:
-            return False
 
 
 def individual_dship_api_call(url) -> str | None:
@@ -103,24 +62,3 @@ def individual_dship_api_call(url) -> str | None:
             return None
     else:
         return None
-
-
-class Coordinates:
-    def __init__(self, coordinates: tuple[str, str]):
-        self.lat_in = coordinates[0]
-        self.lon_in = coordinates[1]
-        self.lat_min = self.parse_in(self.lat_in)
-        self.lon_min = self.parse_in(self.lon_in)
-
-    def check_deg_min(self, value: str) -> bool:
-        parts = value.split()
-        return parts[-1] in ["N", "W", "S", "O"]
-
-    def min2deg(self, value: str) -> float:
-        if self.check_deg_min(value):
-            return self.deg_min_to_deg_decimal(value)
-        else:
-            return float(value)
-
-    def deg2min(self, value: str) -> float:
-        pass

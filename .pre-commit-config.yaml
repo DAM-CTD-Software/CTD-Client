@@ -5,6 +5,7 @@ repos:
     rev: v3.13.0
     hooks:
     -   id: reorder-python-imports
+        stages: [pre-commit]
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.2
     hooks:

@@ -1,3 +1,4 @@
+import pytest
 import logging
 from pathlib import Path
 from time import sleep
@@ -31,6 +32,7 @@ def test_event_processing_successful(simple_processing: ProcessingProcedure):
     assert simple_processing.process.exitcode == 0
 
 
+@pytest.mark.seabird
 def test_full_processing(processing: ProcessingProcedure):
     processing.procedure = Procedure(
         configuration={

@@ -125,7 +125,7 @@ def test_correct_target_files(fresh_target_file: Path):
     fresh_target_file.unlink()
 
 
-# @pytest.mark.skip("fails - needs fixing")
+@pytest.mark.seabird
 def test_active_state_each_proc(simple_processing: ProcessingProcedure):
     pubs = EachProcessingPublication(
         **each_processing_copy_test_info,

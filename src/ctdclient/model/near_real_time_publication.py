@@ -72,7 +72,7 @@ class NRTList(UserList):
 
     def create_nrt_instance(self, path: Path):
         toml_file = TOMLFile(path).read()
-        name = toml_file["recipient_name"]
+        name = path.stem[4:]
         active = (
             config.near_real_time[name]
             if name in config.near_real_time
@@ -121,7 +121,6 @@ class NearRealTimeTarget:
 
     def __init__(
         self,
-        recipient_name: str,
         recipient_address: str,
         target_file_suffix: str,
         target_file_directory: Path | str = "",
@@ -131,13 +130,13 @@ class NearRealTimeTarget:
         active: bool = False,
         **kwargs,
     ):
-        self.name = recipient_name
         self.address = recipient_address
         self.dir = Path(target_file_directory)
         self.suffix = target_file_suffix
         self.map_data = geo_filter
         self.email_info = email_info
         self.file_path = Path(file_path)
+        self.name = self.file_path.stem[4:]
         self.files_already_sent = []
         self.active = active
 

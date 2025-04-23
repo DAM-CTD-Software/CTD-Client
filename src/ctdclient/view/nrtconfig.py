@@ -13,7 +13,6 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         master,
         title: str = "NRT Configuration",
         possible_parameters: list[str] = [
-            "recipient_name",
             "recipient_address",
             "target_file_directory",
             "target_file_suffix",

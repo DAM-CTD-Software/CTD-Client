@@ -48,6 +48,7 @@ jobs:
       - name: Bump Version Based on PR Description
         id: new_version
         run: |
+          git fetch --tags origin
           CURRENT_TAG=$(git describe --tags --abbrev=0)
           echo "Current Tag: $CURRENT_TAG"
 

@@ -3,9 +3,9 @@ from pathlib import Path
 
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.configurationhandler import InvalidConfigFile
+from ctdclient.eventmanager import EventManager
 from ctdclient.utils import get_config_path
 from ctdclient.utils import individual_dship_api_call
-from ctdclient.eventmanager import EventManager
 from ctdclient.version import __version__
 
 if getattr(sys, "frozen", False):

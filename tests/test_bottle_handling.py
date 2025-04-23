@@ -1,6 +1,6 @@
 import pytest
-from ctdclient.model.psa import SeasavePsa
 from conftest import psa_dir
+from ctdclient.model.psa import SeasavePsa
 
 
 @pytest.fixture

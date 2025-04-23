@@ -1,8 +1,8 @@
-import pytest
 import logging
 from pathlib import Path
 from time import sleep
 
+import pytest
 from conftest import psa_dir
 from conftest import raw_data_dir
 from conftest import target_file

@@ -5,7 +5,6 @@ repos:
     rev: v3.13.0
     hooks:
     -   id: reorder-python-imports
-        stages: [pre-commit]
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.2
     hooks:
@@ -18,4 +17,9 @@ repos:
     -   id: poetry-check
         stages: [pre-push]
     -   id: poetry-lock
+        stages: [pre-push]
+-   repo: https://git.io-warnemuende.de/michels/my-hooks
+    rev: 0.0.9
+    hooks:
+    -   id: export-requirements
         stages: [pre-push]

@@ -49,7 +49,7 @@ jobs:
         id: new_version
         run: |
           git fetch --tags origin
-          CURRENT_TAG=$(git describe --tags --abbrev=0)
+          CURRENT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
           echo "Current Tag: $CURRENT_TAG"
 
           MAJOR=$(echo $CURRENT_TAG | cut -d '.' -f 1)

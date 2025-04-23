@@ -1,12 +1,12 @@
-import importlib.metadata
 import sys
 from pathlib import Path
 
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.configurationhandler import InvalidConfigFile
+from ctdclient.eventmanager import EventManager
 from ctdclient.utils import get_config_path
 from ctdclient.utils import individual_dship_api_call
-from ctdclient.eventmanager import EventManager
+from ctdclient.version import __version__
 
 if getattr(sys, "frozen", False):
     ROOT_PATH = Path(sys.executable).parent
@@ -17,12 +17,12 @@ CONFIG_PATH = get_config_path(ROOT_PATH, RESSOURCES_PATH)
 try:
     config = ConfigurationFile(CONFIG_PATH)
     WRONG_CONFIG = False
-except InvalidConfigFile as error:
+except InvalidConfigFile:
     CONFIG_PATH.replace(f"misconfigured_{CONFIG_PATH.name}")
     CONFIG_PATH = get_config_path(ROOT_PATH, RESSOURCES_PATH)
     config = ConfigurationFile(CONFIG_PATH)
     WRONG_CONFIG = True
-VERSION = importlib.metadata.version("ctdclient")
+VERSION = __version__
 THEMES_PATH = RESSOURCES_PATH.joinpath("ctktheme.json")
 ICON_PATH = RESSOURCES_PATH.joinpath("icon.ico")
 TEMPLATE_PATH = RESSOURCES_PATH.joinpath("templates")

@@ -7,7 +7,6 @@ from ctdclient.view.ctkframe import CtkFrame
 
 
 class HeaderFrame(CtkFrame):
-
     def __init__(
         self,
         *args,

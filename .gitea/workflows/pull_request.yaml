@@ -1,0 +1,32 @@
+name: Run tests and check format
+
+on:
+  pull_request:
+jobs:
+  testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/ruff-action@v3
+
+      - name: Check formatting
+        run: ruff check
+
+      - name: Install dependencies
+        run: |
+          pip install poetry==2.1.1
+          poetry install --without dev,install
+          pip install pytest-mock
+
+      - name: Initialize seabird_example_data
+        run: |
+          git submodule init
+          git submodule update
+
+      - name: Run tests
+        run: poetry run pytest

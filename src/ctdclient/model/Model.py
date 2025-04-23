@@ -13,7 +13,7 @@ class ModelMixin:
             self.error_callback(message)
         except Exception as error:
             logger.error(
-                f"Error displaying error message: {error}. Original error was: {
-                    message
-                }"
+                f"Error displaying error message: {
+                    error
+                }. Original error was: {message}"
             )

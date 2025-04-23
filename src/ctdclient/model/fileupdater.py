@@ -2,7 +2,6 @@ from pathlib import Path
 
 
 class UpdateFiles:
-
     def __init__(
         self,
         file_path: str | Path,
@@ -42,8 +41,7 @@ class UpdateFiles:
                 part = cruise_id.replace("/", "_")
             if part == "000-00":
                 individual_name_parts[index] = (
-                    f"{
-                        int(station):03d}-{int(event):02d}"
+                    f"{int(station):03d}-{int(event):02d}"
                 )
         return "_".join(individual_name_parts)
 
@@ -53,7 +51,7 @@ class UpdateFiles:
 
         for index, line in enumerate(contents):
             if line.startswith("** Station"):
-                line = f"** Station = {station_event_info.replace("/", "_")}\n"
+                line = f"** Station = {station_event_info.replace('/', '_')}\n"
                 contents[index] = line
                 break
 

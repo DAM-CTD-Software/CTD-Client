@@ -45,8 +45,7 @@ class RunSeasave:
             raise error
         except PermissionError as error:
             logger.error(
-                f"Insufficient permissions to run the command {
-                    run_command}: {error}"
+                f"Insufficient permissions to run the command {run_command}: {error}"
             )
             raise error
         else:

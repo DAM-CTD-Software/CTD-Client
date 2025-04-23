@@ -80,9 +80,9 @@ class MetadataHeader:
         elif name == "GPS_Lat":
             try:
                 first_part, second_part = value.split()
-                formatted_value = f"{first_part} {float(second_part):2.3f} N"
+                formatted_value = f"{first_part} {float(second_part):2.6f}"
             except ValueError:
-                formatted_value = f"{float(value):2.3f} N"
+                formatted_value = f"{float(value):2.6f}"
         elif name == "GPS_Lon":
             try:
                 first_part, second_part = value.split()
@@ -90,10 +90,9 @@ class MetadataHeader:
                     gap = "  "
                 else:
                     gap = " "
-                formatted_value = f"{first_part}{
-                    gap}{float(second_part):2.3f} E"
+                formatted_value = f"{first_part}{gap}{float(second_part):2.6f}"
             except ValueError:
-                formatted_value = f"{float(value):2.3f} E"
+                formatted_value = f"{float(value):2.6f}"
         elif name == "Echo_Depth":
             formatted_value = f"{float(value): .1f} m"
         elif name == "Air_Pressure":
@@ -129,5 +128,4 @@ class MetadataHeader:
         }
         # save the current dship metadata every time a file name is created (every second)
         MetadataHeader.dship_values = dship_values
-        return f"{cruise}_{station}_{platform_name_mapper[platform]}_{
-                cast_number:04d}.hex"
+        return f"{cruise}_{station}_{platform_name_mapper[platform]}_{cast_number:04d}.hex"

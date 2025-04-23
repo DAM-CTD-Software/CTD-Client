@@ -5,10 +5,10 @@ from typing import Callable
 from typing import Tuple
 
 from ctdclient.controller.Controller import Controller
+from ctdclient.definitions import last_ctd_station
 from ctdclient.model.dshipcaller import DshipCaller
 from ctdclient.view.dshipframe import DshipFrame
 from ctdclient.view.infoframe import InfoFrame
-from ctdclient.definitions import last_ctd_station
 
 global alive
 alive = True
@@ -67,14 +67,12 @@ def udpate_ctd_station(
 
 
 class DshipController(Controller):
-
     def __init__(
         self,
         *args,
         info_frame: InfoFrame,
         **kwargs,
     ):
-
         super().__init__(*args, **kwargs)
         self.model: DshipCaller
         self.view: DshipFrame

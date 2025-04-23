@@ -5,21 +5,22 @@ repos:
     rev: v3.13.0
     hooks:
     -   id: reorder-python-imports
-        stages: [commit]
--   repo: https://git.io-warnemuende.de/michels/my-hooks
-    rev: 0.0.7
+        stages: [pre-commit]
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.2
     hooks:
-    -   id: black-formatter
-        stages: [commit]
+    -   id: ruff
+        args: [ --fix ]
+    -   id: ruff-format
+-   repo: https://github.com/python-poetry/poetry
+    rev: 2.1.2
+    hooks:
+    -   id: poetry-check
+        stages: [pre-push]
+    -   id: poetry-lock
+        stages: [pre-push]
+-   repo: https://git.io-warnemuende.de/michels/my-hooks
+    rev: 0.0.9
+    hooks:
     -   id: export-requirements
-        stages: [push]
-    -   id: poetry-version-bump
-        stages: [commit]
-    -   id: git-tag-bump
-        stages: [commit]
-      #     -   id: poetry-build
-      #         stages: [push]
-      #     -   id: upload-package
-      #         stages: [push]
-      #     -   id: update-sphinx-doc
-      #         stages: [push]
+        stages: [pre-push]

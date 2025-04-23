@@ -4,10 +4,9 @@ from datetime import timedelta
 from pathlib import Path
 
 import pytest
-from conftest import data_dir
 from conftest import output_name
 from conftest import target_file
-from ctdclient.eventmanager import EventManager
+from ctdclient.definitions import event_manager
 from ctdclient.model.near_real_time_publication import DailyPublication
 from ctdclient.model.near_real_time_publication import (
     EachProcessingPublication,
@@ -16,7 +15,7 @@ from ctdclient.model.near_real_time_publication import (
     instantiate_near_real_time_target,
 )
 from ctdclient.model.near_real_time_publication import NearRealTimeTarget
-from ctdclient.model.processing import Processing
+from ctdclient.model.processing import ProcessingProcedure
 
 
 daily_email_test_info = {
@@ -52,8 +51,6 @@ each_processing_copy_test_info = {
     "target_file_suffix": "_4coriolis",
     "frequency_of_action": "each_processing",
 }
-
-event_manager = EventManager()
 
 
 def test_frequency_handling():
@@ -128,18 +125,18 @@ def test_correct_target_files(fresh_target_file: Path):
     fresh_target_file.unlink()
 
 
-def test_active_state_each_proc(simple_processing: Processing):
+@pytest.mark.seabird
+def test_active_state_each_proc(simple_processing: ProcessingProcedure):
     pubs = EachProcessingPublication(
         **each_processing_copy_test_info,
-        event_manager=simple_processing.event_manager,
     )
     # set activity to false
     pubs.active = True
     pubs.toggle_activity()
     simple_processing.run(target_file)
-    expected_path = Path(
-        each_processing_copy_test_info["recipient_address"]
-    ).joinpath(output_name)
+    expected_path = Path(each_processing_copy_test_info["recipient_address"]).joinpath(
+        output_name
+    )
     if expected_path.exists():
         expected_path.unlink()
         assert False

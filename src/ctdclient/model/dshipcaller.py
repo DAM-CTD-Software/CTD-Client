@@ -112,8 +112,9 @@ class DshipCaller:
 
 def get_station_log(cruise_id: str) -> None | str:
     manida_url = f"http://{config.dship_ip}:8080/manida-v3/"
-    station_log_url = f"{manida_url}station?expeditionId={
-        cruise_id}&format=JSON"
+    station_log_url = (
+        f"{manida_url}station?expeditionId={cruise_id}&format=JSON"
+    )
     try:
         call = requests.get(station_log_url)
     except (
@@ -151,7 +152,7 @@ def retrieve_station_and_event_info() -> str | None:
         )
         cruise_id = individual_dship_api_call(url_to_get_cruise_id)
         station_log = get_station_log(cruise_id["sample"]["value"])
-    except (KeyError, AttributeError) as error:
+    except (KeyError, AttributeError):
         # TODO: handle this situation properly
         return None
     if station_log:

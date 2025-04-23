@@ -1,17 +1,20 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import copy_metadata
+from pathlib import Path
+import customtkinter
 
-datas=[('.venv/Lib/site-packages/customtkinter', 'customtkinter/'),
-        #('updates/metadata/root.json', 'updates/metadata'),
+customtkinter_path = Path(customtkinter.__file__).parent.absolute()
+
+datas=[
+        (customtkinter_path, 'customtkinter/'),
         ('templates', 'templates'),
         ('icon.ico', '.'),
         ('ctktheme.json', '.'),
         ('update_clean_up.bat', '.'),
         ('docs', 'docs')]
-datas += copy_metadata('ctdclient')
 
 a = Analysis(
-    ['src\\ctdclient\\main.py'],
+    ['src/ctdclient/main.py'],
     pathex=[],
     binaries=[],
     datas=datas,
@@ -30,7 +33,6 @@ exe = EXE(
     a.scripts,
     a.binaries,
     a.datas,
-    # exclude_binaries=True,
     name='ctdclient',
     debug=False,
     bootloader_ignore_signals=False,

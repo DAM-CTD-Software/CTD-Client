@@ -62,24 +62,3 @@ def individual_dship_api_call(url) -> str | None:
             return None
     else:
         return None
-
-
-class Coordinates:
-    def __init__(self, coordinates: tuple[str, str]):
-        self.lat_in = coordinates[0]
-        self.lon_in = coordinates[1]
-        self.lat_min = self.parse_in(self.lat_in)
-        self.lon_min = self.parse_in(self.lon_in)
-
-    def check_deg_min(self, value: str) -> bool:
-        parts = value.split()
-        return parts[-1] in ["N", "W", "S", "O"]
-
-    def min2deg(self, value: str) -> float:
-        if self.check_deg_min(value):
-            return self.deg_min_to_deg_decimal(value)
-        else:
-            return float(value)
-
-    def deg2min(self, value: str) -> float:
-        pass

@@ -1,0 +1,121 @@
+name: Publish package
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  version_bump:
+    runs-on: ubuntu-latest
+    outputs:
+      bump_level: ${{ steps.bump_level.outputs.BUMP_LEVEL }}
+      new_version: ${{ steps.new_version.outputs.NEW_VERSION }}
+      pr_desc: ${{ steps.pr_desc.outputs.PR_DESC }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure Git User
+        run: |
+          git config --global user.name "${{ secrets.GIT_USER_NAME }}"
+          git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
+          git config --global credential.helper store
+          echo "https://${{ secrets.GIT_USER_NAME }}:${{ secrets.GIT_TOKEN }}@git.io-warnemuende.de" > ~/.git-credentials
+          chmod 600 ~/.git-credentials
+
+      - name: Get PR Description from Gitea API
+        id: pr_desc
+        run: |
+          PR_NUMBER=$(git log -1 --pretty=%B | grep -oP '\(#\d+\)' | grep -oP '\d+')
+          PR_DESC=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
+                     "https://git.io-warnemuende.de/api/v1/repos/${{ gitea.repository }}/pulls/$PR_NUMBER" | jq -r '.title')
+          echo "PR_DESC=$PR_DESC" >> $GITHUB_ENV
+          echo "PR_DESC=$PR_DESC" >> $GITHUB_OUTPUT
+
+      - name: Determine Version Bump Level
+        id: bump_level
+        run: |
+          PR_DESC="#major"
+          if echo "$PR_DESC" | grep -iq "#major"; then
+            VERSION_BUMP="major"
+          elif echo "$PR_DESC" | grep -iq "#minor"; then
+            VERSION_BUMP="minor"
+          else
+            VERSION_BUMP="patch"
+          fi
+          echo "VERSION_BUMP=$VERSION_BUMP" >> $GITHUB_ENV
+          echo "BUMP_LEVEL=$VERSION_BUMP" >> $GITHUB_OUTPUT
+
+      - name: Bump Version Based on PR Description
+        id: new_version
+        run: |
+          CURRENT_TAG=$(git describe --tags --abbrev=0)
+          echo "Current Tag: $CURRENT_TAG"
+
+          MAJOR=$(echo $CURRENT_TAG | cut -d '.' -f 1)
+          MINOR=$(echo $CURRENT_TAG | cut -d '.' -f 2)
+          PATCH=$(echo $CURRENT_TAG | cut -d '.' -f 3)
+
+          case $VERSION_BUMP in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          echo $NEW_VERSION
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create and Push Git Tag
+        run: |
+          git tag $NEW_VERSION
+          git push origin $NEW_VERSION --no-verify
+
+
+  build_binary:
+    needs: version_bump
+    if: needs.version_bump.outputs.bump_level != 'patch'
+    runs-on: ubuntu-latest
+    container:
+      image: batonogov/pyinstaller-windows:python-3.12.0
+    env:
+      NEW_VERSION: "${{ needs.version_bump.outputs.new_version }}"
+      PR_DESC: "${{ needs.version_bump.outputs.pr_desc }}"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install python dependencies
+        run: |
+          echo '${{ toJSON(needs) }}'
+          pip install -r requirements.txt
+
+      - name: Build Windows binary
+        run: |
+          ./write_version.sh $NEW_VERSION
+          pyinstaller -y windows.spec
+
+      - name: Create Gitea release
+        run: |
+          apt update && apt install -y curl
+          RESPONSE=$(curl -X POST "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases" \
+            -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
+            -d "{\"tag_name\": \"$NEW_VERSION\", \"name\": \"Release $NEW_VERSION\", \"body\": \"$PR_DESC\"}")
+            RELEASE_ID=$(echo "$RESPONSE" | jq -r '.id')
+            echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
+
+      - name: Upload binary to release
+        run: |
+          curl -X POST "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases/$RELEASE_ID/assets" \
+            -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
+            -F "file=@dist/ctdclient.exe" \
+            -F "name=ctdclient.exe" \
+            -F "tag_name=$NEW_VERSION"

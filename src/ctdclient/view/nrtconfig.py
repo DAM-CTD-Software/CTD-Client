@@ -23,12 +23,10 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         config_file: Path | str = "",
         title_size: int = 20,
         possible_email_parameters: list[str] = [
-            "send_directly",
+            "open_draft",
             "smtp_server",
             "smtp_port",
             "smtp_email",
-            "smtp_user",
-            "smtp_pass",
             "subject",
             "body",
         ],
@@ -77,6 +75,15 @@ class NRTConfigurator(ViewMixin, TomlEditor):
             value_entry = ctk.CTkTextbox(frame, height=200, width=300)
             value_entry.insert(1.0, value)
             args = {"index1": "1.0", "index2": "end"}
+        elif key == "open_draft":
+            switch_var = ctk.StringVar(value="true")
+            value_entry = ctk.CTkSwitch(
+                frame,
+                variable=switch_var,
+                text="",
+                onvalue="true",
+                offvalue="false",
+            )
         else:
             value_entry = ctk.CTkEntry(frame, width=300)
             value_entry.insert(0, value)
@@ -84,7 +91,10 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         value_entry.grid(row=0, column=1)  # , padx=5, pady=5)
 
         def update_param(event):
-            self.config_data["email_info"][key] = value_entry.get(**args)
+            if key == "open_draft":
+                self.config_data["email_info"][key] = switch_var.get()
+            else:
+                self.config_data["email_info"][key] = value_entry.get(**args)
 
         key_label.bind("<Leave>", update_param)
         value_entry.bind("<Leave>", update_param)

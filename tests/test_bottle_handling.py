@@ -1,10 +1,11 @@
 import pytest
 from ctdclient.model.psa import SeasavePsa
+from conftest import psa_dir
 
 
 @pytest.fixture
 def psa() -> SeasavePsa:
-    return SeasavePsa("Seasave.psa")
+    return SeasavePsa(psa_dir.joinpath("Seasave.psa"))
 
 
 def test_comma2dot(psa):

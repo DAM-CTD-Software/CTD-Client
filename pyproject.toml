@@ -37,7 +37,7 @@ twine = ">=4.0.2"
 pre-commit = ">=3.6.0"
 
 [tool.pytest.ini_options]
-addopts = '--cov=ctdclient.model --log-format="%(asctime)s %(levelname)s %(message)s" --log-date-format="%Y-%m-%d %H:%M:%S"'
+pythonpath = [".", "src", "src/ctdclient"]
 filterwarnings = [
     "error",
     "ignore::UserWarning",

@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 def instantiate_near_real_time_target(
     *args,
-    frequency_of_action: str = "23:59",
+    frequency_of_action: str = "23:59:00",
     **kwargs,
 ) -> NearRealTimeTarget:
     if ":" in frequency_of_action:
@@ -108,6 +108,8 @@ class NRTList(UserList):
             nrt.stop()
         if nrt.file_path.exists():
             nrt.file_path.unlink()
+        config.near_real_time.pop(nrt.name)
+        config.write()
 
 
 class NearRealTimeTarget:

@@ -1,5 +1,4 @@
 import logging
-import platform
 import shutil
 import sys
 import tkinter as tk
@@ -17,12 +16,7 @@ def get_config_path(
     root_path: Path,
     ressources_path: Path,
 ) -> Path:
-    if platform.system() == "Linux":
-        config_name = "linux_config.toml"
-    elif platform.system() == "Windows":
-        config_name = "ctdclient.toml"
-    else:
-        sys.exit("Unknown operating system. Aborting.")
+    config_name = "ctdclient.toml"
     default_file_path = root_path.joinpath(config_name)
     if default_file_path.exists():
         return default_file_path

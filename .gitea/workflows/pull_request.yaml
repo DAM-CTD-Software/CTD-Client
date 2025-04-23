@@ -19,8 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install poetry==2.1.1
-          poetry install --without dev,install
+          pip install -r requirements.txt
           pip install pytest-mock
 
       - name: Initialize seabird_example_data
@@ -29,4 +28,4 @@ jobs:
           git submodule update
 
       - name: Run tests
-        run: poetry run pytest
+        run: pytest

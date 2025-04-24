@@ -88,16 +88,16 @@ jobs:
     container:
       image: batonogov/pyinstaller-windows:python-3.12.0
     env:
-      NEW_VERSION: "${{ needs.version_bump.outputs.new_version }}"
-      PR_DESC: "${{ needs.version_bump.outputs.pr_desc }}"
+      NEW_VERSION: ${{ needs.version_bump.outputs.new_version }}
+      PR_DESC: ${{ needs.version_bump.outputs.pr_desc }}
     steps:
       - name: Install missing node to run own containers
-        run: apt update && apt install -y nodejs
+        run: apt update && apt install -y nodejs curl
+
       - uses: actions/checkout@v4
 
       - name: Install python dependencies
         run: |
-          echo '${{ toJSON(needs) }}'
           pip install -r requirements.txt
 
       - name: Build Windows binary
@@ -107,7 +107,6 @@ jobs:
 
       - name: Create Gitea release
         run: |
-          apt update && apt install -y curl
           RESPONSE=$(curl -X POST "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases" \
             -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
             -d "{\"tag_name\": \"$NEW_VERSION\", \"name\": \"Release $NEW_VERSION\", \"body\": \"$PR_DESC\"}")

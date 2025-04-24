@@ -41,6 +41,7 @@ pythonpath = [".", "src", "src/ctdclient"]
 filterwarnings = [
     "error",
     "ignore::UserWarning",
+    'ignore::DeprecationWarning',
     # note the use of single quote below to denote "raw" strings in TOML
     'ignore: datetime.datetime.utcfromtimestamp\(\) is deprecated:DeprecationWarning',
 ]

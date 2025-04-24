@@ -34,7 +34,6 @@ jobs:
       - name: Determine Version Bump Level
         id: bump_level
         run: |
-          PR_DESC="#major"
           if echo "$PR_DESC" | grep -iq "#major"; then
             VERSION_BUMP="major"
           elif echo "$PR_DESC" | grep -iq "#minor"; then
@@ -92,6 +91,8 @@ jobs:
       NEW_VERSION: "${{ needs.version_bump.outputs.new_version }}"
       PR_DESC: "${{ needs.version_bump.outputs.pr_desc }}"
     steps:
+      - name: Install missing node to run own containers
+        run: apt update && apt install -y nodejs
       - uses: actions/checkout@v4
 
       - name: Install python dependencies

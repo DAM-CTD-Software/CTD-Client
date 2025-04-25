@@ -1,4 +1,3 @@
-import datetime
 from pathlib import Path
 
 import pytest
@@ -9,7 +8,7 @@ example_data = Path("seabird_example_data")
 data_dir = example_data.joinpath("cnv")
 raw_data_dir = example_data.joinpath("hex")
 psa_dir = example_data.joinpath("psa")
-target_file = data_dir.joinpath("basic_emb.cnv")
+target_file = data_dir.joinpath("multiple_soaking.cnv")
 output_name = "basic_emb_4coriolis.cnv"
 templates_dir = Path("templates")
 config_template = templates_dir.joinpath("ctdclient.toml")
@@ -62,8 +61,8 @@ def simple_processing(processing: ProcessingProcedure) -> ProcessingProcedure:
             "output_type": "cnv",
             "output_name": output_name,
             "modules": {
-                "abs_sal": {
-                    "parameters": {"time": datetime.datetime.now(), "type": "ocean"}
+                "alignctd": {
+                    "sbeox0ML/L": None,
                 },
             },
         },

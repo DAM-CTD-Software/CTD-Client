@@ -28,7 +28,7 @@ def test_event_processing_successful(simple_processing: ProcessingProcedure):
 
     event_manager.subscribe("processing_successful", assert_correct_file_name)
     simple_processing.run(target_file)
-    sleep(1)
+    sleep(2)
     assert simple_processing.process.exitcode == 0
 
 

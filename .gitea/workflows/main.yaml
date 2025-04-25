@@ -84,20 +84,21 @@ jobs:
   build_binary:
     needs: version_bump
     if: needs.version_bump.outputs.bump_level != 'patch'
-    runs-on: ubuntu-latest
     container:
-      image: batonogov/pyinstaller-windows:python-3.12.0
+      image: batonogov/pyinstaller-windows:latest
     env:
       NEW_VERSION: ${{ needs.version_bump.outputs.new_version }}
       PR_DESC: ${{ needs.version_bump.outputs.pr_desc }}
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
     steps:
-      - name: Install missing node to run own containers
-        run: apt update && apt install -y nodejs curl
+      - name: Install missing dependencies
+        run: apt update && apt install -y nodejs curl git jq
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
       - name: Install python dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Build Windows binary
@@ -107,16 +108,20 @@ jobs:
 
       - name: Create Gitea release
         run: |
-          RESPONSE=$(curl -X POST "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases" \
-            -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
-            -d "{\"tag_name\": \"$NEW_VERSION\", \"name\": \"Release $NEW_VERSION\", \"body\": \"$PR_DESC\"}")
-            RELEASE_ID=$(echo "$RESPONSE" | jq -r '.id')
-            echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
+          RESPONSE=$(curl -X 'POST' \
+            "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases" \
+            -H "Authorization: token $GIT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": \"$PR_DESC\", \"name\": \"Release $NEW_VERSION\", \"tag_name\": \"$NEW_VERSION\"}")
+          echo $RESPONSE
+          RELEASE_ID=$(echo "$RESPONSE" | jq -r '.id')
+          echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
 
       - name: Upload binary to release
         run: |
-          curl -X POST "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases/$RELEASE_ID/assets" \
-            -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
-            -F "file=@dist/ctdclient.exe" \
-            -F "name=ctdclient.exe" \
-            -F "tag_name=$NEW_VERSION"
+          curl -X 'POST' \
+            "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases/$RELEASE_ID/assets?=ctdclient.exe" \
+            -H "Authorization: token $GIT_TOKEN" \
+            -H 'accept: application/json' \
+            -H 'Content-Type: multipart/form-data' \
+            -F 'attachment=@dist/ctdclient.exe'

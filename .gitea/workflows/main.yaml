@@ -51,6 +51,10 @@ jobs:
           CURRENT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
           echo "Current Tag: $CURRENT_TAG"
 
+          if [[ ${CURRENT_TAG::1} == "v" ]] ; then
+            CURRENT_TAG="${CURRENT_TAG:1}"
+          fi
+
           MAJOR=$(echo $CURRENT_TAG | cut -d '.' -f 1)
           MINOR=$(echo $CURRENT_TAG | cut -d '.' -f 2)
           PATCH=$(echo $CURRENT_TAG | cut -d '.' -f 3)
@@ -70,7 +74,7 @@ jobs:
               ;;
           esac
 
-          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+          NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
           echo $NEW_VERSION
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_OUTPUT

@@ -66,15 +66,27 @@ button. When clicking this, the corresponding process will be killed immediately
 
 How to process
 ----
-.. image:: ../images/proc.png
 
 Processing a .hex or .cnv file can be done by clicking 'Run Processing' on the
 measurement tab. This opens a file selector where the target file to process
-can be selected. Whatever script or, when using the processing procedure from https://git.io-warnemuende.de/CTD-Software/processing ,
-.toml configuration is selected in the 'processing' tab. At the moment, this
-tab only allows to do exactly that, to choose a file that describes your
-processing workflow and in the case of a script, takes the target file as a
-single argument.
+can be selected. The selected file will be used as input for all scripts and/or
+processing workflows selected in the processing tab.
+These workflows basically allow the user to easilly build a series of processing
+steps that are meant to be run on the target data file. In-depth description of
+processing workflows can be found in `the documentation of the respective
+python package <https://ctd-software.pages.io-warnemuende.de/processing/usage.html#workflow-files>`_.
+
+You can customize workflows in the 'Processing' Tab. Here, a list of the
+available workflow files and other scripts can be seen. 
+
+.. image:: ../images/proc.png
+
+They can be turned on
+and off by the switch, which means that they are going to run upon clicking
+'Run Processing'. To edit the individual files, click 'edit/details'. That will
+open a new window with the respective files configuration:
+
+.. image:: ../images/proc_workflow.png
 
 
 How to use Near-Real-Time Publications

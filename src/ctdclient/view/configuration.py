@@ -22,7 +22,6 @@ class ConfigurationView(ViewMixin, CtkFrame):
         super().__init__(master=root)
         self.base_settings = BaseSettings(self)
         self.expert_settings = ExpertSettings(self)
-        self.contact_view = ContactView(self)
         self.tabs = TabView(
             window=self,
             tabs={

@@ -8,7 +8,7 @@ customtkinter_path = Path(customtkinter.__file__).parent.absolute()
 datas=[
         (customtkinter_path, 'customtkinter/'),
         ('templates', 'templates'),
-        ('icon.ico', '.'),
+        ('icon/icon.ico', '.'),
         ('ctktheme.json', '.'),
         ('update_clean_up.bat', '.'),
         ('docs', 'docs')]

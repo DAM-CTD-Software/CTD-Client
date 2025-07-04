@@ -161,9 +161,7 @@ class ProcessingView(ViewMixin, CtkFrame):
     def display_modules(
         self, frame: ctk.CTkFrame, processing_workflow: ProcessingProcedure
     ):
-        for index, module in enumerate(
-            processing_workflow.procedure.modules.keys()
-        ):
+        for index, module in enumerate(processing_workflow.modules.keys()):
             ctk.CTkLabel(frame, text=module).grid(row=index, column=0)
 
     def open_config(self, processing_workflow: ProcessingConfig):

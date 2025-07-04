@@ -13,15 +13,29 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx_autodoc_typehints",
     "sphinx.ext.todo",
+    "sphinx.ext.linkcode",
     "myst_parser",
 ]
 
-html_logo = "../../icon/BrnBld_CtdRosette_256.png"
-html_favicon = "../../icon.ico"
+
+def linkcode_resolve(domain, info):
+    if domain != "py":
+        return None
+    if not info["module"]:
+        return None
+    filename = info["module"].replace(".", "/")
+    return (
+        "https://git.io-warnemuende.de/CTD-Software/CTD-Client/src/branch/main/src/%s.py"
+        % filename
+    )
+
+
+html_logo = "../../icon/BrnBld_CtdRosette_256.svg"
+html_favicon = "../../icon/BrnBld_CtdRosette_256.svg"
 
 autodoc_member_order = "bysource"
 templates_path = ["_templates"]
 exclude_patterns = []
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 html_static_path = ["_static"]

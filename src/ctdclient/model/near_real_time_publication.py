@@ -27,7 +27,7 @@ from ctdclient.definitions import cruise_name
 from ctdclient.definitions import event_manager
 from ctdclient.definitions import ROOT_PATH
 from ctdclient.definitions import TEMPLATE_PATH
-from seabirdfilehandler import SeaBirdFile
+from seabirdfilehandler import DataFile
 from shapely.geometry import Point
 from tomlkit.toml_file import TOMLFile
 
@@ -302,7 +302,7 @@ class NearRealTimeTarget:
                 continue
             if len(self.map_data) > 0:
                 try:
-                    file_metadata = SeaBirdFile(
+                    file_metadata = DataFile(
                         path_to_file=file,
                         only_header=True,
                     ).metadata

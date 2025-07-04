@@ -8,7 +8,6 @@ from tkinter import ttk
 
 import customtkinter as ctk
 from ctdclient.definitions import config
-from ctdclient.definitions import RESSOURCES_PATH
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.tabview import TabView
 from ctdclient.view.View import ViewMixin
@@ -23,13 +22,11 @@ class ConfigurationView(ViewMixin, CtkFrame):
         super().__init__(master=root)
         self.base_settings = BaseSettings(self)
         self.expert_settings = ExpertSettings(self)
-        self.contact_view = ContactView(self)
         self.tabs = TabView(
             window=self,
             tabs={
                 "basic settings": self.base_settings,
                 "expert settings": self.expert_settings,
-                "contact": self.contact_view,
             },
             width=600,
             height=700,
@@ -376,24 +373,43 @@ class AboutView(CtkFrame):
 
         ctk.CTkLabel(
             self,
-            text="This is the CTD-Client developed at the IOW for the DAM.\nIt is meant to help in and streamline the CTD-Data-Acquisition.\nThe documentation can be found here:",
+            text="This is the CTD-Client developed at the IOW for the DAM.\nIt is meant to help in and streamline the CTD-Data-Acquisition.\n\nThe documentation can be found here:",
         ).grid(row=0, column=0, padx=self.padx, pady=self.pady)
-        offline_link = ctk.CTkButton(
+        ctk.CTkButton(
             self,
-            text="Open documentation in browser",
+            text="General online documentation",
             command=lambda: webbrowser.open_new_tab(
-                f"file://{RESSOURCES_PATH}/docs/build/usage.html"
+                "https://ctd-software.pages.io-warnemuende.de/CTD-Client/usage.html"
             ),
-        )
-        offline_link.grid(row=1, column=0)
-
-
-class ContactView(CtkFrame):
-    def initialize(self, root):
-        super().__init__(master=root)
-
+        ).grid(row=1, column=0, padx=self.padx, pady=self.pady)
+        ctk.CTkButton(
+            self,
+            text="Processing documentation",
+            command=lambda: webbrowser.open_new_tab(
+                "https://ctd-software.pages.io-warnemuende.de/processing/"
+            ),
+        ).grid(row=2, column=0, padx=self.padx, pady=self.pady)
         ctk.CTkLabel(
             self,
-            text="Developed and maintained by Emil Michels, IOW.\nFeel free to contact me in case of problems, if you find a bug or just have a great idea on how to improve this software.\nwebsite: https://www.io-warnemuende.de/emil-michels-en.html\nemail: emil.michels@io-warnemuende.de\ntelephone: +49 381 5197 159",
-            justify="left",
-        ).grid()
+            text="Developed and maintained by Emil Michels, IOW.\nFeel free to contact me anytime.\n",
+        ).grid(row=3, column=0, padx=self.padx, pady=self.pady)
+        contact_links = ctk.CTkFrame(self, fg_color="transparent")
+        contact_links.grid(row=4, column=0, padx=self.padx, pady=self.pady)
+        ctk.CTkButton(
+            contact_links,
+            text="Email",
+            command=lambda: webbrowser.open(
+                "mailto:?to="
+                + "emil.michels@io-warnemuende.de"
+                + "&subject="
+                + "CTD-Client Support: ",
+                new=1,
+            ),
+        ).grid(row=0, column=0, padx=self.padx, pady=self.pady)
+        ctk.CTkButton(
+            contact_links,
+            text="Website",
+            command=lambda: webbrowser.open_new_tab(
+                "https://www.io-warnemuende.de/emil-michels-en.html"
+            ),
+        ).grid(row=0, column=1, padx=self.padx, pady=self.pady)

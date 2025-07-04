@@ -21,7 +21,7 @@ from ctdclient.definitions import WRONG_CONFIG
 from ctdclient.view.mainwindow import MainWindow
 from CTkMessagebox import CTkMessagebox
 from tufup.client import Client
- 
+
 format = "%(asctime)s - %(name)s - [%(levelname)s] - %(message)s"
 datefmt = "%Y-%m-%d %H:%M:%S"
 loglevel = logging.INFO
@@ -50,7 +50,7 @@ def main():
     configuration_file = config
     # set ctk options
     root = ctk.CTk()
-    root.title(f"DAM CTD Software v{VERSION}")
+    root.title(f"DAM CTD Software {VERSION}")
     # Because CTkToplevel currently is bugged on windows
     # and doesn't check if a user specified icon is set
     # we need to set the icon again after 200ms

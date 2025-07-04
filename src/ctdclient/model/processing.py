@@ -127,6 +127,7 @@ class ProcessingProcedure(ProcessingConfig):
             procedure_fingerprint_directory=procedure_fingerprint_directory,
             file_type_dir=file_type_dir,
         )
+        self.modules = config["modules"]
         self.killed = False
 
     def run(self, file: Path):

@@ -12,21 +12,22 @@ if getattr(sys, "frozen", False):
     ROOT_PATH = Path(sys.executable).parent
     RESSOURCES_PATH = Path(sys._MEIPASS)
 else:
-    RESSOURCES_PATH = ROOT_PATH = Path(__file__).absolute().parents[2]
-CONFIG_PATH = get_config_path(ROOT_PATH, RESSOURCES_PATH)
-try:
-    config = ConfigurationFile(CONFIG_PATH)
-    WRONG_CONFIG = False
-except InvalidConfigFile:
-    CONFIG_PATH.replace(f"misconfigured_{CONFIG_PATH.name}")
-    CONFIG_PATH = get_config_path(ROOT_PATH, RESSOURCES_PATH)
-    config = ConfigurationFile(CONFIG_PATH)
-    WRONG_CONFIG = True
+    ROOT_PATH = Path(__file__).absolute().parents[2]
+    RESSOURCES_PATH = ROOT_PATH.joinpath("ressources")
 VERSION = __version__
 THEMES_PATH = RESSOURCES_PATH.joinpath("ctktheme.json")
 ICON_PATH = RESSOURCES_PATH.joinpath("icon.ico")
 TEMPLATE_PATH = RESSOURCES_PATH.joinpath("templates")
 PROCESSING_TEMPLATE_PATH = TEMPLATE_PATH.joinpath("processing_template.toml")
+CONFIG_PATH = get_config_path(ROOT_PATH, TEMPLATE_PATH)
+try:
+    config = ConfigurationFile(CONFIG_PATH)
+    WRONG_CONFIG = False
+except InvalidConfigFile:
+    CONFIG_PATH.replace(f"misconfigured_{CONFIG_PATH.name}")
+    CONFIG_PATH = get_config_path(ROOT_PATH, TEMPLATE_PATH)
+    config = ConfigurationFile(CONFIG_PATH)
+    WRONG_CONFIG = True
 
 # update specifics
 INSTALL_DIR = RESSOURCES_PATH.joinpath("updates")

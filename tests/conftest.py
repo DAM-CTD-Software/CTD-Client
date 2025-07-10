@@ -10,7 +10,7 @@ raw_data_dir = example_data.joinpath("hex")
 psa_dir = example_data.joinpath("psa")
 target_file = data_dir.joinpath("multiple_soaking.cnv")
 output_name = "basic_emb_4coriolis.cnv"
-templates_dir = Path("templates")
+templates_dir = Path("resources/templates")
 config_template = templates_dir.joinpath("ctdclient.toml")
 processing_template = templates_dir.joinpath("processing_template.toml")
 

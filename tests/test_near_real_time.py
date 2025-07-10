@@ -24,7 +24,7 @@ daily_email_test_info = {
     "target_file_directory": "seabird_example_data/cnv",
     "target_file_suffix": "_4coriolis",
     "frequency_of_action": "daily",
-    "geo_filter": "maps/germany.xml",
+    "geo_filter": "resources/maps/germany.xml",
     "email_info": {
         "send_directly": True,
         "smtp_server": "localhost",
@@ -92,8 +92,8 @@ def test_geo_filter():
     pubs = EachProcessingPublication(
         **each_processing_copy_test_info, event_manager=event_manager
     )
-    assert pubs.geographic_filter((11, 54), "maps/germany.xml")
-    assert not pubs.geographic_filter((50, 20), "maps/germany.xml")
+    assert pubs.geographic_filter((11, 54), "resources/maps/germany.xml")
+    assert not pubs.geographic_filter((50, 20), "resources/maps/germany.xml")
 
 
 def test_send_email(mocker, fresh_target_file):

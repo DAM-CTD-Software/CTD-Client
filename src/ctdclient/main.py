@@ -10,7 +10,7 @@ from ctdclient.controller.maincontroller import MainController
 from ctdclient.definitions import config
 from ctdclient.definitions import ICON_PATH
 from ctdclient.definitions import METADATA_URL
-from ctdclient.definitions import RESSOURCES_PATH
+from ctdclient.definitions import RESOURCES_PATH
 from ctdclient.definitions import ROOT_PATH
 from ctdclient.definitions import TARGET_URL
 from ctdclient.definitions import THEMES_PATH
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     if UPDATED:
         import os
 
-        old_path = RESSOURCES_PATH.joinpath("update_clean_up.bat")
+        old_path = RESOURCES_PATH.joinpath("update_clean_up.bat")
         if not old_path.is_absolute():
             old_path = old_path.absolute()
         target_dir = old_path.parents[1]

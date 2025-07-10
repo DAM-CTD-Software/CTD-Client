@@ -238,7 +238,7 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                         padx=self.padx,
                         pady=self.pady,
                     )
-                elif name.endswith("exe"):
+                elif name.endswith(("exe", "dir", "print")):
                     ctk.CTkLabel(
                         self,
                         textvariable=variable,
@@ -251,7 +251,7 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                         pady=self.pady,
                     )
                     command_with_arguments = partial(
-                        self.select_file, setting, name, variable
+                        self.select_file, name, variable
                     )
                     ctk.CTkButton(
                         self,
@@ -341,28 +341,30 @@ class ExpertSettings(ctk.CTkScrollableFrame):
         # self.configuration.write(use_internal_values=False)
         # self.callbacks["save"]()
 
-    def select_file(self, instrument, name, variable):
+    def select_file(self, name, variable):
         """
         Generic file selection method, that opens a file browsing pop-up.
         """
+        path = Path(variable.get())
         if name.endswith("exe"):
             file_type = "exe"
-        else:
-            file_type = name
-        path = Path(variable.get())
-        filetypes = (
-            (f"{file_type} files", f"*.{file_type}"),
-            ("All files", "*.*"),
-        )
+            filetypes = (
+                (f"{file_type} files", f"*.{file_type}"),
+                ("All files", "*.*"),
+            )
 
-        file = fd.askopenfilename(
-            title=f"Path to {name}",
-            initialdir=path.parent,
-            initialfile=path.name,
-            filetypes=filetypes,
-        )
-        if file:
-            variable.set(file)
+            file = fd.askopenfilename(
+                title=f"Path to {name}",
+                initialdir=path.parent,
+                initialfile=path.name,
+                filetypes=filetypes,
+            )
+        else:
+            file = fd.askdirectory(
+                title=f"Path to {name}",
+                initialdir=path.parent,
+            )
+        variable.set(file)
 
 
 class AboutView(CtkFrame):

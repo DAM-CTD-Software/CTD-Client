@@ -11,7 +11,7 @@ use_dship_values = true
 generate_processing_fingerprint = ""
 file_type_dir = ""
 debugging = false
-processing_dir = 'templates'
+processing_dir = "resources\\templates"
 
 [dship]
 ip = 'dship1'

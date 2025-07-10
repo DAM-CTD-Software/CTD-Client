@@ -7,18 +7,15 @@ customtkinter_path = Path(customtkinter.__file__).parent.absolute()
 
 datas=[
         (customtkinter_path, 'customtkinter/'),
-        ('templates', 'templates'),
-        ('icon/icon.ico', '.'),
-        ('ctktheme.json', '.'),
-        ('update_clean_up.bat', '.'),
-        ('docs', 'docs')]
+        ('resources', '.')
+]
 
 a = Analysis(
     ['src/ctdclient/main.py'],
     pathex=[],
     binaries=[],
     datas=datas,
-    hiddenimports=[],
+    hiddenimports=['scipy._cyutility'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -46,5 +43,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['icon\\icon.ico'],
+    icon=['resources/icon.ico'],
 )

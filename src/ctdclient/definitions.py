@@ -10,26 +10,27 @@ from ctdclient.version import __version__
 
 if getattr(sys, "frozen", False):
     ROOT_PATH = Path(sys.executable).parent
-    RESSOURCES_PATH = Path(sys._MEIPASS)
+    RESOURCES_PATH = Path(sys._MEIPASS)
 else:
-    RESSOURCES_PATH = ROOT_PATH = Path(__file__).absolute().parents[2]
-CONFIG_PATH = get_config_path(ROOT_PATH, RESSOURCES_PATH)
+    ROOT_PATH = Path(__file__).absolute().parents[2]
+    RESOURCES_PATH = ROOT_PATH.joinpath("resources")
+VERSION = __version__
+THEMES_PATH = RESOURCES_PATH.joinpath("ctktheme.json")
+ICON_PATH = RESOURCES_PATH.joinpath("icon.ico")
+TEMPLATE_PATH = RESOURCES_PATH.joinpath("templates")
+PROCESSING_TEMPLATE_PATH = TEMPLATE_PATH.joinpath("processing_template.toml")
+CONFIG_PATH = get_config_path(ROOT_PATH, TEMPLATE_PATH)
 try:
     config = ConfigurationFile(CONFIG_PATH)
     WRONG_CONFIG = False
 except InvalidConfigFile:
     CONFIG_PATH.replace(f"misconfigured_{CONFIG_PATH.name}")
-    CONFIG_PATH = get_config_path(ROOT_PATH, RESSOURCES_PATH)
+    CONFIG_PATH = get_config_path(ROOT_PATH, TEMPLATE_PATH)
     config = ConfigurationFile(CONFIG_PATH)
     WRONG_CONFIG = True
-VERSION = __version__
-THEMES_PATH = RESSOURCES_PATH.joinpath("ctktheme.json")
-ICON_PATH = RESSOURCES_PATH.joinpath("icon.ico")
-TEMPLATE_PATH = RESSOURCES_PATH.joinpath("templates")
-PROCESSING_TEMPLATE_PATH = TEMPLATE_PATH.joinpath("processing_template.toml")
 
 # update specifics
-INSTALL_DIR = RESSOURCES_PATH.joinpath("updates")
+INSTALL_DIR = RESOURCES_PATH.joinpath("updates")
 TUFUP_METADATA = INSTALL_DIR.joinpath("metadata")
 TUFUP_TARGET = INSTALL_DIR.joinpath("targets")
 # ensure, that directory exists

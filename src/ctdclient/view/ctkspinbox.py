@@ -1,6 +1,7 @@
 import tkinter as tk
-import customtkinter as ctk
 from typing import Callable
+
+import customtkinter as ctk
 
 
 class CTkSpinbox(ctk.CTkFrame):
@@ -19,7 +20,11 @@ class CTkSpinbox(ctk.CTkFrame):
         self.step_size = step_size
         self.command = command
 
-        self.configure(fg_color=("gray78", "gray28"))  # set frame color
+        self.configure(
+            fg_color="transparent",
+            border_color="gray28",
+            border_width=0.4,
+        )
 
         self.grid_columnconfigure((0, 2), weight=0)  # buttons don't expand
         self.grid_columnconfigure(1, weight=1)  # entry expands

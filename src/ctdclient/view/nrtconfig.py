@@ -67,7 +67,7 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         frame.grid(row=row, column=0, sticky="ew", padx=5, pady=5)
         frame.grid_columnconfigure(0, weight=1)
 
-        key_label = ctk.CTkLabel(frame, text=key, anchor="w")
+        key_label = ctk.CTkLabel(frame, text=key.replace("_", " "), anchor="w")
         key_label.grid(row=0, column=0, sticky="w", padx=2, pady=2)
 
         if key == "body":

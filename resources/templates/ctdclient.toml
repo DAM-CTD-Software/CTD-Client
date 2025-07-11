@@ -26,9 +26,9 @@ Station = 'ActionLog.PUP.DopName'
 GPS_Time = 'SYS.DISP.TimeTxt'
 GPS_Lat = 'SYS.STR.PosLat'
 GPS_Lon = 'SYS.STR.PosLon'
-Echo_Depth = 'SYS.CALC.WaterDepth'
+Water_Depth = 'SYS.CALC.WaterDepth'
 Air_Pressure = 'Weatherstation.PEUMA.Air_pressure'
-Pos_Alias = 'Web.PUP.NextWPName'
+Position_Alias = 'Web.PUP.NextWPName'
 Device = 'ActionLog.PUP.DeviceShortName'
 
 [operators]

@@ -13,6 +13,8 @@ class CtkFrame(ctk.CTkFrame):
         self.padx = 5
         self.pady = 5
         self.configure(fg_color="transparent")
+        self.master.grid_rowconfigure(0, weight=1)
+        self.master.grid_columnconfigure(0, weight=1)
 
     def set_border(self, width: int = 1, color: str = "gray10"):
         """Sets a uniform, minimal border around the frame."""

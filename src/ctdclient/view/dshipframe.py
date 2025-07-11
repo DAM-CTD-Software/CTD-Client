@@ -44,9 +44,17 @@ class DshipFrame(ViewMixin, CtkFrame):
         hidden_elements = ("Cruise", "Device") if not self.debug else ()
         for index, (key, value) in enumerate(self.dship_vars.items()):
             if key not in hidden_elements:
-                ctk.CTkLabel(self, text=key).grid(row=index + 1, column=0)
+                ctk.CTkLabel(self, text=key.replace("_", " ")).grid(
+                    row=index + 1,
+                    column=0,
+                    sticky="w",
+                    padx=self.padx,
+                )
                 ctk.CTkLabel(self, textvariable=value).grid(
-                    row=index + 1, column=1
+                    row=index + 1,
+                    column=1,
+                    sticky="w",
+                    padx=self.padx,
                 )
         self.update_dship_values()
 

@@ -36,22 +36,29 @@ class InfoFrame(ViewMixin, CtkFrame):
                 child.grid_forget()
                 child.destroy()
 
-        ctk.CTkLabel(self, text="current filename").grid(
+        ctk.CTkLabel(self, text="Current filename").grid(
             row=0, column=0, sticky=tk.W, padx=self.padx
         )
         ctk.CTkLabel(self, textvariable=self.current_filename).grid(
             row=0, column=1, sticky=tk.E
         )
         # last filename
-        ctk.CTkLabel(self, text="last filename").grid(
+        ctk.CTkLabel(self, text="Last filename").grid(
             row=1, column=0, sticky=tk.W, padx=self.padx
         )
         ctk.CTkLabel(self, textvariable=self.last_filename).grid(
             row=1, column=1, sticky=tk.E
         )
+        # cast selection/display
+        ctk.CTkLabel(self, text="Cast number").grid(
+            row=2, column=0, sticky=tk.W, padx=self.padx
+        )
+        CTkSpinbox(self, variable=self.cast_number).grid(
+            row=2, column=1, sticky=tk.E
+        )
         # operator selection
         ctk.CTkLabel(self, text="Operator").grid(
-            row=2, column=0, sticky=tk.W, padx=self.padx
+            row=3, column=0, sticky=tk.W, padx=self.padx
         )
         ctk.CTkComboBox(
             self,
@@ -61,16 +68,9 @@ class InfoFrame(ViewMixin, CtkFrame):
                 if item != ""
             ],
             variable=self.operator,
-        ).grid(row=2, column=1, sticky=tk.E)
-        # cast selection/display
-        ctk.CTkLabel(self, text="Cast number").grid(
-            row=3, column=0, sticky=tk.W, padx=self.padx
-        )
-        CTkSpinbox(self, variable=self.cast_number).grid(
-            row=3, column=1, sticky=tk.E
-        )
+        ).grid(row=3, column=1, sticky=tk.E)
         # scanfish-specific option to override the current Pos_Alias
-        ctk.CTkLabel(self, text="Override Pos_Alias").grid(
+        ctk.CTkLabel(self, text="Override Position Alias").grid(
             row=5, column=0, sticky=tk.W, padx=self.padx
         )
         ctk.CTkEntry(

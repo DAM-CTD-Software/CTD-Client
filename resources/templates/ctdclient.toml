@@ -2,7 +2,7 @@
 # usually set only once during the software installation process
 last_platform = "CTD"
 [base]
-platforms = ['CTD', "Scanfish"]
+platforms = ["CTD", "Scanfish"]
 seasave_exe = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\Seasave.exe"
 downcast_option = false
 self_updating = false
@@ -12,24 +12,25 @@ generate_processing_fingerprint = ""
 file_type_dir = ""
 debugging = false
 processing_dir = "resources\\templates"
+nrt_dir = ""
 
 [dship]
-ip = 'dship1'
+ip = "dship1"
 url_part = ":8080/dship-web/service/samples"
 # timeout between individual API calls in seconds
 fetch_intervall = 1
 
 # the internal dship names of the different parameters
 [dship.identifier]
-Cruise = 'SYS.DISP.ExpNumber'
-Station = 'ActionLog.PUP.DopName'
-GPS_Time = 'SYS.DISP.TimeTxt'
-GPS_Lat = 'SYS.STR.PosLat'
-GPS_Lon = 'SYS.STR.PosLon'
-Echo_Depth = 'SYS.CALC.WaterDepth'
-Air_Pressure = 'Weatherstation.PEUMA.Air_pressure'
-Pos_Alias = 'Web.PUP.NextWPName'
-Device = 'ActionLog.PUP.DeviceShortName'
+Cruise = "SYS.DISP.ExpNumber"
+Station = "ActionLog.PUP.DopName"
+GPS_Time = "SYS.DISP.TimeTxt"
+GPS_Lat = "SYS.STR.PosLat"
+GPS_Lon = "SYS.STR.PosLon"
+Water_Depth = "SYS.CALC.WaterDepth"
+Air_Pressure = "Weatherstation.PEUMA.Air_pressure"
+Position_Alias = "Web.PUP.NextWPName"
+Device = "ActionLog.PUP.DeviceShortName"
 
 [operators]
 op1 = ""

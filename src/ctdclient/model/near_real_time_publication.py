@@ -25,7 +25,6 @@ from ctdclient.definitions import config
 from ctdclient.definitions import cruise_head
 from ctdclient.definitions import cruise_name
 from ctdclient.definitions import event_manager
-from ctdclient.definitions import ROOT_PATH
 from ctdclient.definitions import TEMPLATE_PATH
 from seabirdfilehandler import DataFile
 from shapely.geometry import Point
@@ -60,8 +59,7 @@ class NRTList(UserList):
         if clear_data:
             self.kill_processes()
             self.data = []
-        # TODO: make this flexible? eg allow dir selection
-        for path in ROOT_PATH.glob("nrt_*.toml"):
+        for path in config.nrt_dir.glob("nrt_*.toml"):
             try:
                 self.data.append(self.create_nrt_instance(path))
             except Exception as error:

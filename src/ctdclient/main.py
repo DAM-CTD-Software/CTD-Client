@@ -88,6 +88,7 @@ def main():
     if WRONG_CONFIG:
         main_window.after(2000, inform_about_bad_config, main_window)
 
+    ctk.set_widget_scaling(1.5)
     # main_window.grid(row=0, column=0, sticky="nsew")
     root.grid_rowconfigure(0, weight=1)
     root.grid_columnconfigure(0, weight=1)

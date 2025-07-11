@@ -11,7 +11,6 @@ from ctdclient.definitions import config
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.tabview import TabView
 from ctdclient.view.View import ViewMixin
-from CTkListbox import CTkListbox
 from CTkMessagebox import CTkMessagebox
 
 
@@ -195,7 +194,7 @@ class ExpertSettings(ctk.CTkScrollableFrame):
         self.padx = 5
         self.pady = 5
         self.values = self.get_values_to_set()
-        self.platform_options = ["CTD"]  # ¨Scanfish¨
+        self.platform_options = ["CTD"]
         top_entry_length = len(self.values["base"])
         for index, (setting, inner_dict) in enumerate(self.values.items()):
             index *= top_entry_length + len(self.platform_options) + 1
@@ -217,13 +216,6 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                 inner_dict.items()
             ):
                 row = index + inner_index + 2
-                ctk.CTkLabel(self, text=f"{name.replace('_', ' ')}: ").grid(
-                    row=row,
-                    column=0,
-                    sticky=tk.W,
-                    padx=self.padx,
-                    pady=self.pady,
-                )
                 if param_type is bool:
                     variable = tk.BooleanVar(value=variable.get())
                     inner_dict[name] = (variable, param_type)
@@ -261,25 +253,29 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                         font=(tkFont.nametofont("TkDefaultFont"), 10),
                     ).grid(row=row, column=2, padx=self.padx, pady=self.pady)
                 elif name.endswith("platforms"):
-                    self.listbox = CTkListbox(
-                        self,
-                        multiple_selection=True,
-                        width=80,
-                        height=90,
-                        font=(tkFont.nametofont("TkDefaultFont"), 10),
-                    )
-                    self.listbox.grid(
-                        row=row,
-                        column=1,
-                        padx=self.padx,
-                        pady=self.pady,
-                        sticky=tk.E,
-                    )
-                    for index, platform in enumerate(self.platform_options):
-                        self.listbox.insert(index, platform)
-                        if platform in variable:
-                            # TODO: not working for more than one value
-                            self.listbox.activate(index)
+                    continue
+                    # TODO:will not be shown as long as platforms are not fully
+                    # implemented
+                    #
+                    # self.listbox = CTkListbox(
+                    #     self,
+                    #     multiple_selection=True,
+                    #     width=80,
+                    #     height=90,
+                    #     font=(tkFont.nametofont("TkDefaultFont"), 10),
+                    # )
+                    # self.listbox.grid(
+                    #     row=row,
+                    #     column=1,
+                    #     padx=self.padx,
+                    #     pady=self.pady,
+                    #     sticky=tk.E,
+                    # )
+                    # for index, platform in enumerate(self.platform_options):
+                    #     self.listbox.insert(index, platform)
+                    #     if platform in variable:
+                    #         # TODO: not working for more than one value
+                    #         self.listbox.activate(index)
 
                 else:
                     ctk.CTkEntry(self, textvariable=variable).grid(
@@ -289,6 +285,13 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                         padx=self.padx,
                         pady=self.pady,
                     )
+                ctk.CTkLabel(self, text=f"{name.replace('_', ' ')}: ").grid(
+                    row=row,
+                    column=0,
+                    sticky=tk.W,
+                    padx=self.padx,
+                    pady=self.pady,
+                )
         ctk.CTkButton(
             self, text="Save", command=self.write_config, width=600
         ).grid(

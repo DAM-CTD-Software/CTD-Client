@@ -12,6 +12,7 @@ generate_processing_fingerprint = ""
 file_type_dir = ""
 debugging = false
 processing_dir = "resources\\templates"
+nrt_dir = ""
 
 [dship]
 ip = 'dship1'

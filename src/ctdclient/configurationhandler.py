@@ -43,6 +43,9 @@ class ConfigurationFile:
             self.platforms: list = self.data["base"]["platforms"]
             assert isinstance(self.platforms, list)
             self.path_to_seasave: Path = Path(self.data["base"]["seasave_exe"])
+            self.path_to_proc_exes: Path = Path(
+                self.data["base"]["processing_exes"]
+            )
             self.downcast_option: bool = self.data["base"]["downcast_option"]
             self.updating: bool = self.data["base"]["self_updating"]
             self.server: str = self.data["base"]["server_address"]

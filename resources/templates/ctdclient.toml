@@ -14,6 +14,7 @@ file_type_dir = ""
 debugging = false
 processing_dir = "resources\\templates"
 nrt_dir = ""
+scaling = 1.0
 
 [dship]
 ip = "dship1"

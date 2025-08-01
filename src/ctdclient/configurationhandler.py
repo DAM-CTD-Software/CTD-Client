@@ -59,6 +59,7 @@ class ConfigurationFile:
                 self.data["base"]["processing_dir"]
             )
             self.nrt_dir: Path = Path(self.data["base"]["nrt_dir"])
+            self.scaling: float = float(self.data["base"]["scaling"])
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dship_url_part: str = self.data["dship"]["url_part"]
             self.dhsip_fetch_intervall: float = float(

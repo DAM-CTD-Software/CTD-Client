@@ -230,7 +230,7 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                         padx=self.padx,
                         pady=self.pady,
                     )
-                elif name.endswith(("exe", "dir", "print")):
+                elif name.endswith(("exe", "dir", "print", "exes")):
                     ctk.CTkLabel(
                         self,
                         textvariable=variable,

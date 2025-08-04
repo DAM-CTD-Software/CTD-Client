@@ -43,6 +43,9 @@ class ConfigurationFile:
             self.platforms: list = self.data["base"]["platforms"]
             assert isinstance(self.platforms, list)
             self.path_to_seasave: Path = Path(self.data["base"]["seasave_exe"])
+            self.path_to_proc_exes: Path = Path(
+                self.data["base"]["processing_exes"]
+            )
             self.downcast_option: bool = self.data["base"]["downcast_option"]
             self.updating: bool = self.data["base"]["self_updating"]
             self.server: str = self.data["base"]["server_address"]
@@ -56,6 +59,7 @@ class ConfigurationFile:
                 self.data["base"]["processing_dir"]
             )
             self.nrt_dir: Path = Path(self.data["base"]["nrt_dir"])
+            self.scaling: float = float(self.data["base"]["scaling"])
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dship_url_part: str = self.data["dship"]["url_part"]
             self.dhsip_fetch_intervall: float = float(

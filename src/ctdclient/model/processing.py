@@ -88,6 +88,12 @@ class ProcessingConfig(ABC):
             True if self.name == config.last_processing_file.name else False
         )
 
+    def __str__(self) -> str:
+        return str(self.path_to_config)
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
     @abstractmethod
     def run(self, file: Path):
         pass
@@ -120,14 +126,15 @@ class ProcessingProcedure(ProcessingConfig):
         file_type_dir: str = "",
     ):
         new_config = Path(path_to_config)
-        config = Configuration(new_config)
+        proc_config = Configuration(new_config)
         self.procedure = Procedure(
-            config,
+            proc_config,
+            seabird_exe_directory=config.path_to_proc_exes,
             auto_run=False,
             procedure_fingerprint_directory=procedure_fingerprint_directory,
             file_type_dir=file_type_dir,
         )
-        self.modules = config["modules"]
+        self.modules = proc_config["modules"]
         self.killed = False
 
     def run(self, file: Path):

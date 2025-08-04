@@ -62,6 +62,7 @@ def main():
     root.option_add("*Font", default_font)
     ctk.set_appearance_mode("dark")
     ctk.set_default_color_theme(str(THEMES_PATH))
+    ctk.set_widget_scaling(config.scaling)
     root.geometry("700x780")
     # initialize objects
     main_controller = MainController(root)
@@ -88,7 +89,6 @@ def main():
     if WRONG_CONFIG:
         main_window.after(2000, inform_about_bad_config, main_window)
 
-    ctk.set_widget_scaling(1.5)
     # main_window.grid(row=0, column=0, sticky="nsew")
     root.grid_rowconfigure(0, weight=1)
     root.grid_columnconfigure(0, weight=1)

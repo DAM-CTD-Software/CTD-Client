@@ -10,6 +10,8 @@ datas=[
         ('resources', '.')
 ]
 
+datas += copy_metadata("ctd-processing")
+
 a = Analysis(
     ['src/ctdclient/main.py'],
     pathex=[],

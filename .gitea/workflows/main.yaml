@@ -116,7 +116,6 @@ jobs:
 
   build_binary:
     needs: version_bump
-    if: needs.version_bump.outputs.bump_level != 'patch'
     container:
       image: batonogov/pyinstaller-windows:v4.11.1
     env:

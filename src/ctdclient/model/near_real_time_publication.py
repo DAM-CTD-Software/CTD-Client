@@ -250,19 +250,17 @@ class NearRealTimeTarget:
         else:
             self.send_email(email_message)
 
-    def send_email(
-        self,
-        msg: EmailMessage,
-    ):
+    def send_email(self, msg: EmailMessage):
         """
         Sends the email message using the given smtp server configuration.
         """
         try:
             smtp_server = self.email_info["smtp_server"]
             smtp_port = self.email_info["smtp_port"]
-        except KeyError as error:
+            assert len(smtp_server) and len(smtp_port)
+        except (KeyError, AssertionError):
             logger.error(
-                f"Could not send email, because of missing information: {error}"
+                "Could not send email, because of missing smtp server and/or port information."
             )
             return
         assert isinstance(msg, EmailMessage)

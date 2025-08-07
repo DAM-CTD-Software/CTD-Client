@@ -1,4 +1,3 @@
-import logging
 import shutil
 import sys
 import tkinter.font as tkFont
@@ -18,26 +17,11 @@ from ctdclient.definitions import TUFUP_METADATA
 from ctdclient.definitions import TUFUP_TARGET
 from ctdclient.definitions import VERSION
 from ctdclient.definitions import WRONG_CONFIG
+from ctdclient.logconfig import LoggingConfig
 from ctdclient.view.mainwindow import MainWindow
 from CTkMessagebox import CTkMessagebox
 from tufup.client import Client
 
-format = "%(asctime)s - %(name)s - [%(levelname)s] - %(message)s"
-datefmt = "%Y-%m-%d %H:%M:%S"
-loglevel = logging.INFO
-
-# Configure the root logger with a file handler
-logging.basicConfig(
-    level=loglevel,
-    format=format,
-    datefmt=datefmt,
-    handlers=[
-        logging.FileHandler("ctdclient.log"),
-        logging.StreamHandler(),  # Also output to console
-    ],
-)
-
-logger = logging.getLogger(__name__)
 
 global UPDATED
 UPDATED = False
@@ -67,6 +51,8 @@ def main():
     # initialize objects
     main_controller = MainController(root)
     main_window = main_controller.mainwindow
+
+    logger = LoggingConfig(root=root, logger_name=__name__).logger
 
     # check for update upon start
     if configuration_file.updating:

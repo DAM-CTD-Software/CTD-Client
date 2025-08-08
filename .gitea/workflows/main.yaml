@@ -98,6 +98,12 @@ jobs:
           sphinx-apidoc -f -e -o docs/source src/ctdclient
           sphinx-build -b html docs/source /htmls
 
+      - name: Upload html
+        uses: actions/upload-arctifact@v3
+        with:
+          name: html-docs
+          path: /htmls
+
       - name: Checkout pages branch
         run: |
           git fetch
@@ -127,6 +133,12 @@ jobs:
         run: apt update && apt install -y nodejs curl git jq
 
       - uses: actions/checkout@v3
+
+      - name: Download html
+        uses: actions/download-artifacts@v3
+        with:
+          name: html-docs
+          path: /htmls
 
       - name: Install python dependencies
         run: |

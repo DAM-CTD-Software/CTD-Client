@@ -320,6 +320,14 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                 }
             }
         )
+        value_dict.update(
+            {
+                "email config": {
+                    key: (tk.StringVar(value=value), type(value))
+                    for key, value in self.configuration["email"].items()
+                }
+            }
+        )
         return value_dict
 
     def write_config(self):
@@ -334,6 +342,10 @@ class ExpertSettings(ctk.CTkScrollableFrame):
         self.configuration["dship"]["identifier"] = {
             key: value[0].get()
             for key, value in self.values["dship parameters"].items()
+        }
+        self.configuration["email"] = {
+            key: value[0].get()
+            for key, value in self.values["email config"].items()
         }
         self.configuration.write(use_internal_values=False)
         CTkMessagebox(

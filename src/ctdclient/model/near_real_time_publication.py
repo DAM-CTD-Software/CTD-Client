@@ -257,7 +257,7 @@ class NearRealTimeTarget:
         try:
             smtp_server = self.email_info["smtp_server"]
             smtp_port = self.email_info["smtp_port"]
-            assert len(smtp_server) and len(smtp_port)
+            assert len(smtp_server) and len(str(smtp_port))
         except (KeyError, AssertionError):
             logger.error(
                 "Could not send email, because of missing smtp server and/or port information."

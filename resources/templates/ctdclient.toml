@@ -34,6 +34,11 @@ Air_Pressure = "Weatherstation.PEUMA.Air_pressure"
 Position_Alias = "Web.PUP.NextWPName"
 Device = "ActionLog.PUP.DeviceShortName"
 
+[email]
+smtp_server = "192.168.236.240"
+smtp_port = 25
+smtp_email = "ctd@borgese.briese-research.de"
+
 [operators]
 op1 = ""
 op2 = ""

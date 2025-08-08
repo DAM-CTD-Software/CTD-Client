@@ -69,6 +69,7 @@ class ConfigurationFile:
                 "identifier"
             ]
             assert isinstance(self.dship_api_target_names, dict)
+            self.email_config: dict = self.data["email"]
             self.operators: dict = self.data["operators"]
             assert isinstance(self.operators, dict)
             self.near_real_time: dict = self.data["near_real_time"]

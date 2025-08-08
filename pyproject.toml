@@ -9,8 +9,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.12, <4.0"
-ctd-processing = ">=1.6.4"
-seabirdfilehandler = ">=0.7.0"
+ctd-processing = ">=1.6.5"
+seabirdfilehandler = ">=0.7.4"
 tomlkit = ">=0.12.3"
 xmltodict = ">=0.13.0"
 requests = ">=2.31.0"

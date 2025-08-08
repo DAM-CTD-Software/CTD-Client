@@ -1,3 +1,4 @@
+import sys
 import tkinter as tk
 import tkinter.font as tkFont
 import webbrowser
@@ -8,6 +9,7 @@ from tkinter import ttk
 
 import customtkinter as ctk
 from ctdclient.definitions import config
+from ctdclient.definitions import RESOURCES_PATH
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.tabview import TabView
 from ctdclient.view.View import ViewMixin
@@ -320,6 +322,14 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                 }
             }
         )
+        value_dict.update(
+            {
+                "email config": {
+                    key: (tk.StringVar(value=value), type(value))
+                    for key, value in self.configuration["email"].items()
+                }
+            }
+        )
         return value_dict
 
     def write_config(self):
@@ -334,6 +344,10 @@ class ExpertSettings(ctk.CTkScrollableFrame):
         self.configuration["dship"]["identifier"] = {
             key: value[0].get()
             for key, value in self.values["dship parameters"].items()
+        }
+        self.configuration["email"] = {
+            key: value[0].get()
+            for key, value in self.values["email config"].items()
         }
         self.configuration.write(use_internal_values=False)
         CTkMessagebox(
@@ -380,20 +394,17 @@ class AboutView(CtkFrame):
             self,
             text="This is the CTD-Client developed at the IOW for the DAM.\nIt is meant to help in and streamline the CTD-Data-Acquisition.\n\nThe documentation can be found here:",
         ).grid(row=0, column=0, padx=self.padx, pady=self.pady)
+        if getattr(sys, "frozen", False):
+            docs = f"file://{RESOURCES_PATH.absolute()}/htmls/usage.html"
+            text = "Documentation"
+        else:
+            docs = "https://ctd-software.pages.io-warnemuende.de/CTD-Client/usage.html"
+            text = "Online documentation"
         ctk.CTkButton(
             self,
-            text="General online documentation",
-            command=lambda: webbrowser.open_new_tab(
-                "https://ctd-software.pages.io-warnemuende.de/CTD-Client/usage.html"
-            ),
+            text=text,
+            command=lambda: webbrowser.open_new_tab(docs),
         ).grid(row=1, column=0, padx=self.padx, pady=self.pady)
-        ctk.CTkButton(
-            self,
-            text="Processing documentation",
-            command=lambda: webbrowser.open_new_tab(
-                "https://ctd-software.pages.io-warnemuende.de/processing/"
-            ),
-        ).grid(row=2, column=0, padx=self.padx, pady=self.pady)
         ctk.CTkLabel(
             self,
             text="Developed and maintained by Emil Michels, IOW.\nFeel free to contact me anytime.\n",

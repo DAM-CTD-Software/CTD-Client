@@ -3,6 +3,12 @@ import sys
 
 sys.path.insert(0, os.path.abspath(os.path.join("..", "..", "src")))
 
+autodoc_mock_imports = [
+    "tkinter",
+    "customtkinter",
+    "CTkMessagebox",
+]
+
 project = "ctdclient"
 copyright = "2024-2025, Emil Michels"
 author = "Emil Michels"
@@ -30,8 +36,8 @@ def linkcode_resolve(domain, info):
     )
 
 
-html_logo = "../../icon/BrnBld_CtdRosette_256.svg"
-html_favicon = "../../icon/BrnBld_CtdRosette_256.svg"
+html_logo = "../../resources/icon.ico"
+html_favicon = "../../resources/icon.ico"
 
 autodoc_member_order = "bysource"
 templates_path = ["_templates"]

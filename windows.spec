@@ -7,7 +7,8 @@ customtkinter_path = Path(customtkinter.__file__).parent.absolute()
 
 datas=[
         (customtkinter_path, 'customtkinter/'),
-        ('resources', '.')
+        ('resources', '.'),
+        ('/htmls', 'htmls'),
 ]
 
 datas += copy_metadata("ctd-processing")

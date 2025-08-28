@@ -1,9 +1,11 @@
 import shutil
 from pathlib import Path
 
+import pytest
 import tomlkit
 from conftest import config_template
 from ctdclient.configurationhandler import ConfigurationFile
+from ctdclient.configurationhandler import InvalidConfigFile
 from ctdclient.utils import _merge_dicts
 from ctdclient.utils import create_new_config_file
 from tomlkit.toml_file import TOMLFile
@@ -27,8 +29,10 @@ def test_config_file_difference():
     with open(dummy_config, "w") as file:
         file.write(tomlkit.dumps(new).replace("\r", ""))
     updated = create_new_config_file(dummy_config, config_template)
-    # debugging info
-    print(updated)
     assert 'email' in list(updated.keys())
-    assert ConfigurationFile(dummy_config)
-    dummy_config.unlink()
+    try:
+        ConfigurationFile(dummy_config)
+    except InvalidConfigFile:
+        pytest.fail(f'Generated invalid configuration file:\n{updated}')
+    else:
+        dummy_config.unlink()

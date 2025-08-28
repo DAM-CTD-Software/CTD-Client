@@ -4,7 +4,9 @@ import sys
 from pathlib import Path
 
 import requests
+import tomlkit
 import xmltodict
+from tomlkit.toml_file import TOMLFile
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +26,35 @@ def get_config_path(
         )
     except FileNotFoundError:
         sys.exit("No configuration file found. Aborting.")
+
+
+def create_new_config_file(old_config: Path, new_config: Path) -> dict:
+    old = TOMLFile(old_config).read()
+    new = TOMLFile(new_config).read()
+    _merge_dicts(old, new)
+    with open(old_config, "w") as file:
+        file.write(tomlkit.dumps(old).replace("\r", ""))
+    return old
+
+
+def _merge_dicts(original, new):
+    if isinstance(original, dict) and isinstance(new, dict):
+        original_keys = set(original.keys())
+        new_keys = set(new.keys())
+        different_keys = new_keys - original_keys
+
+        for key in different_keys:
+            original[key] = new[key]
+
+        for key in original_keys & new_keys:
+            _merge_dicts(original[key], new[key])
+    elif isinstance(original, list) and isinstance(new, list):
+        for i in range(min(len(original), len(new))):
+            _merge_dicts(original[i], new[i])
+        if len(new) > len(original):
+            original.extend(new[len(original) :])
+    else:
+        pass
 
 
 def individual_dship_api_call(url) -> str | None:

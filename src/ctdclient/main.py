@@ -103,8 +103,8 @@ def check_if_running() -> bool:
 
 def inform_about_bad_config(main_window):
     answer = CTkMessagebox(
-        title="Misconfigured config file",
-        message="Your configuration file seems to be misformed. A new one has been generated and is being used for this session. Please make sure that all the necessary settings are correct.",
+        title="Old config file",
+        message="Your configuration file seems to be outdated. A new one has been generated and is being used for this session. Please make sure that all the necessary settings are (still) correct.",
         icon="warning",
         option_1="Ok",
     )

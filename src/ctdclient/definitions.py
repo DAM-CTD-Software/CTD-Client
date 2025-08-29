@@ -4,6 +4,7 @@ from pathlib import Path
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.configurationhandler import InvalidConfigFile
 from ctdclient.eventmanager import EventManager
+from ctdclient.utils import create_new_config_file
 from ctdclient.utils import get_config_path
 from ctdclient.utils import individual_dship_api_call
 from ctdclient.version import __version__
@@ -24,8 +25,9 @@ try:
     config = ConfigurationFile(CONFIG_PATH)
     WRONG_CONFIG = False
 except InvalidConfigFile:
-    CONFIG_PATH.replace(f"misconfigured_{CONFIG_PATH.name}")
-    CONFIG_PATH = get_config_path(ROOT_PATH, TEMPLATE_PATH)
+    create_new_config_file(
+        CONFIG_PATH, TEMPLATE_PATH.joinpath("ctdclient.toml")
+    )
     config = ConfigurationFile(CONFIG_PATH)
     WRONG_CONFIG = True
 

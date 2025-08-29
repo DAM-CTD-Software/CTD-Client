@@ -5,17 +5,16 @@ on:
     branches:
       - main
 jobs:
-  version_bump:
-    runs-on: ubuntu-latest
+  build_binary:
     container:
+      image: batonogov/pyinstaller-windows:v4.11.1
       volumes:
         - htmls:/htmls
-    outputs:
-      bump_level: ${{ steps.bump_level.outputs.BUMP_LEVEL }}
-      new_version: ${{ steps.new_version.outputs.NEW_VERSION }}
-      pr_desc: ${{ steps.pr_desc.outputs.PR_DESC }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Install missing dependencies
+        run: apt update && apt install -y nodejs curl git jq
+
+      - uses: actions/checkout@v3
 
       - name: Configure Git User
         run: |
@@ -87,22 +86,19 @@ jobs:
           git tag $NEW_VERSION
           git push origin $NEW_VERSION --no-verify
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.13"
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip download gsw==3.6.19 --platform win_amd64 --python-version 3.12 --only-binary :all:
+          mv gsw-3.6.19-cp312-cp312-win_amd64.whl gsw-3.6.19-cp313-cp313-win_amd64.whl
+          pip install gsw-3.6.19-cp313-cp313-win_amd64.whl
+          pip install -r requirements.txt
+          pip install sphinx sphinx-autodoc-typehints myst-parser furo
 
       - name: Update documentation
         run: |
-          pip install -r requirements.txt
-          pip install sphinx sphinx-autodoc-typehints myst-parser furo
           sphinx-apidoc -f -e -o docs/source src/ctdclient
           sphinx-build -b html docs/source /htmls
-
-      - name: Upload html
-        uses: actions/upload-arctifact@v3
-        with:
-          name: html-docs
-          path: /htmls
 
       - name: Checkout pages branch
         run: |
@@ -117,36 +113,7 @@ jobs:
           git add .
           git commit -m "Update Sphinx documentation" --no-verify
           git push -u origin pages
-
-
-
-  build_binary:
-    needs: version_bump
-    container:
-      image: batonogov/pyinstaller-windows:v4.11.1
-    env:
-      NEW_VERSION: ${{ needs.version_bump.outputs.new_version }}
-      PR_DESC: ${{ needs.version_bump.outputs.pr_desc }}
-      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
-    steps:
-      - name: Install missing dependencies
-        run: apt update && apt install -y nodejs curl git jq
-
-      - uses: actions/checkout@v3
-
-      - name: Download html
-        uses: actions/download-artifacts@v3
-        with:
-          name: html-docs
-          path: /htmls
-
-      - name: Install python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip download gsw==3.6.19 --platform win_amd64 --python-version 3.12 --only-binary :all:
-          mv gsw-3.6.19-cp312-cp312-win_amd64.whl gsw-3.6.19-cp313-cp313-win_amd64.whl
-          pip install gsw-3.6.19-cp313-cp313-win_amd64.whl
-          pip install -r requirements.txt
+          git checkout main
 
       - name: Build Windows binary
         run: |

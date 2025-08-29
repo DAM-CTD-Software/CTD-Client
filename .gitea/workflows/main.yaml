@@ -10,6 +10,9 @@ jobs:
       image: batonogov/pyinstaller-windows:v4.11.1
       volumes:
         - htmls:/htmls
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Install missing dependencies
         run: apt update && apt install -y nodejs curl git jq

@@ -26,6 +26,9 @@ class LoggingConfig:
         self.configure_logging()
 
     def configure_logging(self):
+        # need to explicetly set PIL log level, as it heavily spams when using
+        # debug log level
+        logging.getLogger("PIL").setLevel(logging.WARNING)
         format = "%(asctime)s - %(name)s - [%(levelname)s] - %(message)s"
         datefmt = "%Y-%m-%d %H:%M:%S"
         loglevel = logging.DEBUG if config.debugging else logging.WARNING

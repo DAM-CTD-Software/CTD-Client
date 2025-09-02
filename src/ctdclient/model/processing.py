@@ -140,6 +140,7 @@ class ProcessingProcedure(ProcessingConfig):
     def run(self, file: Path):
         self.process = mp.Process(target=self.apply_procedure, args=[file])
         self.process.start()
+        logger.debug(f"Started processing with:\n{self.procedure.config}")
 
     def apply_procedure(self, file: Path):
         self.procedure.run(file)

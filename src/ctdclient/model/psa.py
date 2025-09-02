@@ -148,7 +148,7 @@ class SeasavePsa(PsaFile):
             "WaterSamplerConfiguration"
         ] = watersampler
 
-    def set_xmlcon_file_path(self, xmlcon_path: str):
+    def set_xmlcon_file_path(self, xmlcon_path: Path | str):
         """
         Sets the correct XMLCON path.
 
@@ -158,9 +158,11 @@ class SeasavePsa(PsaFile):
             Path to XMLCON.
 
         """
-        self.settings_part["ConfigurationFilePath"]["@value"] = xmlcon_path
+        self.settings_part["ConfigurationFilePath"]["@value"] = str(
+            xmlcon_path
+        )
 
-    def set_hex_file_path(self, hex_path: str):
+    def set_hex_file_path(self, hex_path: Path | str):
         """
         Sets the correct path to the newly created hex file.
 
@@ -170,4 +172,4 @@ class SeasavePsa(PsaFile):
             New path of the hex.
 
         """
-        self.settings_part["DataFilePath"]["@value"] = hex_path
+        self.settings_part["DataFilePath"]["@value"] = str(hex_path)

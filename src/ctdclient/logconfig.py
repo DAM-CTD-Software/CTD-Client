@@ -26,6 +26,9 @@ class LoggingConfig:
         self.configure_logging()
 
     def configure_logging(self):
+        # need to explicetly set PIL log level, as it heavily spams when using
+        # debug log level
+        logging.getLogger("PIL").setLevel(logging.WARNING)
         format = "%(asctime)s - %(name)s - [%(levelname)s] - %(message)s"
         datefmt = "%Y-%m-%d %H:%M:%S"
         loglevel = logging.DEBUG if config.debugging else logging.WARNING
@@ -86,11 +89,30 @@ class LoggingConfig:
             smtp_server = config.email_config["smtp_server"]
             smtp_port = config.email_config["smtp_port"]
             assert len(smtp_server) and len(str(smtp_port))
+            server = smtplib.SMTP(smtp_server, int(smtp_port))
         except (KeyError, AssertionError):
+            CTkMessagebox(
+                title="No email server configured",
+                icon="cancel",
+                message="Cannot send email, you need to configure the email settings in the Settings correctly.",
+                option_1="Ok",
+            )
             self.logger.error(
                 "Could not send email, because of missing smtp server and/or port information."
             )
             return
+        except ConnectionRefusedError:
+            CTkMessagebox(
+                title="Could not reach email server",
+                icon="cancel",
+                message="Cannot send email, as the server refuses a connection",
+                option_1="Ok",
+            )
+            self.logger.error(
+                "Could not send email, because of wrong smtp server and/or port information."
+            )
+            return
+
         msg = EmailMessage()
         timestamp = datetime.now(tz=timezone.utc).strftime("%y-%m-%d %H:%M:%S")
         msg.set_content(
@@ -114,11 +136,10 @@ class LoggingConfig:
                     )
             except Exception:
                 continue
-        with smtplib.SMTP(smtp_server, int(smtp_port)) as server:
-            server.starttls()
-            try:
-                server.send_message(msg)
-            except smtplib.SMTPRecipientsRefused as error:
-                self.logger.error(f"Credentials needed to send email: {error}")
-            else:
-                self.logger.info(f"Email sent to {msg['To']}")
+        server.starttls()
+        try:
+            server.send_message(msg)
+        except smtplib.SMTPRecipientsRefused as error:
+            self.logger.error(f"Credentials needed to send email: {error}")
+        else:
+            self.logger.info(f"Email sent to {msg['To']}")

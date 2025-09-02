@@ -62,6 +62,7 @@ class MetadataHeader:
             ]
         psa.set_metadata_header(header_list, autostart)
         header_print = "\n".join(header_list)
+        logger.debug(f"Wrote hex metadata header:\n{header_print}")
         return header_print
 
     @classmethod

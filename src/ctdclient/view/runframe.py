@@ -1,3 +1,4 @@
+import subprocess
 import threading
 import tkinter as tk
 from pathlib import Path
@@ -107,10 +108,11 @@ class RunFrame(ViewMixin, CtkFrame):
             self.downcast.get(),
             self.autostart.get(),
         )
-        self.measurement_button.configure(
-            text="Cancel", command=self.cancel_measurement
-        )
-        self.check_seasave()
+        if isinstance(self.process, subprocess.Popen):
+            self.measurement_button.configure(
+                text="Cancel", command=self.cancel_measurement
+            )
+            self.check_seasave()
 
     def check_seasave(self):
         if self.process.poll() is not None:

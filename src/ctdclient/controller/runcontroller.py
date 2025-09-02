@@ -4,9 +4,7 @@ from ctdclient.controller.Controller import Controller
 from ctdclient.model.bottles import BottleClosingDepths
 from ctdclient.model.dshipcaller import retrieve_station_and_event_info
 from ctdclient.model.fileupdater import UpdateFiles
-from ctdclient.model.metadataheader import MetadataHeader
 from ctdclient.model.processing import ProcessingList
-from ctdclient.model.psa import SeasavePsa
 from ctdclient.model.runseasave import RunSeasave
 from ctdclient.view.measurement import MeasurementView
 from ctdclient.view.runframe import RunFrame
@@ -49,9 +47,19 @@ class RunController(Controller):
         autostart: bool = False,
     ):
         self.current_filename = self.output_dir.joinpath(file_name)
-        self.update_variables_pre_run(autostart)
-        return RunSeasave(self.configuration, self.current_filename).run(
-            downcast, autostart
+        self.output_dir = self.configuration.output_directory
+        self.bottles.data = {
+            key: value.get() for key, value in self.bottle_values.items()
+        }
+        return RunSeasave()(
+            self.current_filename,
+            self.bottles,
+            self.platform,
+            self.cast_number.get(),
+            self.operator.get(),
+            self.station.get(),
+            downcast,
+            autostart,
         )
 
     def update_variables_post_run(self):
@@ -63,30 +71,6 @@ class RunController(Controller):
             self.configuration.last_filename = Path(self.current_filename)
             self.configuration.operators["last"] = self.operator.get()
             self.configuration.write()
-
-    def update_variables_pre_run(self, autostart):
-        self.output_dir = self.configuration.output_directory
-        self.bottles.data = {
-            key: value.get() for key, value in self.bottle_values.items()
-        }
-        # set psa values
-        psa = SeasavePsa(self.configuration.seasave_psa)
-        psa.set_xmlcon_file_path(self.configuration.xmlcon)
-        psa.set_hex_file_path(self.current_filename)
-        psa.set_bottle_fire_info(
-            bottle_info=self.bottles.data,
-            number_of_bottles=self.bottles.number_of_bottles,
-        )
-        # write metadataheader
-        MetadataHeader.build_metadata_header(
-            psa=psa,
-            platform=self.platform,
-            cast=self.cast_number.get(),
-            operator=self.operator.get(),
-            pos_alias=self.station.get(),
-            autostart=autostart,
-        )
-        psa.to_xml()
 
     def check_correct_filename(self):
         self.update_variables_post_run()

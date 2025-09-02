@@ -1,5 +1,11 @@
 import logging
 import subprocess
+from pathlib import Path
+
+from ctdclient.definitions import config
+from ctdclient.model.bottles import BottleClosingDepths
+from ctdclient.model.metadataheader import MetadataHeader
+from ctdclient.model.psa import SeasavePsa
 
 logger = logging.getLogger(__name__)
 
@@ -11,13 +17,31 @@ class RunSeasave:
     to XMLCON and hex file.
     """
 
-    def __init__(self, config, hex_name, psa_output_name=None) -> None:
-        self.config = config
-        self.path_to_seasave_exe = self.config.path_to_seasave
-        self.path_to_psa = self.config.seasave_psa
-        self.hex_name = hex_name
+    def __call__(
+        self,
+        current_filename: Path,
+        bottles: BottleClosingDepths,
+        platform: str,
+        cast: str,
+        operator: str,
+        station: str,
+        downcast: bool = True,
+        autostart: bool = True,
+    ) -> subprocess.Popen | None:
+        self.path_to_seasave_exe = config.path_to_seasave
+        self.path_to_psa = config.seasave_psa
+        if self.update_psa(
+            current_filename,
+            bottles,
+            platform,
+            cast,
+            operator,
+            station,
+            autostart,
+        ):
+            return self.run(downcast, autostart)
 
-    def run(self, downcast=True, autostart=True):
+    def run(self, downcast=True, autostart=True) -> subprocess.Popen:
         """
         Executes the seasave.exe with given command line arguments.
 
@@ -50,6 +74,41 @@ class RunSeasave:
             raise error
         else:
             return ps
+
+    def update_psa(
+        self,
+        current_filename: Path,
+        bottles: BottleClosingDepths,
+        platform: str,
+        cast: str,
+        operator: str,
+        station: str,
+        autostart: bool = False,
+    ) -> bool:
+        # set psa values
+        if self.path_to_psa == Path("."):
+            logger.error(
+                "No path to a .psa file given. Cannot run seasave without one."
+            )
+            return False
+        psa = SeasavePsa(self.path_to_psa)
+        psa.set_xmlcon_file_path(config.xmlcon)
+        psa.set_hex_file_path(current_filename)
+        psa.set_bottle_fire_info(
+            bottle_info=bottles.data,
+            number_of_bottles=bottles.number_of_bottles,
+        )
+        # write metadataheader
+        MetadataHeader.build_metadata_header(
+            psa=psa,
+            platform=platform,
+            cast=cast,
+            operator=operator,
+            pos_alias=station,
+            autostart=autostart,
+        )
+        psa.to_xml()
+        return True
 
     def set_seasave_command_line_parameters(
         self,

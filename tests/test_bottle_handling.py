@@ -1,8 +1,12 @@
+import logging
+
 import pytest
 from conftest import psa_dir
 from ctdclient.model.bottles import BottleClosingDepths
 from ctdclient.model.psa import SeasavePsa
 
+logger = logging.getLogger(__name__)
+logger.propagate = True
 
 @pytest.fixture
 def psa() -> SeasavePsa:
@@ -46,3 +50,18 @@ def test_same_depth_mapping(config):
     bottles.check_bottle_data(test_data)
     assert bottles[1] == '0.8'
     assert bottles[3] == '1.2'
+
+    config.minimum_bottle_diff = 0
+    bottles = BottleClosingDepths(config)
+    bottles.check_bottle_data(test_data)
+    assert bottles[1] == '1.0'
+
+
+def test_more_than_two_same_depth_mappings(config, caplog):
+    caplog.set_level(logging.WARNING)
+    test_data = {1: '1', 2: '1', 3: '1'}
+    config.minimum_bottle_diff = 0.4
+    config.number_of_bottles = len(test_data)
+    bottles = BottleClosingDepths(config)
+    bottles.check_bottle_data(test_data)
+    assert 'Cannot close more than two bottles at the same depth automatically. Make sure to set the bottles to different depths or try to put your target bottles on the same release hook.' in caplog.text

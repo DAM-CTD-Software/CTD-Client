@@ -32,6 +32,11 @@ class BottleClosingDepths(UserDict):
         }
 
     def check_bottle_data(self, bottle_data_table: dict):
+        bottle_data_table = {
+            k: v.replace(",", ".")
+            for k, v in bottle_data_table.items()
+            if v != ""
+        }
         # check for more than two bottles set to the same depth
         depth_counts = Counter(bottle_data_table.values())
         if [count for count in depth_counts.values() if count > 2]:
@@ -59,4 +64,7 @@ class BottleClosingDepths(UserDict):
         new_data_table = {
             k: f"{v:.1f}" for (k, _), v in zip(items, adjusted_values)
         }
-        self.data = new_data_table
+        for n in range(1, self.number_of_bottles + 1):
+            if n not in new_data_table:
+                new_data_table[n] = ""
+        self.data = {k: v for k, v in sorted(new_data_table.items())}

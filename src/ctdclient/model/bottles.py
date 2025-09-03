@@ -42,7 +42,12 @@ class BottleClosingDepths(UserDict):
             return
 
         items = sorted(bottle_data_table.items(), key=lambda x: x[1])
-        adjusted_values = [float(v) for _, v in items]
+        adjusted_values = []
+        for _, value in items:
+            try:
+                adjusted_values.append(float(value))
+            except ValueError:
+                continue
 
         for i in range(1, len(adjusted_values)):
             diff = adjusted_values[i] - adjusted_values[i - 1]

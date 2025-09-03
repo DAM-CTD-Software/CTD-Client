@@ -40,17 +40,18 @@ class BottleClosingDepths(UserDict):
             )
             self.data = {1: "ERROR"}
             return
-        new_data_table = {}
-        for key, value in bottle_data_table.items():
-            if key in new_data_table:
-                continue
-            if value in list(new_data_table.values()):
-                other_key = list(new_data_table.keys())[
-                    list(new_data_table.values()).index(value)
-                ]
-                new_data_table[other_key] = str(
-                    int(value) - (self.config.minimum_bottle_diff / 2)
-                )
-                value = str(int(value) + (self.config.minimum_bottle_diff / 2))
-            new_data_table[key] = value
+
+        items = sorted(bottle_data_table.items(), key=lambda x: x[1])
+        adjusted_values = [float(v) for _, v in items]
+
+        for i in range(1, len(adjusted_values)):
+            diff = adjusted_values[i] - adjusted_values[i - 1]
+            if diff < self.config.minimum_bottle_diff:
+                shift = (self.config.minimum_bottle_diff - diff) / 2
+                adjusted_values[i - 1] -= shift
+                adjusted_values[i] += shift
+
+        new_data_table = {
+            k: f"{v:.1f}" for (k, _), v in zip(items, adjusted_values)
+        }
         self.data = new_data_table

@@ -26,3 +26,19 @@ class BottleClosingDepths(UserDict):
         self.data = {
             number + 1: "" for number in range(self.number_of_bottles)
         }
+
+    def check_bottle_data(self, bottle_data_table: dict):
+        new_data_table = {}
+        for key, value in bottle_data_table.items():
+            if key in new_data_table:
+                continue
+            if value in list(new_data_table.values()):
+                other_key = list(new_data_table.keys())[
+                    list(new_data_table.values()).index(value)
+                ]
+                new_data_table[other_key] = str(
+                    int(value) - (self.config.minimum_bottle_diff / 2)
+                )
+                value = str(int(value) + (self.config.minimum_bottle_diff / 2))
+            new_data_table[key] = value
+        self.data = new_data_table

@@ -48,9 +48,9 @@ class RunController(Controller):
     ):
         self.current_filename = self.output_dir.joinpath(file_name)
         self.output_dir = self.configuration.output_directory
-        self.bottles.data = {
-            key: value.get() for key, value in self.bottle_values.items()
-        }
+        self.bottles.check_bottle_data(
+            {key: value.get() for key, value in self.bottle_values.items()}
+        )
         return RunSeasave()(
             self.current_filename,
             self.bottles,

@@ -62,7 +62,8 @@ class BottleClosingDepths(UserDict):
                 adjusted_values[i] += shift
 
         new_data_table = {
-            k: f"{v:.1f}" for (k, _), v in zip(items, adjusted_values)
+            k: str(round(v + 1e-10, 1))
+            for (k, _), v in zip(items, adjusted_values)
         }
         for n in range(1, self.number_of_bottles + 1):
             if n not in new_data_table:

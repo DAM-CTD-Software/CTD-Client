@@ -33,6 +33,7 @@ class RunSeasave:
         # check for an error inside the bottle handling
         if bottles[1] == "ERROR":
             return
+        logger.debug(f"Wrote these bottle values to the psa:\n{bottles}")
         if self.update_psa(
             current_filename,
             bottles,

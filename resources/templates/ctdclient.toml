@@ -15,6 +15,7 @@ debugging = false
 processing_dir = "resources\\templates"
 nrt_dir = ""
 scaling = 1.0
+minimum_bottle_difference = 0.4
 
 [dship]
 ip = "dship1"

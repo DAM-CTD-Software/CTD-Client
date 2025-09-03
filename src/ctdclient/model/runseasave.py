@@ -30,6 +30,10 @@ class RunSeasave:
     ) -> subprocess.Popen | None:
         self.path_to_seasave_exe = config.path_to_seasave
         self.path_to_psa = config.seasave_psa
+        # check for an error inside the bottle handling
+        if bottles[1] == "ERROR":
+            return
+        logger.debug(f"Wrote these bottle values to the psa:\n{bottles}")
         if self.update_psa(
             current_filename,
             bottles,

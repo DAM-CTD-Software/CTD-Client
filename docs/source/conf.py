@@ -36,8 +36,7 @@ def linkcode_resolve(domain, info):
     )
 
 
-html_logo = "../../resources/icon.ico"
-html_favicon = "../../resources/icon.ico"
+html_logo = html_favicon = "../images/ctd_rosette.svg"
 
 autodoc_member_order = "bysource"
 templates_path = ["_templates"]

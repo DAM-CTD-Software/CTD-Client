@@ -1,4 +1,8 @@
+import logging
+from collections import Counter
 from collections import UserDict
+
+logger = logging.getLogger(__name__)
 
 
 class BottleClosingDepths(UserDict):
@@ -28,6 +32,14 @@ class BottleClosingDepths(UserDict):
         }
 
     def check_bottle_data(self, bottle_data_table: dict):
+        # check for more than two bottles set to the same depth
+        depth_counts = Counter(bottle_data_table.values())
+        if [count for count in depth_counts.values() if count > 2]:
+            logger.error(
+                "Cannot close more than two bottles at the same depth automatically. Make sure to set the bottles to different depths or try to put your target bottles on the same release hook."
+            )
+            self.data = {1: "ERROR"}
+            return
         new_data_table = {}
         for key, value in bottle_data_table.items():
             if key in new_data_table:

@@ -1,5 +1,6 @@
 import pytest
 from conftest import psa_dir
+from ctdclient.model.bottles import BottleClosingDepths
 from ctdclient.model.psa import SeasavePsa
 
 
@@ -35,3 +36,13 @@ def test_comma2dot(psa):
     ]["Row"]:
         if row["@BottleNumber"] in expected_bottle_values:
             assert row["@FireAt"] == expected_bottle_values[row["@BottleNumber"]]
+
+
+def test_same_depth_mapping(config):
+    test_data = {1: '1', 2: '2', 3: '1'}
+    config.minimum_bottle_diff = 0.4
+    config.number_of_bottles = len(test_data)
+    bottles = BottleClosingDepths(config)
+    bottles.check_bottle_data(test_data)
+    assert bottles[1] == '0.8'
+    assert bottles[3] == '1.2'

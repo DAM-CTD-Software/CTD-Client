@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.model.processing import ProcessingProcedure
 from processing.procedure import Procedure
 
@@ -93,3 +94,7 @@ def fresh_target_file() -> Path:
     fresh_file = data_dir.joinpath(file_name)
     fresh_file.touch()
     return fresh_file
+
+@pytest.fixture
+def config() -> ConfigurationFile:
+    return ConfigurationFile(config_template)

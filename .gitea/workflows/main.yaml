@@ -5,19 +5,17 @@ on:
     branches:
       - main
 jobs:
-  build_binary:
+  version_bump:
+    runs-on: ubuntu-latest
     container:
-      image: batonogov/pyinstaller-windows:v4.11.1
       volumes:
         - htmls:/htmls
-    defaults:
-      run:
-        shell: bash
+    outputs:
+      bump_level: ${{ steps.bump_level.outputs.BUMP_LEVEL }}
+      new_version: ${{ steps.new_version.outputs.NEW_VERSION }}
+      pr_desc: ${{ steps.pr_desc.outputs.PR_DESC }}
     steps:
-      - name: Install missing dependencies
-        run: apt update && apt install -y nodejs curl git jq
-
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Configure Git User
         run: |
@@ -89,17 +87,14 @@ jobs:
           git tag $NEW_VERSION
           git push origin $NEW_VERSION --no-verify
 
-      - name: Install python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip download gsw==3.6.19 --platform win_amd64 --python-version 3.12 --only-binary :all:
-          mv gsw-3.6.19-cp312-cp312-win_amd64.whl gsw-3.6.19-cp313-cp313-win_amd64.whl
-          pip install gsw-3.6.19-cp313-cp313-win_amd64.whl
-          pip install -r requirements.txt
-          pip install sphinx sphinx-autodoc-typehints myst-parser furo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
 
       - name: Update documentation
         run: |
+          pip install -r requirements.txt
+          pip install sphinx sphinx-autodoc-typehints myst-parser furo
           sphinx-apidoc -f -e -o docs/source src/ctdclient
           sphinx-build -b html docs/source /htmls
 
@@ -116,10 +111,38 @@ jobs:
           git add .
           git commit -m "Update Sphinx documentation" --no-verify
           git push -u origin pages
-          git checkout main
+
+
+
+  build_binary:
+    needs: version_bump
+    container:
+      image: batonogov/pyinstaller-windows:v4.11.1
+    env:
+      NEW_VERSION: ${{ needs.version_bump.outputs.new_version }}
+      PR_DESC: ${{ needs.version_bump.outputs.pr_desc }}
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+    steps:
+      - name: Install missing dependencies
+        run: apt update && apt install -y nodejs curl git jq
+
+      - uses: actions/checkout@v3
+
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip download gsw==3.6.19 --platform win_amd64 --python-version 3.12 --only-binary :all:
+          mv gsw-3.6.19-cp312-cp312-win_amd64.whl gsw-3.6.19-cp313-cp313-win_amd64.whl
+          pip install gsw-3.6.19-cp313-cp313-win_amd64.whl
+          pip install -r requirements.txt
 
       - name: Build Windows binary
         run: |
+          git fetch
+          git branch -f pages origin/pages
+          git checkout pages :
+          mkdir /htmls
+          cp -r -t /htmls *.html *.inv *.js _static _sources _images
           ./write_version.sh $NEW_VERSION
           pyinstaller -y windows.spec
 
@@ -142,3 +165,4 @@ jobs:
             -H 'accept: application/json' \
             -H 'Content-Type: multipart/form-data' \
             -F 'attachment=@dist/ctdclient.exe'
+

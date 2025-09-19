@@ -21,17 +21,16 @@ THEMES_PATH = RESOURCES_PATH.joinpath("ctktheme.json")
 ICON_PATH = RESOURCES_PATH.joinpath("icon.ico")
 TEMPLATE_PATH = RESOURCES_PATH.joinpath("templates")
 PROCESSING_TEMPLATE_PATH = TEMPLATE_PATH.joinpath("processing_template.toml")
-CONFIG_PATH = get_config_path(
-    Path(user_config_dir("ctdclient")), TEMPLATE_PATH
-)
+CONFIG_PATH = Path(user_config_dir("ctdclient"))
+CONFIG_FILE_PATH = get_config_path(CONFIG_PATH, TEMPLATE_PATH)
 try:
-    config = ConfigurationFile(CONFIG_PATH)
+    config = ConfigurationFile(CONFIG_FILE_PATH)
     WRONG_CONFIG = False
 except InvalidConfigFile:
     create_new_config_file(
-        CONFIG_PATH, TEMPLATE_PATH.joinpath("ctdclient.toml")
+        CONFIG_FILE_PATH, TEMPLATE_PATH.joinpath("ctdclient.toml")
     )
-    config = ConfigurationFile(CONFIG_PATH)
+    config = ConfigurationFile(CONFIG_FILE_PATH)
     WRONG_CONFIG = True
 
 # update specifics

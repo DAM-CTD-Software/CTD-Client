@@ -6,7 +6,7 @@ import pytest
 from conftest import psa_dir
 from conftest import raw_data_dir
 from conftest import target_file
-from ctdclient.definitions import config
+from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import event_manager
 from ctdclient.model.processing import ProcessingList
 from ctdclient.model.processing import ProcessingProcedure
@@ -35,7 +35,7 @@ def test_event_processing_successful(simple_processing: ProcessingProcedure):
 def test_processing_list_creation():
     proc_list = ProcessingList()
     proc_list.read_processing_files()
-    assert len(proc_list) == len([file for file in Path(config.processing_dir).glob('*proc*')])
+    assert len(proc_list) == len([file for file in CONFIG_PATH.glob('*proc*')])
 
 
 @pytest.mark.seabird

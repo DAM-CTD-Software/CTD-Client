@@ -9,6 +9,7 @@ from collections import UserList
 from pathlib import Path
 
 from ctdclient.definitions import config
+from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import event_manager
 from ctdclient.definitions import TEMPLATE_PATH
 from processing.procedure import Procedure
@@ -23,7 +24,7 @@ class ProcessingList(UserList):
     def read_processing_files(self):
         # reset processing configs
         self.data = []
-        for file in config.processing_dir.glob("*proc*"):
+        for file in CONFIG_PATH.glob("*proc*"):
             try:
                 self.data.append(self.create_new_processing_config(file))
             except Exception:

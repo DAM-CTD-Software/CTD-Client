@@ -22,6 +22,7 @@ from typing import Callable
 
 import geopandas as gpd
 from ctdclient.definitions import config
+from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import cruise_head
 from ctdclient.definitions import cruise_name
 from ctdclient.definitions import event_manager
@@ -59,7 +60,7 @@ class NRTList(UserList):
         if clear_data:
             self.kill_processes()
             self.data = []
-        for path in config.nrt_dir.glob("nrt_*.toml"):
+        for path in CONFIG_PATH.glob("nrt_*.toml"):
             try:
                 self.data.append(self.create_nrt_instance(path))
             except Exception as error:

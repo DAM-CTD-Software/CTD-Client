@@ -12,8 +12,6 @@ use_dship_values = true
 generate_processing_fingerprint = ""
 file_type_dir = ""
 debugging = false
-processing_dir = "resources\\templates"
-nrt_dir = ""
 scaling = 1.0
 minimum_bottle_difference = 0.4
 

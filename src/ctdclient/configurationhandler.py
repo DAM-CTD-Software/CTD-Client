@@ -55,10 +55,6 @@ class ConfigurationFile:
             ]
             self.file_type_dir: str = self.data["base"]["file_type_dir"]
             self.debugging: bool = self.data["base"]["debugging"]
-            self.processing_dir: Path = Path(
-                self.data["base"]["processing_dir"]
-            )
-            self.nrt_dir: Path = Path(self.data["base"]["nrt_dir"])
             self.scaling: float = float(self.data["base"]["scaling"])
             self.minimum_bottle_diff: float = float(
                 self.data["base"]["minimum_bottle_difference"]

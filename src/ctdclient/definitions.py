@@ -8,6 +8,7 @@ from ctdclient.utils import create_new_config_file
 from ctdclient.utils import get_config_path
 from ctdclient.utils import individual_dship_api_call
 from ctdclient.version import __version__
+from platformdirs import user_config_dir
 
 if getattr(sys, "frozen", False):
     ROOT_PATH = Path(sys.executable).parent
@@ -20,7 +21,9 @@ THEMES_PATH = RESOURCES_PATH.joinpath("ctktheme.json")
 ICON_PATH = RESOURCES_PATH.joinpath("icon.ico")
 TEMPLATE_PATH = RESOURCES_PATH.joinpath("templates")
 PROCESSING_TEMPLATE_PATH = TEMPLATE_PATH.joinpath("processing_template.toml")
-CONFIG_PATH = get_config_path(ROOT_PATH, TEMPLATE_PATH)
+CONFIG_PATH = get_config_path(
+    Path(user_config_dir("ctdclient")), TEMPLATE_PATH
+)
 try:
     config = ConfigurationFile(CONFIG_PATH)
     WRONG_CONFIG = False

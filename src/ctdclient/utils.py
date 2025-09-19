@@ -21,8 +21,9 @@ def get_config_path(
         return default_file_path
     try:
         logger.warning("Using template configuration file.")
+        default_file_path.parent.mkdir(parents=True, exist_ok=True)
         return Path(
-            shutil.copy(template_path.joinpath(config_name), root_path)
+            shutil.copy(template_path.joinpath(config_name), default_file_path)
         )
     except FileNotFoundError:
         sys.exit("No configuration file found. Aborting.")

@@ -9,7 +9,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.12, <4.0"
-ctd-processing = ">=1.6.5"
+ctd-processing = ">=1.7.1"
 seabirdfilehandler = ">=0.7.4"
 tomlkit = ">=0.12.3"
 xmltodict = ">=0.13.0"
@@ -18,9 +18,8 @@ customtkinter = ">=5.2.2"
 ctkmessagebox = ">=2.5"
 ctklistbox = ">=1.4"
 psutil = ">=5.9.8"
-tufup = ">=0.9.0"
-geopandas = ">=1.0.1"
 numpy = "=2.2.1"
+platformdirs = ">=4.4.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.4.4"

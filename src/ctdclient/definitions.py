@@ -8,6 +8,7 @@ from ctdclient.utils import create_new_config_file
 from ctdclient.utils import get_config_path
 from ctdclient.utils import individual_dship_api_call
 from ctdclient.version import __version__
+from platformdirs import user_config_dir
 
 if getattr(sys, "frozen", False):
     ROOT_PATH = Path(sys.executable).parent
@@ -20,28 +21,17 @@ THEMES_PATH = RESOURCES_PATH.joinpath("ctktheme.json")
 ICON_PATH = RESOURCES_PATH.joinpath("icon.ico")
 TEMPLATE_PATH = RESOURCES_PATH.joinpath("templates")
 PROCESSING_TEMPLATE_PATH = TEMPLATE_PATH.joinpath("processing_template.toml")
-CONFIG_PATH = get_config_path(ROOT_PATH, TEMPLATE_PATH)
+CONFIG_PATH = Path(user_config_dir("ctdclient"))
+CONFIG_FILE_PATH = get_config_path(CONFIG_PATH, TEMPLATE_PATH)
 try:
-    config = ConfigurationFile(CONFIG_PATH)
+    config = ConfigurationFile(CONFIG_FILE_PATH)
     WRONG_CONFIG = False
 except InvalidConfigFile:
     create_new_config_file(
-        CONFIG_PATH, TEMPLATE_PATH.joinpath("ctdclient.toml")
+        CONFIG_FILE_PATH, TEMPLATE_PATH.joinpath("ctdclient.toml")
     )
-    config = ConfigurationFile(CONFIG_PATH)
+    config = ConfigurationFile(CONFIG_FILE_PATH)
     WRONG_CONFIG = True
-
-# update specifics
-INSTALL_DIR = RESOURCES_PATH.joinpath("updates")
-TUFUP_METADATA = INSTALL_DIR.joinpath("metadata")
-TUFUP_TARGET = INSTALL_DIR.joinpath("targets")
-# ensure, that directory exists
-if not TUFUP_TARGET.exists():
-    TUFUP_TARGET.mkdir(parents=True)
-if not config.server[-1] == "/":
-    config.server = f"{config.server}/"
-METADATA_URL = f"{config.server}metadata/"
-TARGET_URL = f"{config.server}targets/"
 
 # retrieve very basic dship information
 url = f"{config.dship_ip}{config.dship_url_part}"

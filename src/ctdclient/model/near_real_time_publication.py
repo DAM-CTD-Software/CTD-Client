@@ -20,14 +20,13 @@ from email.message import EmailMessage
 from pathlib import Path
 from typing import Callable
 
-import geopandas as gpd
 from ctdclient.definitions import config
+from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import cruise_head
 from ctdclient.definitions import cruise_name
 from ctdclient.definitions import event_manager
 from ctdclient.definitions import TEMPLATE_PATH
 from seabirdfilehandler import DataFile
-from shapely.geometry import Point
 from tomlkit.toml_file import TOMLFile
 
 logger = logging.getLogger(__name__)
@@ -59,7 +58,7 @@ class NRTList(UserList):
         if clear_data:
             self.kill_processes()
             self.data = []
-        for path in config.nrt_dir.glob("nrt_*.toml"):
+        for path in CONFIG_PATH.glob("nrt_*.toml"):
             try:
                 self.data.append(self.create_nrt_instance(path))
             except Exception as error:
@@ -122,7 +121,7 @@ class NearRealTimeTarget:
         recipient_address: str,
         target_file_suffix: str,
         target_file_directory: Path | str = "",
-        geo_filter: Path | str = "",
+        geo_filter: str = "",
         email_info: dict = {},
         file_path: Path | str = "",
         active: bool = False,
@@ -131,7 +130,7 @@ class NearRealTimeTarget:
         self.address = recipient_address
         self.dir = Path(target_file_directory)
         self.suffix = target_file_suffix
-        self.map_data = geo_filter
+        self.geo_filter = geo_filter
         self.email_info = email_info
         self.file_path = Path(file_path)
         self.name = self.file_path.stem[4:]
@@ -296,7 +295,7 @@ class NearRealTimeTarget:
                 or (file.name.startswith("."))
             ):
                 continue
-            if len(self.map_data) > 0:
+            if len(self.geo_filter) > 0:
                 try:
                     file_metadata = DataFile(
                         path_to_file=file,
@@ -337,28 +336,58 @@ class NearRealTimeTarget:
             -1 if direction in ["W", "S"] else 1
         )
 
-    def geographic_filter(
-        self,
-        coordinate_pair: tuple,
-        polygon_data_to_check_against: str = "",
-    ) -> bool:
+    def geographic_filter(self, coordinate_pair: tuple) -> bool:
         """
         Checks, whether we are inside of a certain polygon.
         The polygon will usually be the EEZ of a certain country. Does support
         all data formats that geopandas can handle.
         """
-        if len(polygon_data_to_check_against) == 0:
-            polygon_data_to_check_against = str(self.map_data)
+        available_filters = {
+            "germany": [
+                (10.0, 53.9),
+                (14.75, 53.9),
+                (14.75, 55.5),
+                (10.0, 55.5),
+                (10.0, 53.9),
+            ]
+        }
+        try:
+            polygon = available_filters[self.geo_filter]
+        except KeyError:
+            return False
         # if no polygon is given, no geo filter can be applied and thus, we
         # just return true and skip the rest of the method
-        if len(polygon_data_to_check_against) == 0:
+        if len(polygon) == 0:
             return True
-        try:
-            polygon = gpd.read_file(polygon_data_to_check_against)
-            point_to_test = Point(coordinate_pair)
-        except (FileNotFoundError, AttributeError):
-            return False
-        return polygon.contains(point_to_test)[0]
+        return self.point_in_polygon(coordinate_pair, polygon)
+
+    def point_in_polygon(self, point, polygon):
+        """
+        Check if a point is inside a polygon using the Ray Casting Algorithm.
+
+        :param point: Tuple (x, y) representing the point to check.
+        :param polygon: List of tuples [(x1, y1), (x2, y2), ...] representing the polygon vertices.
+        :return: True if the point is inside the polygon, False otherwise.
+        """
+        x, y = point
+        n = len(polygon)
+        inside = False
+
+        p1x, p1y = polygon[0]
+        for i in range(n + 1):
+            p2x, p2y = polygon[i % n]
+            if y > min(p1y, p2y):
+                if y <= max(p1y, p2y):
+                    if x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            xinters = (y - p1y) * (p2x - p1x) / (
+                                p2y - p1y
+                            ) + p1x
+                        if p1x == p2x or x <= xinters:
+                            inside = True
+            p1x, p1y = p2x, p2y
+
+        return inside
 
     def time_filter(self, file: Path) -> bool:
         """Ensure, that file has been modified in the last 24 hours."""

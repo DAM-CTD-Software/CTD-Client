@@ -6,22 +6,27 @@ import sys
 from datetime import datetime
 from datetime import timezone
 from email.message import EmailMessage
+from pathlib import Path
 
 import customtkinter as ctk
 from ctdclient.definitions import config
 from ctdclient.definitions import cruise_name
 from CTkMessagebox import CTkMessagebox
+from platformdirs import user_log_dir
 
 
 class LoggingConfig:
     def __init__(
         self,
         root: ctk.CTk | ctk.CTkToplevel | ctk.CTkFrame,
-        log_file: str = "ctdclient.log",
         logger_name: str = "ctdclient",
     ):
         self.root = root
-        self.log_file = log_file
+        self.log_file = Path(user_log_dir("ctdclient")).joinpath(
+            "ctdclient.log"
+        )
+        if not self.log_file.exists():
+            self.log_file.parent.mkdir(parents=True, exist_ok=True)
         self.logger_name = logger_name
         self.configure_logging()
 

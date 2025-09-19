@@ -6,14 +6,10 @@ platforms = ["CTD", "Scanfish"]
 seasave_exe = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\Seasave.exe"
 processing_exes = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\SBEDataProcessing-Win32"
 downcast_option = false
-self_updating = false
-server_address = "http://localhost:8000/"
 use_dship_values = true
 generate_processing_fingerprint = ""
 file_type_dir = ""
 debugging = false
-processing_dir = "resources\\templates"
-nrt_dir = ""
 scaling = 1.0
 minimum_bottle_difference = 0.4
 

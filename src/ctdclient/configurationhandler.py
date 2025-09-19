@@ -47,18 +47,12 @@ class ConfigurationFile:
                 self.data["base"]["processing_exes"]
             )
             self.downcast_option: bool = self.data["base"]["downcast_option"]
-            self.updating: bool = self.data["base"]["self_updating"]
-            self.server: str = self.data["base"]["server_address"]
             self.use_dship: bool = self.data["base"]["use_dship_values"]
             self.generate_processing_fingerprint: str = self.data["base"][
                 "generate_processing_fingerprint"
             ]
             self.file_type_dir: str = self.data["base"]["file_type_dir"]
             self.debugging: bool = self.data["base"]["debugging"]
-            self.processing_dir: Path = Path(
-                self.data["base"]["processing_dir"]
-            )
-            self.nrt_dir: Path = Path(self.data["base"]["nrt_dir"])
             self.scaling: float = float(self.data["base"]["scaling"])
             self.minimum_bottle_diff: float = float(
                 self.data["base"]["minimum_bottle_difference"]

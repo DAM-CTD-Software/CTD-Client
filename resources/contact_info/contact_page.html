@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en" data-darkreader-mode="dynamic" data-darkreader-scheme="dark" slick-uniqueid="3" class=" ffedgfwyd idc0_343"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><style class="darkreader darkreader--fallback" media="screen"></style><style class="darkreader darkreader--user-agent" media="screen">@layer {
+html {
+    background-color: var(--darkreader-background-ffffff, #181a1b) !important;
+}
+html {
+    color-scheme: dark !important;
+}
+iframe {
+    color-scheme: dark !important;
+}
+html, body {
+    background-color: var(--darkreader-background-ffffff, #181a1b);
+}
+html, body {
+    border-color: var(--darkreader-border-4c4c4c, #736b5e);
+    color: var(--darkreader-text-000000, #e8e6e3);
+}
+a {
+    color: var(--darkreader-text-0040ff, #3391ff);
+}
+table {
+    border-color: var(--darkreader-border-808080, #545b5e);
+}
+mark {
+    color: var(--darkreader-text-000000, #e8e6e3);
+}
+::placeholder {
+    color: var(--darkreader-text-a9a9a9, #b2aba1);
+}
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    background-color: var(--darkreader-background-faffbd, #404400) !important;
+    color: var(--darkreader-text-000000, #e8e6e3) !important;
+}
+::selection {
+    background-color: var(--darkreader-background-0060d4, #004daa) !important;
+    color: var(--darkreader-text-ffffff, #e8e6e3) !important;
+}
+::-moz-selection {
+    background-color: var(--darkreader-background-0060d4, #004daa) !important;
+    color: var(--darkreader-text-ffffff, #e8e6e3) !important;
+}
+}</style><style class="darkreader darkreader--text" media="screen"></style><style class="darkreader darkreader--invert" media="screen">.jfk-bubble.gtx-bubble, .captcheck_answer_label > input + img, span#closed_text > img[src^="https://www.gstatic.com/images/branding/googlelogo"], span[data-href^="https://www.hcaptcha.com/"] > #icon, img.Wirisformula, a[data-testid="headerMediumLogo"]>svg, .d2l-navigation-link-image-container, .d2l-iframe-loading-container {
+    filter: invert(100%) hue-rotate(180deg) contrast(90%) !important;
+}</style><style class="darkreader darkreader--inline" media="screen">[data-darkreader-inline-bgcolor] {
+  background-color: var(--darkreader-inline-bgcolor) !important;
+}
+[data-darkreader-inline-bgimage] {
+  background-image: var(--darkreader-inline-bgimage) !important;
+}
+[data-darkreader-inline-border] {
+  border-color: var(--darkreader-inline-border) !important;
+}
+[data-darkreader-inline-border-bottom] {
+  border-bottom-color: var(--darkreader-inline-border-bottom) !important;
+}
+[data-darkreader-inline-border-left] {
+  border-left-color: var(--darkreader-inline-border-left) !important;
+}
+[data-darkreader-inline-border-right] {
+  border-right-color: var(--darkreader-inline-border-right) !important;
+}
+[data-darkreader-inline-border-top] {
+  border-top-color: var(--darkreader-inline-border-top) !important;
+}
+[data-darkreader-inline-boxshadow] {
+  box-shadow: var(--darkreader-inline-boxshadow) !important;
+}
+[data-darkreader-inline-color] {
+  color: var(--darkreader-inline-color) !important;
+}
+[data-darkreader-inline-fill] {
+  fill: var(--darkreader-inline-fill) !important;
+}
+[data-darkreader-inline-stroke] {
+  stroke: var(--darkreader-inline-stroke) !important;
+}
+[data-darkreader-inline-outline] {
+  outline-color: var(--darkreader-inline-outline) !important;
+}
+[data-darkreader-inline-stopcolor] {
+  stop-color: var(--darkreader-inline-stopcolor) !important;
+}
+[data-darkreader-inline-bg] {
+  background: var(--darkreader-inline-bg) !important;
+}
+[data-darkreader-inline-border-short] {
+  border: var(--darkreader-inline-border-short) !important;
+}
+[data-darkreader-inline-border-bottom-short] {
+  border-bottom: var(--darkreader-inline-border-bottom-short) !important;
+}
+[data-darkreader-inline-border-left-short] {
+  border-left: var(--darkreader-inline-border-left-short) !important;
+}
+[data-darkreader-inline-border-right-short] {
+  border-right: var(--darkreader-inline-border-right-short) !important;
+}
+[data-darkreader-inline-border-top-short] {
+  border-top: var(--darkreader-inline-border-top-short) !important;
+}
+[data-darkreader-inline-invert] {
+    filter: invert(100%) hue-rotate(180deg);
+}</style><style class="darkreader darkreader--variables" media="screen">:root {
+   --darkreader-neutral-background: var(--darkreader-background-ffffff, #181a1b);
+   --darkreader-neutral-text: var(--darkreader-text-000000, #e8e6e3);
+   --darkreader-selection-background: var(--darkreader-background-0060d4, #004daa);
+   --darkreader-selection-text: var(--darkreader-text-ffffff, #e8e6e3);
+}</style><style class="darkreader darkreader--root-vars" media="screen"></style>
+
+      <meta charset="UTF-8">
+    <title>Emil Michels - IOW</title>
+    <!-- base href="https://www.io-warnemuende.de/" -->
+
+          <meta name="robots" content="index,follow">
+      <meta name="description" content="">
+      <meta name="generator" content="Contao Open Source CMS">
+    
+    
+        <style>#wrapper{width:940px;margin:0 auto}#header{height:150px}#left{width:190px;right:190px}#container{padding-left:190px}#footer{height:190px}</style><style class="darkreader darkreader--sync" media="screen"></style>
+    <link rel="stylesheet" href="contact_page_files/fe_klausi.css"><style class="darkreader darkreader--sync" media="screen"></style><link rel="stylesheet" href="contact_page_files/layout.min.css,icons.min.css,subcols.css,mediabox-black.min..css"><style class="darkreader darkreader--sync" media="screen"></style>        <script type="text/javascript" async="" defer="defer" src="contact_page_files/piwik.js"></script><script src="contact_page_files/mootools.min.js,onReadyAeo.min.js,aeo.min.js-e9152b5e.js"></script><meta name="darkreader" content="1705273c9bd648e5bc9ec278bcc9ae5d"><style class="darkreader darkreader--override" media="screen">.vimvixen-hint {
+    background-color: var(--darkreader-background-ffd76e, #684b00) !important;
+    border-color: var(--darkreader-background-c59d00, #9e7e00) !important;
+    color: var(--darkreader-text-302505, #d7d4cf) !important;
+}
+#vimvixen-console-frame {
+    color-scheme: light !important;
+}
+::placeholder {
+    opacity: 0.5 !important;
+}
+#edge-translate-panel-body,
+.MuiTypography-body1,
+.nfe-quote-text {
+    color: var(--darkreader-neutral-text) !important;
+}
+gr-main-header {
+    background-color: var(--darkreader-background-add8e6, #1b4958) !important;
+}
+.tou-z65h9k,
+.tou-mignzq,
+.tou-1b6i2ox,
+.tou-lnqlqk {
+    background-color: var(--darkreader-neutral-background) !important;
+}
+.tou-75mvi {
+    background-color: var(--darkreader-background-cfecf5, #0f3a47) !important;
+}
+.tou-ta9e87,
+.tou-1w3fhi0,
+.tou-1b8t2us,
+.tou-py7lfi,
+.tou-1lpmd9d,
+.tou-1frrtv8,
+.tou-17ezmgn {
+    background-color: var(--darkreader-background-f5f5f5, #1e2021) !important;
+}
+.tou-uknfeu {
+    background-color: var(--darkreader-background-faedda, #432c09) !important;
+}
+.tou-6i3zyv {
+    background-color: var(--darkreader-background-85c3d8, #245d70) !important;
+}
+div.mermaid-viewer-control-panel .btn {
+    background-color: var(--darkreader-neutral-background);
+    fill: var(--darkreader-neutral-text);
+}
+svg g rect.er {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g rect.er.entityBox {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g rect.er.attributeBoxOdd {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g rect.er.attributeBoxEven {
+    fill: var(--darkreader-selection-background);
+    fill-opacity: 0.8 !important;
+}
+svg rect.er.relationshipLabelBox {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g g.nodes rect,
+svg g g.nodes polygon {
+    fill: var(--darkreader-neutral-background) !important;
+}
+svg g rect.task {
+    fill: var(--darkreader-selection-background) !important;
+}
+svg line.messageLine0,
+svg line.messageLine1 {
+    stroke: var(--darkreader-neutral-text) !important;
+}
+div.mermaid .actor {
+    fill: var(--darkreader-neutral-background) !important;
+}
+mitid-authenticators-code-app > .code-app-container {
+    background-color: white !important;
+    padding-top: 1rem;
+}
+iframe#unpaywall[src$="unpaywall.html"] {
+    color-scheme: light !important;
+}
+select {
+    --darkreader-bg--form-control-background-color: rgba(22, 22, 22, 0) !important;
+}
+select * {
+    background-color: var(--darkreader-neutral-background) !important;
+}
+body#tumblr {
+    --darkreader-bg--secondary-accent: 31, 32, 34 !important;
+    --darkreader-bg--white: 23, 23, 23 !important;
+    --darkreader-text--black: 228, 224, 218 !important;
+}
+:host {
+    --d2l-border-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+    --d2l-button-icon-background-color-hover: var(--darkreader-bg--d2l-color-gypsum) !important;
+    --d2l-color-ferrite: var(--darkreader-neutral-text) !important;
+    --d2l-color-sylvite: var(--darkreader-bg--d2l-color-sylvite) !important;
+    --d2l-dropdown-background-color: var(--darkreader-neutral-background) !important;
+    --d2l-dropdown-border-color: var(--darkreader-border--d2l-color-mica) !important;
+    --d2l-input-backgroud-color: var(--darkreader-neutral-background) !important;
+    --d2l-menu-border-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+    --d2l-tooltip-background-color: var(--darkreader-neutral-background) !important;
+    --d2l-tooltip-border-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+}
+:host([_floating]) .d2l-floating-buttons-container {
+    background-color: var(--darkreader-neutral-background) !important;
+    border-top-color: var(--darkreader-border--d2l-color-mica) !important;
+    opacity: 0.88 !important;
+}
+d2l-card {
+    background: var(--darkreader-neutral-background) !important;
+    border-color: var(--darkreader-border--d2l-color-gypsum) !important;
+}
+d2l-dropdown-content > div,
+d2l-menu-item {
+    background-color: var(--darkreader-neutral-background) !important;
+    border-radius: 10px !important;
+}
+d2l-empty-state-simple {
+    border-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+}
+.d2l-button-filter > ul > li > a.vui-button {
+    border-color: var(--darkreader-border--d2l-color-mica) !important;
+}
+.d2l-label-text:has(.d2l-button-subtle-content):hover,
+.d2l-label-text:has(.d2l-button-subtle-content):focus,
+.d2l-label-text:has(.d2l-button-subtle-content):active {
+    background-color: var(--darkreader-bg--d2l-color-gypsum) !important;
+}
+.d2l-navigation-centerer {
+    color: inherit !important;
+}
+.d2l-tabs-layout {
+    border-color: var(--darkreader-border--d2l-color-gypsum) !important;
+}
+.d2l-input,
+.d2l-calendar-date,
+.d2l-htmleditor-container {
+    background-color: var(--darkreader-neutral-background) !important;
+}
+.d2l-collapsible-panel {
+    border: 1px solid var(--darkreader-border--d2l-color-mica) !important;
+    border-radius: 0.4rem !important;
+}
+.d2l-collapsible-panel-divider {
+    border-bottom: 1px solid var(--darkreader-border--d2l-color-mica) !important;
+}
+.d2l-w2d-flex {
+    border-bottom: 2px solid var(--darkreader-border--d2l-color-mica) !important;
+}
+.d2l-collapsible-panel scrolled,
+.d2l-collapsible-panel-header,
+.d2l-w2d-collection-fixed {
+    background-color: var(--darkreader-neutral-background) !important;
+}
+.d2l-loading-spinner-bg {
+    fill: var(--darkreader-bg--d2l-color-gypsum) !important;
+}
+.d2l-loading-spinner-bg-stroke {
+    stroke: var(--darkreader-border--d2l-color-mica) !important;
+}
+.d2l-loading-spinner-wrapper svg path,
+.d2l-loading-spinner-wrapper svg circle {
+    fill: var(--darkreader-neutral-background) !important;
+}
+embed[type="application/pdf"] { filter: invert(100%) contrast(90%); }</style><link rel="alternate" hreflang="de" href="https://www.io-warnemuende.de/emil-michels.html">
+<link rel="alternate" hreflang="x-default" href="https://www.io-warnemuende.de/emil-michels.html">
+<link rel="alternate" hreflang="en" href="https://www.io-warnemuende.de/emil-michels-en.html">
+<!--[if lte IE 7]><link href="system/modules/Subcolumns/assets/yaml3/subcolsIEHacks.css" rel="stylesheet" type="text/css" /><![endif]--> <!--[if lt IE 7]><link rel="stylesheet" href="files/base/css/ie6_3px_bug.css" type="text/css" media="screen" /><![endif]-->
+
+<!-- Matomo -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://piwik.io-warnemuende.de/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code --> <link rel="stylesheet" href="contact_page_files/update-corrections.css" type="text/css"><style class="darkreader darkreader--sync" media="screen"></style>
+  
+
+<script type="text/javascript">
+function aeo_link_decode(href) {
+    var address = href.replace(/.*index.php\/email_obfuscation\/en\/aeo\/([a-z0-9._%-]+)\+([a-z0-9._%-]+)\+([a-z.]+)\+[0-9]+\+{0,1}([^\.]*)\..*/i, '$1' + '@' + '$2' + '.' + '$3' + '|' + '$4');
+    var i = strpos(address, '|', 0);
+    var params = '';
+    if (i) {
+    	var params = address.substr(i + 1);
+    	address = address.substr(0, i);
+    	
+    	if (params.length > 0) {
+    		params = base64_decode(params);
+    	}
+    }
+    
+    address = rot13 ? str_rot13(address) : address;
+    if (params.length > 0) {
+   		address = address + html_entity_decode(params);
+   	}
+        
+    window.location.replace('mailto:' + address);
+}
+
+var rot13 = true;
+var tooltip_js_on = 'send email';
+
+</script>
+
+
+<style type="text/css">
+	span.obfuscated { display: none; white-space: nowrap;}
+</style><style class="darkreader darkreader--sync" media="screen"></style>
+</head>
+<body id="top" class="contao-layout-7">
+
+      
+    <div id="wrapper">
+
+                        <header id="header">
+            <div class="inside">
+              
+<!-- indexer::stop -->
+<div id="homelink"><a href="https://www.io-warnemuende.de/en_index.html" title="The IOW homepage">IOW Home</a></div>
+<!-- indexer::continue -->
+<!-- indexer::stop -->
+<div class="mod_breadcrumb block" id="breadcrumbs">
+
+<a href="https://www.io-warnemuende.de/en_index.html" title="IOW">IOW</a> / 
+<a href="https://www.io-warnemuende.de/introduction-map.html" title="About us">About us</a> / 
+<a href="https://www.io-warnemuende.de/staff.html" title="Employees">Employees</a> / 
+<span class="active">Emil Michels</span>
+
+</div>
+<!-- indexer::continue -->
+
+<!-- indexer::stop -->
+<nav class="mod_navigation block">
+
+  
+  <a href="https://www.io-warnemuende.de/emil-michels-en.html#skipNavigation10" class="invisible">Skip navigation</a>
+
+  <div id="nav_main">
+<ul>
+<li class="home first"><a href="https://www.io-warnemuende.de/en_index.html" title="Leibniz Institute for Baltic Sea Research Warnemünde" onclick="this.blur();">Home</a></li>
+<li class="aktuelles"><a href="https://www.io-warnemuende.de/news-en.html" title="News" onclick="this.blur();">News</a></li>
+<li class="forschung"><a href="https://www.io-warnemuende.de/research-programme-2024-2033.html" title="Research" onclick="this.blur();">Research</a></li>
+<li class="studium"><a href="https://www.io-warnemuende.de/studies.html" title="Teaching" onclick="this.blur();">Teaching</a></li>
+<li class="meer"><a href="https://www.io-warnemuende.de/learn-about-the-sea.html" title="Learn about the Sea" onclick="this.blur();">Learn about the Sea</a></li>
+<li class="trail wir last" id="current"><a href="https://www.io-warnemuende.de/introduction-map.html" title="About us" onclick="this.blur();">About us</a></li>
+</ul>
+</div>
+  <span id="skipNavigation10" class="invisible"></span>
+
+</nav>
+<!-- indexer::continue -->
+
+<!-- indexer::stop -->
+<nav class="mod_customnav block" id="header_servicenavigation">
+
+  
+  <a href="https://www.io-warnemuende.de/emil-michels-en.html#skipNavigation70" class="invisible">Skip navigation</a>
+
+  <!-- Service-Navigation oben-->
+<div id="topnav">
+   <!-- start: skip link navigation -->
+   <a class="skip" href="#navigation" title="skip link">Skip to the navigation</a><span class="hideme">.</span>
+   <a class="skip" href="#content" title="skip link">Skip to the content</a><span class="hideme">.</span>
+<span>
+<a href="https://www.io-warnemuende.de/staff.html" title="Staff" onclick="this.blur();">Staff</a> | <a href="http://intranet.io-warnemuende.de/" title="Intranet" onclick="this.blur();">Intranet</a> | <a href="https://www.io-warnemuende.de/legal-notice.html" title="Legal Notice" onclick="this.blur();">Legal Notice</a> | <a href="https://www.io-warnemuende.de/data-protection-statement.html" title="Data Protection Statement" onclick="this.blur();">Data Protection</a> | <a href="https://www.io-warnemuende.de/contact.html" title="Contact" onclick="this.blur();">Contact</a></span>
+
+</div>
+
+  <span id="skipNavigation70" class="invisible"></span>
+
+</nav>
+<!-- indexer::continue -->
+
+<!-- indexer::stop -->
+<nav class="mod_changelanguage block">
+
+  
+  
+<ul class="level_1">
+            <li class="lang-de"><a href="https://www.io-warnemuende.de/emil-michels.html" title="Emil Michels" class="lang-de" hreflang="de" aria-label="Go to current page in German">DE</a></li>
+      </ul>
+
+</nav>
+<!-- indexer::continue -->            </div>
+          </header>
+              
+      
+              <div id="container">
+
+                      <main id="main">
+              <div class="inside">
+                
+<div class="printlayout">
+<img src="contact_page_files/bg_iow_header_printlayout_en.gif" width="940" height="108" border="0" alt="IOW Logo"></div>
+
+  <div class="mod_article block" id="article-11233">
+    
+          
+<h1 class="ce_headline">
+  Emil Michels</h1>
+
+<!-- Spaltenset Start //-->
+<section class="ce_colsetStart subcolumns colcount_2 yaml3 col-66x33 sc-type-66x33">
+	<!-- first Column //-->
+	<div class="c66l col_1 first">
+				<div class="subcl" style="padding-right:0px;">
+					
+<div class="ce_text label_value_staff abstand-10x0 block">
+
+        
+  
+  
+      
+<figure class="image_container float_left" style="margin-right:1em;">
+  
+  
+
+<img src="contact_page_files/Emil%20Michels%20k-9afbe441.jpg" width="200" height="279" alt="Vorname Nachname">
+
+
+  
+  </figure>
+
+  
+      <div class="label">Address:</div>
+<div class="value">Leibniz-Institute for Baltic Sea Research <br>Seestrasse 15<br>D-18119 Rostock<br>Germany</div>
+<div class="label">Phone:</div>
+<div class="value">+49 381 5197 159</div>
+<div class="label">Fax:</div>
+<div class="value">+49 381 5197 114</div>
+<div class="label">E-Mail:</div>
+<div class="value"><a title="send email" href="javascript:aeo_link_decode('index.php/email_obfuscation/en/aeo/rzvy.zvpuryf+vb-jnearzhraqr+qr+9727+.html');" rel="nofollow" name="aeo-obfuscated-5765">emil<span class="obfuscated">null</span>.michels@io-warnemuende.de</a></div>  
+
+</div>
+
+<h2 class="ce_headline">
+  Work areas</h2>
+
+<div class="ce_text block">
+
+        
+  
+      <p>- Software development for the whole CTD measurement process</p>
+<p>- Data Curator for CTD data in the <a href="https://www.allianz-meeresforschung.de/en/activities/data-management-and-digitalisation#underway">DAM Underway Project</a></p>
+<p>- development of standardised processing and validation procedures, as well as quality control criteria for CTD data</p>  
+  
+  
+
+</div>
+
+<div class="ce_text block">
+
+            <h2>Software</h2>
+      
+  
+      <p><strong>CTD-Client</strong></p>
+<p>Simple inerface to measure and process CTD data.</p>
+<ul>
+<li><a href="https://ctd-software.pages.io-warnemuende.de/CTD-Client/" target="_blank" rel="noopener">Dokumentation</a></li>
+<li><a href="https://git.io-warnemuende.de/CTD-Software/CTD-Client" target="_blank" rel="noopener">Code</a></li>
+<li><a href="https://git.io-warnemuende.de/CTD-Software/CTD-Client/releases/latest" target="_blank" rel="noopener">Download last version</a></li>
+</ul>
+<p><strong>CTD-Processing</strong></p>
+<p>Toolbox to process CTD&nbsp; data.</p>
+<ul>
+<li><a href="https://ctd-software.pages.io-warnemuende.de/processing/" target="_blank" rel="noopener">Dokumentation</a></li>
+<li><a href="https://git.io-warnemuende.de/CTD-Software/processing" target="_blank" rel="noopener">Code</a></li>
+<li><a href="https://pypi.org/project/ctd-processing/" target="_blank" rel="noopener">Pypi Package Link</a></li>
+</ul>
+<p><strong>Seabirdfilehandler</strong></p>
+<p>Parsers to interact with Sea-Bird files.</p>
+<ul>
+<li><a href="https://ctd-software.pages.io-warnemuende.de/seabirdfilehandler/" target="_blank" rel="noopener">Dokumentation</a></li>
+<li><a href="https://git.io-warnemuende.de/CTD-Software/SeabirdFileHandler" target="_blank" rel="noopener">Code</a></li>
+<li><a href="https://pypi.org/project/seabirdfilehandler/" target="_blank" rel="noopener">Pypi Package Link</a></li>
+</ul>  
+  
+  
+
+</div>
+				</div>
+			</div>
+	<!-- second Column //-->
+	<div class="ce_colsetPart c33r col_2 last">
+				<div class="subcr" style="padding-left:0px;">
+		
+				</div>
+			</div>
+</section>
+<!-- Spaltenset End //-->
+    
+      </div>
+
+              </div>
+                          </main>
+          
+                                    <aside id="left">
+                <div class="inside">
+                  
+<!-- indexer::stop -->
+<nav class="mod_navigation block" id="submenu">
+
+  
+  <a href="https://www.io-warnemuende.de/emil-michels-en.html#skipNavigation16" class="invisible">Skip navigation</a>
+
+  <ul>
+<li class="first"><a href="https://www.io-warnemuende.de/introduction-map.html" title="Short introduction &amp; site plan">Short introduction &amp; site plan</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/physical-oceanography.html" title="Physical Oceanography">Physical Oceanography</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/biological-oceanography.html" title="Biological Oceanography">Biological Oceanography</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/marine-chemistry.html" title="Marine Chemistry">Marine Chemistry</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/marine-geology.html" title="Marine Geosciences">Marine Geosciences</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/marine-observations.html" title="Marine Observations">Marine Observations</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/administration.html" title="Administration">Administration</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/science-management-unit.html" title="Science Management unit">Science Management unit</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/analytics-group.html" title="Analytics Group">Analytics Group</a><span class="hidden">.</span></li>
+<li><a href="https://www.io-warnemuende.de/it-and-data-management.html" title="IT &amp; Data Management">IT &amp; Data Management</a><span class="hidden">.</span></li>
+<li class="submenu trail subtreehidden"><a href="https://www.io-warnemuende.de/staff.html" title="Employees">Employees</a><span class="hidden">.</span><ul>
+<li class="sibling first"><a href="https://www.io-warnemuende.de/soeren-ahmerkamp-en.html" title="Soeren Ahmerkamp">Soeren Ahmerkamp</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/amelia-agranovich-en.html" title="Amelia Agranovich">Amelia Agranovich</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/anna-adriana-anschuetz-en.html" title="Anna-Adriana Anschütz">Anna-Adriana Anschütz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/annabell-apitz-en.html" title="Annabell Apitz">Annabell Apitz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/helena-frazao-en.html" title="Helena Frazao (en)">Helena Frazao (en)</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/damian-leonardo-arevalo-martinez-en.html" title="Damian Leonardo Arévalo Martínez">Damian Leonardo Arévalo Martínez</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/helge-arz-en.html" title="Helge Arz">Helge Arz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/leonie-barghorn-en.html" title="Leonie Barghorn">Leonie Barghorn</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/ulrich-bathmann-en.html" title="Ulrich Bathmann">Ulrich Bathmann</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/giulia-bellon-en.html" title="Giulia Bellon">Giulia Bellon</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/henry-bittig-en.html" title="Henry Bittig">Henry Bittig</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/steffen-bock-en.html" title="Steffen Bock">Steffen Bock</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sarah-bolius-en.html" title="Sarah Bolius">Sarah Bolius</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/hadi-bordbar-en.html" title="Professional Webpage">Hadi Bordbar</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/florian-boergel-en.html" title="Florian Börgel">Florian Börgel</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/philina-borowski-en.html" title="Philina Borowski">Philina Borowski</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/grete-boskamp-en.html" title="Grete Boskamp">Grete Boskamp</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/michael-boettcher-en.html" title="Michael Böttcher">Michael Böttcher</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/ibrahim-boubekri-en.html" title="Ibrahim Boubekri">Ibrahim Boubekri</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/torben-bruhns-en.html" title="Torben Bruhns">Torben Bruhns</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/hans-burchard-en.html" title="Hans Burchard">Hans Burchard</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/bronwyn-cahill-en.html" title="Bronwyn Cahill">Bronwyn Cahill</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/ilona-chorny-en.html" title="Ilona Chorny">Ilona Chorny</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/manita-chouksey-en.html" title="Manita Chouksey">Manita Chouksey</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/evridiki-chrysagi-en.html" title="Evridiki Chrysagi">Evridiki Chrysagi</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/markus-czymzik-en.html" title="Markus Czymzik">Markus Czymzik</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/olaf-dellwig-en.html" title="Olaf Dellwig">Olaf Dellwig</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/madleen-dierken-en.html" title="Madleen Dierken">Madleen Dierken</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/joachim-dippner-en.html" title="Joachim Dippner">Joachim Dippner</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sonja-ehlers-en.html" title="Sonja Ehlers">Sonja Ehlers</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/catia-milene-ehlert-von-ahn.html" title="Cátia Milene Ehlert von Ahn">Cátia Milene Ehlert von Ahn</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/kristina-enders-en.html" title="Kristina Enders">Kristina Enders</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/gabriela-escobar-s%C3%A1nchez-en.html" title="Gabriela Escobar Sánchez">Gabriela Escobar Sánchez</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/arne-estelmann-en.html" title="Arne Estelmann">Arne Estelmann</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/rainer-feistel-en.html" title="Rainer Feistel">Rainer Feistel</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/susanne-feistel-en.html" title="Susanne Feistel">Susanne Feistel</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/peter-feldens-en.html" title="Peter Feldens">Peter Feldens</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/agata-feldens-en.html" title="Agata Feldens">Agata Feldens</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/wolfgang-fennel-en.html" title="Wolfgang Fennel">Wolfgang Fennel</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/ute-fensky-en.html" title="Ute Fensky">Ute Fensky</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/kathrin-fisch-en.html" title="Kathrin Fisch">Kathrin Fisch</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/rene-friedland-2213.html" title="René Friedland">René Friedland</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/laura-fuchs-en.html" title="Laura Fuchs">Laura Fuchs</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/jacob-geersen-en.html" title="Jacob Geersen">Jacob Geersen</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/michael-glockzin-en.html" title="Michael Glockzin">Michael Glockzin</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/irina-goldschmidt-en.html" title="Irina Goldschmidt">Irina Goldschmidt</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/mayya-gogina-en.html" title="Mayya Gogina">Mayya Gogina</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/marie-grape-en.html" title="Marie Grape">Marie Grape</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sabrina-gratz-en.html" title="Sabrina Gratz">Sabrina Gratz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/ulf-graewe-en.html" title="Ulf Gräwe">Ulf Gräwe</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/matthias-groeger-en.html" title="titel">Matthias Gröger</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/annett-gruettmueller-en.html" title="Annett Grüttmüller">Annett Grüttmüller</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/mirco-haseler-en.html" title="Mirco Haseler">Mirco Haseler</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/christiane-hassenrueck-en.html" title="Christiane Hassenrück">Christiane Hassenrück</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/toralf-heene-en.html" title="Toralf Heene">Toralf Heene</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/erika-henell-en.html" title="Erika Henell">Erika Henell</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/jan-henkel-en.html" title="Jan Henkel">Jan Henkel</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/daniel-herlemann.1688.html" title="Daniel Herlemann">Daniel Herlemann</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/nicole-heidenreich-en.html" title="Nicole Heidenreich">Nicole Heidenreich</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/peter-holtermann-en.html" title="Peter Holtermann">Peter Holtermann</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/lilo-heyn-en.html" title="Lilo Heyn">Lilo Heyn</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/soeren-iwe-en.html" title="Sören Iwe">Sören Iwe</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/juliana-ivar-do-sul-en.html" title="Juliana Ivar do Sul">Juliana Ivar do Sul</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/stanislav-jabinski-en.html" title="Stanislav Jabinski">Stanislav Jabinski</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/erik-jacobs-en.html" title="Erik Jacobs">Erik Jacobs</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/franz-jendersie-en.html" title="Franz Jendersie">Franz Jendersie</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/klaus-juergens-en.html" title="Klaus Jürgens">Klaus Jürgens</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/susanne-juergensmann-en.html" title="Susanne Jürgensmann">Susanne Jürgensmann</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sophie-kache-en.html" title="Sophie Kache">Sophie Kache</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/jerome-kaiser-en.html" title="Jerome Kaiser">Jerome Kaiser</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/marion-kanwischer-en.html" title="Marion Kanwischer">Marion Kanwischer</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/kirstin-kastell-en.html" title="Kirstin Kastell">Kirstin Kastell</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/isabell-klawonn-en.html" title="Isabell Klawonn">Isabell Klawonn</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/kk.html" title="Knut Klingbeil">Knut Klingbeil</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/katharina-kniesz-en.html" title="Katharina Kniesz">Katharina Kniesz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/josef-koehn-en.html" title="Josef Köhn">Josef Köhn</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/martin-kolbe-en.html" title="Martin Kolbe">Martin Kolbe</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/bennet-krebs-en.html" title="Bennet Krebs">Bennet Krebs</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/anke-kremp-en.html" title="Anke Kremp">Anke Kremp</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sandra-kube-en.html" title="Sandra Kube">Sandra Kube</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/solveig-kuehl-en.html" title="Solveig Kühl">Solveig Kühl</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/joern-kurth-en.html" title="Jörn Kurth">Jörn Kurth</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/joachim-kuss-en.html" title="Joachim Kuss">Joachim Kuss</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/matthias-labrenz-en.html" title="Matthias Labrenz">Matthias Labrenz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/susanne-lage-en.html" title="Susanne Schöne">Susanne Schöne</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/robin-lenz-en.html" title="Robin Lenz">Robin Lenz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/iris-liskow-en.html" title="Iris Liskow">Iris Liskow</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/natalie-loick-en.html" title="Natalie Loick">Natalie Loick</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/marvin-lorenz-en.html" title="Marvin Lorenz">Marvin Lorenz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/mathilda-luxenburger-en.html" title="Mathilda Elisabeth Luxenburger">Mathilda Elisabeth Luxenburger</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/greta-markfort-en.html" title="Greta Markfort">Greta Markfort</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/robert-mars-en.html" title="Robert Mars">Robert Mars</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/denise-marx-en.html" title="Denise Marx">Denise Marx</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/markus-meier-en.html" title="Markus Meier">Markus Meier</a><span class="hidden">.</span></li>
+<li class="active active"><strong class="active">Emil Michels</strong></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/volker-mohrholz-en.html" title="Volker Mohrholz">Volker Mohrholz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/jann-mueller-en.html" title="Jann Mueller">Jann Mueller</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sebastian-neubert-en.html" title="Sebastian Neubert">Sebastian Neubert</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/aicha-naumann-en.html" title="Aïcha Naumann">Aïcha Naumann</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/michael-naumann-en.html" title="Michael Naumann">Michael Naumann</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/guenther-nausch-en.html" title="Günther Nausch">Günther Nausch</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/monika-nausch-en.html" title="Monika Nausch">Monika Nausch</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/thomas-neumann-en.html" title="Thomas Neumann">Thomas Neumann</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/helena-osterholz-en.html" title="Helena Osterholz">Helena Osterholz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/stefan-otto-en.html" title="Stefan Otto">Stefan Otto</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/svenja-papenmeier-en.html" title="Svenja Papenmeier">Svenja Papenmeier</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/carolin-paul-en.html" title="Carolin Paul">Carolin Paul</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/mareike-peterson-en.html" title="Mareike Peterson">Mareike Peterson</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sarah-piehl-en.html" title="Sarah Piehl">Sarah Piehl</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/manja-placke-en.html" title="Manja Placke">Manja Placke</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sascha-plewe-en.html" title="Sascha Plewe">Sascha Plewe</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/daniel-poenisch-en.html" title="Daniel Pönisch">Daniel Pönisch</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/frank-pohl-en.html" title="Frank Pohl">Frank Pohl</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sebastian-pomrehn-en.html" title="Sebastian Pomrehn">Sebastian Pomrehn</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/matthias-premke-kraus-en.html" title="Matthias Premke-Kraus">Matthias Premke-Kraus</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/ralf-prien-en.html" title="Ralf Prien">Ralf Prien</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/jonas-radisch-en.html" title="Jonas Radisch">Jonas Radisch</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/hagen-radtke-en.html" title="Hagen Radtke">Hagen Radtke</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/bruna-de-ramos-en.html" title="Bruna de Ramos">Bruna de Ramos</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/berit-recklebe-en.html" title="Berit Recklebe">Berit Recklebe</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/lloyd-reese-en.html" title="Lloyd Reese">Lloyd Reese</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/gregor-rehder-en.html" title="Gregor Rehder">Gregor Rehder</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/janika-reineccius-en.html" title="Janika Reineccius">Janika Reineccius</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/markus-reinert-en.html" title="Markus Reinert">Markus Reinert</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/katharina-romoth-en.html" title="Katharina Romoth">Katharina Romoth</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/jurjen-rooze-en.html" title="Dr. Jurjen Rooze">Jurjen Rooze</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/siren-ruehs-en.html" title="Siren Rühs">Siren Rühs</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/johann-ruickoldt-en.html" title="Johann Ruickoldt">Johann Ruickoldt</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/karoline-rummel-en.html" title="Karoline Rummel">Karoline Rummel</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/bita-sabbaghzadeh-en.html" title="Bita Sabbaghzadeh">Bita Sabbaghzadeh</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/jessica-salcedo-en.html" title="Jessica Salcedo">Jessica Salcedo</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/astrid-sanchez-jimenez-en.html" title="Astrid Sánchez Jiménez">Astrid Sánchez Jiménez</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/mariano-santoro-en.html" title="Mariano Santoro">Mariano Santoro</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/martin-sass-en.html" title="Martin Sass">Martin Sass</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/ingrid-sassenhagen-en.html" title="Ingrid Sassenhagen">Ingrid Sassenhagen</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/gerald-schernewski_GB.html" title="Gerald Schernewski">Gerald Schernewski</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/oliver-schmale-en.html" title="Oliver Schmale">Oliver Schmale</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/martin-schmidt-en.html" title="Martin Schmidt">Martin Schmidt</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/mira-schmitt-en.html" title="Mira Schmitt">Mira Schmitt</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/bernd-schneider-en.html" title="Bernd Schneider">Bernd Schneider</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/mischa-schoenke-en.html" title="Mischa Schönke">Mischa Schönke</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/sina-schopen-en.html" title="Sina Schopen">Sina Schopen</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/stefanie-schubert-en.html" title="Stefanie Schubert">Stefanie Schubert</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/ingo-schuffenhauer-en.html" title="Ingo Schuffenhauer">Ingo Schuffenhauer</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/louisa-schulz-en.html" title="Louisa Alina Schulz">Louisa Alina Schulz</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/detlef-schulz-bull-en.html" title="Detlef Schulz-Bull">Detlef Schulz-Bull</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/heide-schulz-vogt-en.html" title="Heide Schulz-Vogt">Heide Schulz-Vogt</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/inken-schulze-en.html" title="Inken Schulze">Inken Schulze</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/johanna-schumacher-en.html" title="Johanna Schumacher">Johanna Schumacher</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/elisabeth-seidel-en.html" title="Elisabeth Seidel">Elisabeth Seidel</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/juliana-socrate-en.html" title="Juliana Socrate">Juliana Socrate</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/jens-soeder-en.html" title="Jens Söder">Jens Söder</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/mike-sommer-en.html" title="Mike Sommer">Mike Sommer</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/theodor-sperlea-en.html" title="Theodor Sperlea">Theodor Sperlea</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/henri-steinbrink-en.html" title="Henri Steinbrink">Henri Steinbrink</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/erik-stohr-en.html" title="Erik Stohr">Erik Stohr</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/alexander-tagg-en.html" title="Alexander Tagg">Alexander Tagg</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/miriam-von-thenen-en.html" title="Miriam von Thenen">Miriam von Thenen</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/lars-umlauf-en.html" title="Lars Umlauf">Lars Umlauf</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/lukas-vogel-en.html" title="Lukas Vogel">Lukas Vogel</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/angela-vogts-en.html" title="Angela Vogts">Angela Vogts</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/maren-voss-en.html" title="Maren Voß">Maren Voß</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/joanna-waniek-en.html" title="Joanna J. Waniek">Joanna J. Waniek</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/antje-wegwerth-en.html" title="Antje Wegwerth">Antje Wegwerth</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/hendrikje-wehnert-en.html" title="Hendrikje Wehnert">Hendrikje Wehnert</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/fabian-wolf-en.html" title="Fabian Wolf">Fabian Wolf</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/anja-zettler-en.html" title="Anja Zettler">Anja Zettler</a><span class="hidden">.</span></li>
+<li class="sibling"><a href="https://www.io-warnemuende.de/michael-zettler-en.html" title="Michael Zettler">Michael Zettler</a><span class="hidden">.</span></li>
+<li class="sibling last"><a href="https://www.io-warnemuende.de/oliver-zielinski-en.html" title="Oliver Zielinski">Oliver Zielinski</a><span class="hidden">.</span></li>
+</ul>
+</li>
+<li class="last"><a href="https://www.io-warnemuende.de/equal-opportunity.html" title="Gender Equality">Gender Equality</a><span class="hidden">.</span></li>
+</ul>
+
+  <span id="skipNavigation16" class="invisible"></span>
+
+</nav>
+<!-- indexer::continue -->
+
+<!-- search box -->
+<div class="search_box">
+<div class="block">
+  <form action="/search.html" method="get" name="searchform">
+      <input id="menuSearchInput" name="keywords" type="text" value="search term" onfocus="if(this.value=='search term')this.value='';" onblur="if(this.value=='')this.value='search term';"> 
+      <input id="menuSearchButton" type="submit" value="Go.">
+  </form>
+</div>
+</div>
+
+<img src="contact_page_files/bg_iow_col1_end.gif" width="100" height="200" border="0" alt="Institut für Ostseeforschung Warnemünde">
+                </div>
+              </aside>
+                      
+                                
+        </div>
+      
+      
+                        <footer id="footer">
+            <div class="inside">
+              
+<!-- indexer::stop -->
+<div class="footer_members noprint">
+   <!--<div class="leibniz"><a href="http://www.wgl.de" target="_blank">Leibniz Association</a></div>-->
+   <div class="kdm"><a href="http://www.deutsche-meeresforschung.de/en/" target="_blank">German Marine Research Consortium</a></div>
+   <div class="euromarine"><a href="http://www.euromarinenetwork.eu/" target="_blank">Euromarine Network</a></div>
+   <div class="dkk"><a href="http://www.deutsches-klima-konsortium.de/" target="_blank">Deutsches Klima-Konsortium</a></div>
+   <div class="balticearth"><a href="https://baltic.earth/" target="_blank">Baltic Earth</a></div>
+   <div class="dam"><a href="https://www.io-warnemuende.de/https%3A//www.allianz-meeresforschung.de/" target="_blank">Deutsche Allianz Meeresforschung</a></div>
+<div class="teq"><a href="http://www.total-e-quality.de/" target="_blank">Total E-Quality</a></div>
+  <p class="teq_text">IOW is <br>certified for <br><strong>Total E-Quality</strong></p>
+  <!--<p class="footer_members_text">Memberships:</p>-->
+</div>
+<!-- indexer::continue -->
+<!-- indexer::stop -->
+<nav class="mod_customnav noprint block" id="footer_servicenavigation">
+
+  
+  <a href="https://www.io-warnemuende.de/emil-michels-en.html#skipNavigation71" class="invisible">Skip navigation</a>
+
+  <p>
+<a href="https://www.io-warnemuende.de/staff.html" title="Staff" onclick="this.blur();">Staff</a> | <a href="http://intranet.io-warnemuende.de/" title="Intranet" onclick="this.blur();">Intranet</a> | <a href="https://www.io-warnemuende.de/legal-notice.html" title="Legal Notice" onclick="this.blur();">Legal Notice</a> | <a href="https://www.io-warnemuende.de/data-protection-statement.html" title="Data Protection Statement" onclick="this.blur();">Data Protection</a> | <a href="https://www.io-warnemuende.de/contact.html" title="Contact" onclick="this.blur();">Contact</a></p>
+
+  <span id="skipNavigation71" class="invisible"></span>
+
+</nav>
+<!-- indexer::continue -->
+
+<!-- indexer::stop -->
+<nav class="mod_navigation noprint block" id="footer_menunavigation">
+
+  
+  <a href="https://www.io-warnemuende.de/emil-michels-en.html#skipNavigation13" class="invisible">Skip navigation</a>
+
+  <p>
+<a href="https://www.io-warnemuende.de/en_index.html" title="Leibniz Institute for Baltic Sea Research Warnemünde" onclick="this.blur();">Home</a> | <a href="https://www.io-warnemuende.de/news-en.html" title="News" onclick="this.blur();">News</a> | <a href="https://www.io-warnemuende.de/research-programme-2024-2033.html" title="Research" onclick="this.blur();">Research</a> | <a href="https://www.io-warnemuende.de/studies.html" title="Teaching" onclick="this.blur();">Teaching</a> | <a href="https://www.io-warnemuende.de/learn-about-the-sea.html" title="Learn about the Sea" onclick="this.blur();">Learn about the Sea</a> | <a href="https://www.io-warnemuende.de/introduction-map.html" title="About us" onclick="this.blur();">About us</a></p>
+
+  <span id="skipNavigation13" class="invisible"></span>
+
+</nav>
+<!-- indexer::continue -->
+
+<!-- indexer::stop -->
+<div class="copyright">
+<p>© 2008-2025 Leibniz Institute for Baltic Sea Research Warnemünde. Last change of this page: 2025-07-17.
+<span class="printlayout">URL: https://www.io-warnemuende.de/emil-michels-en.html</span></p>
+</div>
+<!-- indexer::continue -->            </div>
+          </footer>
+              
+    </div>
+
+      
+  
+<script src="contact_page_files/mediabox.min.js"></script>
+<script>
+  window.addEvent('domready', function() {
+    var $ = document.id;
+    $$('a[data-lightbox]').mediabox({
+      // Put custom options here
+      clickBlock: false
+    }, function(el) {
+      return [el.href, el.title, el.getAttribute('data-lightbox')];
+    }, function(el) {
+      var data = this.getAttribute('data-lightbox').split(' ');
+      return (this == el) || (data[0] && el.getAttribute('data-lightbox').match(data[0]));
+    });
+    $('mbMedia').addEvent('swipe', function(e) {
+      (e.direction == 'left') ? $('mbNextLink').fireEvent('click') : $('mbPrevLink').fireEvent('click');
+    });
+  });
+</script>
+
+<script type="text/javascript">
+  /* <![CDATA[ */
+  (function() {
+    window.addEvent('domready', function() {
+      new Fx.Accordion($$('.toggler'), $$('div.accordion'), {
+        opacity: false,
+        display: false,
+        alwaysHide: true,
+        onActive: function(tog, el) {
+          el.setProperty('aria-hidden', 'false');
+          tog.addClass('active');
+		var acc = tog.getNext('div.accordion') || tog.getParent().getNext('div.accordion');
+          acc.fade('in');
+          tog.setProperty('aria-expanded', 'true');
+          return false;
+        },
+        onBackground: function(tog, el) {
+          el.setProperty('aria-hidden', 'true');
+          tog.removeClass('active');
+		var acc = tog.getNext('div.accordion') || tog.getParent().getNext('div.accordion');
+          acc.fade('out');
+          tog.setProperty('aria-expanded', 'false');
+          return false;
+        }
+      });
+      $$('.toggler').each(function(el) {
+        el.setProperty('role', 'tab');
+        el.setProperty('tabindex', 0);
+        el.addEvents({
+          'keypress': function(event) {
+            if (event.code == 13 || event.code == 32) {
+              this.fireEvent('click');
+            }
+          },
+          'focus': function() {
+            this.addClass('hover');
+          },
+          'blur': function() {
+            this.removeClass('hover');
+          },
+          'mouseenter': function() {
+            this.addClass('hover');
+          },
+          'mouseleave': function() {
+            this.removeClass('hover');
+          }
+        });
+      });
+      $$('div.accordion').each(function(el) {
+        el.setProperty('role', 'tabpanel');
+      });
+    });
+  })();
+  /* ]]> */
+</script>
+  <script type="application/ld+json">
+{
+    "@context": "https:\/\/schema.org",
+    "@graph": [
+        {
+            "@type": "WebPage"
+        },
+        {
+            "@id": "#\/schema\/image\/d0436de4-085b-11ef-b72c-0050560a0a02",
+            "@type": "ImageObject",
+            "contentUrl": "\/assets\/images\/c\/Emil%20Michels%20k-9afbe441.jpg"
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https:\/\/schema.contao.org",
+    "@graph": [
+        {
+            "@type": "Page",
+            "fePreview": false,
+            "groups": [],
+            "noSearch": false,
+            "pageId": 9727,
+            "protected": false,
+            "title": "Emil Michels"
+        }
+    ]
+}
+</script>
+<div id="mbOverlay" style="display: none; opacity: 0;"></div><div id="mbCenter" style="display: none;"><div id="mbContainer"><div id="mbMedia"></div></div><div id="mbBottom" style="opacity: 0;"><a id="mbCloseLink" href="#"></a><a id="mbNextLink" href="#"></a><a id="mbPrevLink" href="#"></a><div id="mbTitle"></div><div id="mbNumber"></div><div id="mbCaption"></div></div></div></body></html>

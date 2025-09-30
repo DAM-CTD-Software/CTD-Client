@@ -1,11 +1,23 @@
 Installation
 ============
 
-There are three ways to install and/or use this software. First would be in the
-form of a windows executable, .exe, that should run out of the box without any
-further dependencies that need installation. The other two forms of
-distribution are more targeted to developers or other people that seek a
-different use-case than running the software on your typical measurement
-computer. This package can be found on pypi and can therefore be installed
-using your favorite package manager. The last option involves cloning the
-code repository at https://git.io-warnemuende.de/CTD-Software/CTD-Client .
+The CTD-Client is distributed as windows executable (.exe). You can find the latest version
+`here
+<https://git.io-warnemuende.de/CTD-Software/CTD-Client/releases/latest>`_.
+You do not need anything else and can put the .exe file anywhere you want to,
+but it is recommended to use a default path, like C:/Programs. To update the
+software, just replace the exe with a more recent one. You can get notified
+about new versions by subscribing to this rss feed:
+https://git.io-warnemuende.de/CTD-Software/CTD-Client/releases.rss
+
+Configuration
+=============
+
+The settings of the CTD-Client are stored inside C:/user/USERNAME/AppData/Local/ctdclient/ctdclient .
+The main configuration file is called ctdclient.toml and looks like this:
+
+.. literalinclude:: ../../resources/templates/ctdclient.toml
+   :language: toml
+   :caption: ctdclient.toml
+
+All configuration can be done via the GUI of the software.

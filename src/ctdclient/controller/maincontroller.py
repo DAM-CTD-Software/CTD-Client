@@ -90,7 +90,7 @@ class MainController:
             "measurement": self.measurement,
             "processing": self.processing_view,
             "nrt publication": self.nrt_control_view,
-            "config": self.config_view,
+            "settings": self.config_view,
             "help": self.about_view,
         }
         return tab_dict

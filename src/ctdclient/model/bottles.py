@@ -33,11 +33,10 @@ class BottleClosingDepths(UserDict):
 
     def check_bottle_data(self, bottle_data_table: dict):
         bottle_data_table = {
-            k: v.replace(",", ".")
+            k: str(float(v.replace(",", ".")))
             for k, v in bottle_data_table.items()
-            if v != ""
+            if v.replace(",", ".").replace(".", "", 1).isdigit()
         }
-        # check for more than two bottles set to the same depth
         depth_counts = Counter(bottle_data_table.values())
         if [count for count in depth_counts.values() if count > 2]:
             logger.error(
@@ -45,26 +44,25 @@ class BottleClosingDepths(UserDict):
             )
             self.data = {1: "ERROR"}
             return
-
-        items = sorted(bottle_data_table.items(), key=lambda x: x[1])
-        adjusted_values = []
-        for _, value in items:
-            try:
-                adjusted_values.append(float(value))
-            except ValueError:
+        new_data_table = {}
+        for key, value in bottle_data_table.items():
+            if key in new_data_table:
                 continue
-
-        for i in range(1, len(adjusted_values)):
-            diff = adjusted_values[i] - adjusted_values[i - 1]
-            if diff < self.config.minimum_bottle_diff:
-                shift = (self.config.minimum_bottle_diff - diff) / 2
-                adjusted_values[i - 1] -= shift
-                adjusted_values[i] += shift
-
-        new_data_table = {
-            k: str(round(v + 1e-10, 1))
-            for (k, _), v in zip(items, adjusted_values)
-        }
+            if value in list(new_data_table.values()):
+                other_key = list(new_data_table.keys())[
+                    list(new_data_table.values()).index(value)
+                ]
+                new_data_table[other_key] = str(
+                    float(value) - (self.config.minimum_bottle_diff / 2)
+                )
+                value = str(
+                    float(value) + (self.config.minimum_bottle_diff / 2)
+                )
+            try:
+                value = str(float(value))
+            except ValueError:
+                pass
+            new_data_table[key] = value
         for n in range(1, self.number_of_bottles + 1):
             if n not in new_data_table:
                 new_data_table[n] = ""

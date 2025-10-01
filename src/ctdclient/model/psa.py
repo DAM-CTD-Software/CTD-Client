@@ -144,6 +144,7 @@ class SeasavePsa(PsaFile):
         watersampler["@NumberOfWaterBottles"] = str(number_of_bottles)
         watersampler["@EnableRemoteFiring"] = "0"
         watersampler["AutoFireData"]["@AllowManualFiring"] = "1"
+        watersampler["@FiringSequence"] = "3"
         self.data["SeasaveProgramSetup"]["Settings"][
             "WaterSamplerConfiguration"
         ] = watersampler

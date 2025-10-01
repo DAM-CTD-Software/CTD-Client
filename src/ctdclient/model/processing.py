@@ -120,20 +120,15 @@ class ProcessingProcedure(ProcessingConfig):
     def __init__(self, path_to_config: Path | str):
         super().__init__(path_to_config)
 
-    def update_config(
-        self,
-        path_to_config: Path | str,
-        procedure_fingerprint_directory: str | None = None,
-        file_type_dir: str = "",
-    ):
+    def update_config(self, path_to_config: Path | str):
         new_config = Path(path_to_config)
         proc_config = Configuration(new_config)
         self.procedure = Procedure(
             proc_config,
             seabird_exe_directory=config.path_to_proc_exes,
             auto_run=False,
-            procedure_fingerprint_directory=procedure_fingerprint_directory,
-            file_type_dir=file_type_dir,
+            procedure_fingerprint_directory=config.generate_processing_fingerprint,
+            file_type_dir=config.file_type_dir,
         )
         self.modules = proc_config["modules"]
         self.killed = False

@@ -94,7 +94,7 @@ class MetadataHeader:
                 formatted_value = f"{first_part}{gap}{float(second_part):2.6f}"
             except ValueError:
                 formatted_value = f"{float(value):2.6f}"
-        elif name == "Echo_Depth":
+        elif name == "Water_Depth":
             formatted_value = f"{float(value): .1f} m"
         elif name == "Air_Pressure":
             formatted_value = f"{float(value): .1f} hPa"

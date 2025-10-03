@@ -96,8 +96,7 @@ class NRTList(UserList):
 
     def kill_processes(self):
         for nrt in self.data:
-            if isinstance(nrt, DailyPublication):
-                nrt.stop()
+            nrt.stop()
 
     def delete_nrt(self, nrt: NearRealTimeTarget):
         self.data.remove(nrt)
@@ -484,3 +483,9 @@ class EachProcessingPublication(NearRealTimeTarget):
             self.run_email_logic(target_files)
         else:
             self.copy_files(target)
+
+    def stop(self):
+        try:
+            event_manager.unsubscribe("processing_successful", self.run)
+        except (NameError, AttributeError):
+            pass

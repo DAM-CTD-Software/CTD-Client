@@ -5,16 +5,14 @@ psa_directory = ""
 psa = "DatCnv.psa"
 
 [modules.airpressure]
-psa = "AirPressure.par"
 
-[modules.wildedit]
-psa = "WildEdit.psa"
+[modules.wildedit_geomar]
 
 [modules.w_filter]
 psa = "W_Filter.psa"
 
 [modules.alignctd]
-psa = "AlignCTD.psa"
+Oxygen = "3"
 
 [modules.celltm]
 psa = "CellTM.psa"
@@ -25,14 +23,16 @@ psa = "Derive.psa"
 [modules.bottlesum]
 psa = "BottleSum.psa"
 
+[modules.create_bottle_file]
+
 [modules.binavg_1]
 psa = "BinAvg_1.psa"
-file_suffix = "_1"
+file_suffix = "_1m"
 
 [modules.binavg_2]
 psa = "BinAvg_2.psa"
-file_suffix = "_2"
+file_suffix = "_25cm"
 
 [modules.binavg_3]
 psa = "BinAvg_3.psa"
-file_suffix = "_3"
+file_suffix = "_1second"

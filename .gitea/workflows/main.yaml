@@ -14,6 +14,7 @@ jobs:
       bump_level: ${{ steps.bump_level.outputs.BUMP_LEVEL }}
       new_version: ${{ steps.new_version.outputs.NEW_VERSION }}
       pr_desc: ${{ steps.pr_desc.outputs.PR_DESC }}
+      skip: ${{ steps.skip.outputs.SKIP }}
     steps:
       - uses: actions/checkout@v4
 
@@ -112,10 +113,21 @@ jobs:
           git commit -m "Update Sphinx documentation" --no-verify
           git push -u origin pages
 
+      - name: Skip binary creation?
+        id: skip
+        run: |
+          if echo "$PR_DESC" | grep -iq "#skip"; then
+            SKIP="true"
+          else
+            SKIP="false"
+          fi
+          echo "SKIP=$SKIP" >> $GITHUB_OUTPUT
+
 
 
   build_binary:
     needs: version_bump
+    if: needs.version_bump.outputs.skip != 'false'
     container:
       image: batonogov/pyinstaller-windows:v4.11.1
     env:

@@ -29,8 +29,8 @@ class ConfigurationView(ViewMixin, CtkFrame):
         self.tabs = TabView(
             window=self,
             tabs={
-                "basic settings": self.base_settings,
-                "expert settings": self.expert_settings,
+                "basic": self.base_settings,
+                "expert": self.expert_settings,
             },
             width=600,
             height=700,

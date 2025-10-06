@@ -42,18 +42,21 @@ def test_comma2dot(psa):
             assert row["@FireAt"] == expected_bottle_values[row["@BottleNumber"]]
 
 
-def test_same_depth_mapping(config):
-    test_data = {1: '1.9', 2: 'test', 3: '1.2', 4: '1,6'}
+@pytest.mark.parametrize(
+    "test_data", [[{1: '2', 2: '5', 3: '8', 4: '19'}, {1: '2.0', 2: '5.0', 3: '8.0', 4: '19.0'}],
+                  [{1: '2', 2: 'test', 3: '1.2', 4: '1,6'}, {1: '2.0' , 3: '1.2', 4: '1.6'}],
+                  [{5: '5', 3: '5'}, {5: '4.8', 3: '5.2'}],
+                  [{5: '5,0', 3: '5'}, {5: '4.8', 3: '5.2'}],
+                  [{10: 'two', 11: 'two'}, {}],
+    ]
+)
+def test_same_depth_mapping(test_data, config):
     config.minimum_bottle_diff = 0.4
-    config.number_of_bottles = len(test_data)
+    config.number_of_bottles = len(test_data[0])
     bottles = BottleClosingDepths(config)
-    bottles.check_bottle_data(test_data)
-    assert bottles == {1: '2.0' , 2: '', 3: '1.2', 4: '1.6'}
-
-    config.minimum_bottle_diff = 0
-    bottles = BottleClosingDepths(config)
-    bottles.check_bottle_data(test_data)
-    assert bottles[1] == '1.9'
+    bottles.check_bottle_data(test_data[0])
+    for k, v in test_data[1].items():
+        assert v == bottles[k]
 
 
 def test_more_than_two_same_depth_mappings(config, caplog):

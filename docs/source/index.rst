@@ -21,6 +21,7 @@ of the
 
    installing
    usage
+   bugs
    API <modules>
 
 .. toctree::

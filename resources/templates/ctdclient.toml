@@ -1,26 +1,44 @@
 # base configuration for the software internals and system specifics which are
-# usually set only once during the software installation process
+# usually set only once during the software installation process.
+# Most of these settings can be set via the CTD-Clients GUI
 last_platform = "CTD"
 [base]
+# lets you configure different platforms/devices. Unused at the moment.
 platforms = ["CTD", "Scanfish"]
+# the path to the seasave executable
 seasave_exe = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\Seasave.exe"
+# the path to the seasave processing modules
 processing_exes = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\SBEDataProcessing-Win32"
+# whether to display the option, to close bottles automatically during downcast.
+# Will be always true otherwise.
 downcast_option = false
-use_dship_values = true
+# save the processing workflow file used for processing inside the given directory. 
+# If none given, no fingerprint will be saved.
 generate_processing_fingerprint = ""
+# save all files used/created during the processing workflow in individual directories inside the given directory. 
+# If none given, no files will be saved (additionally to the usual file saving done).
 file_type_dir = ""
+# toggles debugging mode, that displays more (debugging) information
 debugging = false
-scaling = 1.0
-minimum_bottle_difference = 0.4
+# lets the user define a scaling factor of the GUI
+scaling = 1.1
+# sets a minimum pressure difference that individual bottles will be separated to, when put to the same depth value. 
+# Prevents slow hardware from not closing both bottles in time.
+# Can be set to 0 if unwanted.
+minimum_bottle_difference = 0.0
 
 [dship]
+# whether to use values from dship or random ones (for testing/debugging)
+use_dship_values = true
+# absolute base path to dship
 ip = "dship1"
+# the dship url to the 'API'
 url_part = ":8080/dship-web/service/samples"
 # timeout between individual API calls in seconds
 fetch_intervall = 1
 
-# the internal dship names of the different parameters
 [dship.identifier]
+# the internal dship variables names of the different parameters
 Cruise = "SYS.DISP.ExpNumber"
 Station = "ActionLog.PUP.DopName"
 GPS_Time = "SYS.DISP.TimeTxt"
@@ -32,11 +50,13 @@ Position_Alias = "Web.PUP.NextWPName"
 Device = "ActionLog.PUP.DeviceShortName"
 
 [email]
+# define settings of a local email server
 smtp_server = "192.168.236.240"
 smtp_port = 25
 smtp_email = "ctd@borgese.briese-research.de"
 
 [operators]
+# the names of the different CTD operators of this cruise. These will be available for selection in the dropdown on the main page.
 op1 = ""
 op2 = ""
 op3 = ""
@@ -49,9 +69,13 @@ last = ""
 [ctd]
 
 [ctd.paths]
+# the configuration file of the Seasave software
 seasave_psa = "."
+# the path were the raw data files will be stored at
 output_directory = "."
+# the instruments configuration file
 xmlcon = "."
+# the number of water bottles currently installed on the CTD rosette
 number_of_bottles = 13
 
 [ctd.memory]

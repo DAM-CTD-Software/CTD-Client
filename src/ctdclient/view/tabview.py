@@ -31,7 +31,7 @@ class TabView(ctk.CTkTabview):
         view.grid()
 
     def on_tab_change(self):
-        if self.get() == "expert settings":
+        if "expert" in self.get():
             CTkMessagebox(
                 title="Caution",
                 message="These settings can break the application, proceed with caution and only if you know what you are doing.",

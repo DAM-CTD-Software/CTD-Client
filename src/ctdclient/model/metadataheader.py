@@ -55,7 +55,7 @@ class MetadataHeader:
             header_list = [
                 (
                     cls.create_metadata_header_line("Pos_Alias", pos_alias)
-                    if element.startswith("Pos_Alias")
+                    if "Alias" in element
                     else element
                 )
                 for element in header_list
@@ -78,13 +78,13 @@ class MetadataHeader:
                 formatted_value = f"{int(station):03d}-{int(event):02d}"
             except (AttributeError, ValueError):
                 formatted_value = "000-00"
-        elif name == "GPS_Lat":
+        elif "lat" in name.lower():
             try:
                 first_part, second_part = value.split()
                 formatted_value = f"{first_part} {float(second_part):2.6f}"
             except ValueError:
                 formatted_value = f"{float(value):2.6f}"
-        elif name == "GPS_Lon":
+        elif "lon" in name.lower():
             try:
                 first_part, second_part = value.split()
                 if float(second_part) < 10:
@@ -94,9 +94,9 @@ class MetadataHeader:
                 formatted_value = f"{first_part}{gap}{float(second_part):2.6f}"
             except ValueError:
                 formatted_value = f"{float(value):2.6f}"
-        elif name == "Water_Depth":
+        elif "depth" in name.lower():
             formatted_value = f"{float(value): .1f} m"
-        elif name == "Air_Pressure":
+        elif "pressure" in name.lower():
             formatted_value = f"{float(value): .1f} hPa"
         else:
             formatted_value = value

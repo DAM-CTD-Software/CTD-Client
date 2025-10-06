@@ -75,7 +75,7 @@ class NRTConfigurator(ViewMixin, TomlEditor):
             value_entry.insert(1.0, value)
             args = {"index1": "1.0", "index2": "end"}
         elif key == "open_draft":
-            switch_var = ctk.StringVar(value="true")
+            switch_var = ctk.StringVar(value=value)
             value_entry = ctk.CTkSwitch(
                 frame,
                 variable=switch_var,

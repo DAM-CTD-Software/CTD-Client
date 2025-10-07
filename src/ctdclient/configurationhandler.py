@@ -47,7 +47,6 @@ class ConfigurationFile:
                 self.data["base"]["processing_exes"]
             )
             self.downcast_option: bool = self.data["base"]["downcast_option"]
-            self.use_dship: bool = self.data["base"]["use_dship_values"]
             self.generate_processing_fingerprint: str = self.data["base"][
                 "generate_processing_fingerprint"
             ]
@@ -57,6 +56,7 @@ class ConfigurationFile:
             self.minimum_bottle_diff: float = float(
                 self.data["base"]["minimum_bottle_difference"]
             )
+            self.use_dship: bool = self.data["dship"]["use_dship_values"]
             self.dship_ip: str = self.data["dship"]["ip"]
             self.dship_url_part: str = self.data["dship"]["url_part"]
             self.dhsip_fetch_intervall: float = float(

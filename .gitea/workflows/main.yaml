@@ -127,7 +127,7 @@ jobs:
 
   build_binary:
     needs: version_bump
-    if: needs.version_bump.outputs.skip != 'false'
+    if: needs.version_bump.outputs.skip == 'false'
     container:
       image: batonogov/pyinstaller-windows:v4.11.1
     env:
@@ -147,6 +147,7 @@ jobs:
           mv gsw-3.6.19-cp312-cp312-win_amd64.whl gsw-3.6.19-cp313-cp313-win_amd64.whl
           pip install gsw-3.6.19-cp313-cp313-win_amd64.whl
           pip install -r requirements.txt
+          pip install tomlq
 
       - name: Build Windows binary
         run: |
@@ -156,6 +157,7 @@ jobs:
           mkdir /htmls
           cp -r -t /htmls *.html *.inv *.js _static _sources _images
           ./write_version.sh $NEW_VERSION
+          ./generate_rc_file.sh $CURRENT_TAG
           pyinstaller -y windows.spec
 
       - name: Create Gitea release

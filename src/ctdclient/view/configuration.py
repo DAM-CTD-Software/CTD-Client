@@ -1,7 +1,10 @@
+import smtplib
 import sys
 import tkinter as tk
 import tkinter.font as tkFont
 import webbrowser
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from functools import partial
 from pathlib import Path
 from tkinter import filedialog as fd
@@ -411,21 +414,88 @@ class AboutView(CtkFrame):
         ).grid(row=3, column=0, padx=self.padx, pady=self.pady)
         contact_links = ctk.CTkFrame(self, fg_color="transparent")
         contact_links.grid(row=4, column=0, padx=self.padx, pady=self.pady)
+
+        # offline link to contact details
+        ctk.CTkLabel(
+            contact_links, text="You can find my contact details here:"
+        ).grid(row=0)
         ctk.CTkButton(
             contact_links,
-            text="Email",
-            command=lambda: webbrowser.open(
-                "mailto:?to="
-                + "emil.michels@io-warnemuende.de"
-                + "&subject="
-                + "CTD-Client Support: ",
-                new=1,
-            ),
-        ).grid(row=0, column=0, padx=self.padx, pady=self.pady)
-        ctk.CTkButton(
-            contact_links,
-            text="Website",
+            text="Contact Details",
             command=lambda: webbrowser.open_new_tab(
-                "https://www.io-warnemuende.de/emil-michels-en.html"
+                f"file://{RESOURCES_PATH.absolute()}/contact_info/contact_page.html"
             ),
-        ).grid(row=0, column=1, padx=self.padx, pady=self.pady)
+        ).grid(row=1, column=0, padx=self.padx, pady=self.pady)
+
+        # email form
+        ctk.CTkLabel(
+            contact_links,
+            text="Or you can send me an email using the following form (and the local email server):",
+        ).grid(row=2)
+        email_form = ctk.CTkFrame(
+            contact_links,
+            fg_color="transparent",
+            border_width=1,
+            border_color="gray10",
+        )
+        email_form.grid(row=3, column=0, padx=self.padx, pady=self.pady)
+
+        label_name = ctk.CTkLabel(email_form, text="Name:")
+        label_name.grid(row=0, column=0, padx=self.padx, pady=self.pady)
+        self.entry_name = ctk.CTkEntry(email_form, width=300)
+        self.entry_name.grid(row=0, column=1, padx=self.padx, pady=self.pady)
+
+        label_email = ctk.CTkLabel(email_form, text="Email:")
+        label_email.grid(row=1, column=0, padx=self.padx, pady=self.pady)
+        self.entry_email = ctk.CTkEntry(email_form, width=300)
+        self.entry_email.grid(row=1, column=1, padx=self.padx, pady=self.pady)
+
+        label_subject = ctk.CTkLabel(email_form, text="Subject:")
+        label_subject.grid(row=2, column=0, padx=self.padx, pady=self.pady)
+        self.entry_subject = ctk.CTkEntry(email_form, width=300)
+        self.entry_subject.grid(
+            row=2, column=1, padx=self.padx, pady=self.pady
+        )
+
+        label_message = ctk.CTkLabel(email_form, text="Message:")
+        label_message.grid(row=3, column=0, padx=self.padx, pady=self.pady)
+        self.text_message = ctk.CTkTextbox(email_form, width=300, height=150)
+        self.text_message.grid(row=3, column=1, padx=self.padx, pady=self.pady)
+
+        button_send = ctk.CTkButton(
+            email_form, text="Send", command=self.send_email
+        )
+        button_send.grid(row=4, column=1, columnspan=2, pady=self.pady * 4)
+
+    def send_email(self):
+        """Send the email using the local SMTP server."""
+        try:
+            name = self.entry_name.get()
+            email = self.entry_email.get()
+            subject = self.entry_subject.get()
+            message = self.text_message.get("1.0", "end-1c")
+
+            msg = MIMEMultipart()
+            msg["From"] = config.email_config["smtp_email"]
+            msg["To"] = email
+            msg["Subject"] = subject
+            body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
+            msg.attach(MIMEText(body, "plain"))
+
+            with smtplib.SMTP(
+                config.email_config["smtp_server"],
+                config.email_config["smtp_port"],
+            ) as server:
+                server.send_message(msg)
+
+            CTkMessagebox(
+                title="Success",
+                message="Email sent successfully!",
+                option_1="Ok",
+            )
+        except Exception as e:
+            CTkMessagebox(
+                title="Error",
+                message=f"Failed to send email: {e}",
+                option_1="Ok",
+            )

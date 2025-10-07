@@ -10,7 +10,7 @@ Simply clicking on one entry will let you switch to that tab.
 
 How to measure
 -----
-.. important:: The CTD-Client comes with sensible defaults, but some things need to be configured before using it first time. So have a look at :ref:`configure` to set up for measurement.
+.. important:: The CTD-Client comes with sensible defaults, but some things need to be configured before using it first time. So have a look at :doc:`the configuration info </installing>` to set up for measurement.
 For measurements you can safely stay inside of the tab of the same name. Here,
 you can see different areas to interact with:
 
@@ -76,14 +76,28 @@ steps that are meant to be run on the target data file. In-depth description of
 processing workflows can be found in `the documentation of the respective
 python package <https://ctd-software.pages.io-warnemuende.de/processing/usage.html#workflow-files>`_.
 
+Available processing modules are the standard Sea-Bird ones (which need to be
+installed on your machine), custom ones from the growing collection inside the
+ctd-processing python package and all TEOS-10 functions, through the 
+`gsw python package <https://teos-10.github.io/GSW-Python>`_.
+
+.. important:: Orchestrating all these modules with their diverse background is 
+   quite complex, if one aims for a drag-and-drop behavior. So be forgiving if
+   some combinations need some more tinkering. You can also file a :doc:`bug </bugs>`, if
+   things go really wrong.
+
 You can customize workflows in the 'Processing' Tab. Here, a list of the
-available workflow files and other scripts can be seen. 
+available workflow files and other scripts can be seen.
+
+.. info:: For other, custom processing scripts to appear here, they need to be
+   put into the :doc:`configuration directory </installing>`
 
 .. image:: ../images/proc.png
 
-They can be turned on
-and off by the switch, which means that they are going to run upon clicking
-'Run Processing'. To edit the individual files, click 'edit/details'. That will
+They can be turned on and off by a switch, which means that they are going to
+run upon clicking 'Run Processing'. Note that all activated workflows will run
+sequentaly, sorted by alphabet, as in the 'processing' tab.
+To edit the individual files, click 'edit/details'. That will
 open a new window with the respective files configuration:
 
 .. image:: ../images/proc_workflow.png
@@ -106,9 +120,9 @@ from the same day. Both variants additionally allow a geographical filter,
 that checks the candidate files coordinates against a polygon of coordinates,
 that must be given in any form that geopandas can handle. All the configuration
 options for a single NRT are saved in a .toml file. A template can be obtained
-from inside the software. A configuration file needs to be prefixed with "nrt_"
-and have the .toml extension. The CTD-Client looks for these files in the root
-directory of the CTD-Client installation.
+from inside the software. A configuration file needs to be prefixed with "nrt\_"
+and have the .toml extension. More details concerning configuration can be
+found :doc:`here </installing>`.
 
 Usage
 ^^^^^^^
@@ -160,22 +174,3 @@ Short description of the individual field values and their uses:
    to test the email settings by setting the 'open_draft' option to true. That
    way, instead of sending the emails directly, the draft will be opened in the system
    email program, to allow reviewing its contents prior to sending.
-
-.. _configure:
-How to configure
------
-.. warning:: Configuration should only be made by people who have a good
-   knowledge of the Seasave software stack and the different file types that
-   Sea-Bird is using.
-
-In general, this section is divided into two parts: the 'basic' configuration
-tab, that allows to edit settings concerning the measurement, for example to
-set paths to the Seasave.psa or the XMLCON. And the 'expert' part, that allows
-the setting of low-level options, like the update server or the activation of
-debug mode.
-
-Basic configuration
-^^^^^
-
-Expert configuration
-^^^^^^

@@ -127,7 +127,7 @@ jobs:
 
   build_binary:
     needs: version_bump
-    if: needs.version_bump.outputs.skip != 'false'
+    if: needs.version_bump.outputs.skip == 'false'
     container:
       image: batonogov/pyinstaller-windows:v4.11.1
     env:

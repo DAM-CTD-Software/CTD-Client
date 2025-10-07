@@ -1,10 +1,10 @@
 [project]
-name = "ctdclient"
+name = "CTD-Client"
 authors = [
     { name = "Emil Michels", email = "<emil.michels@io-warnemuende.de>" },
 ]
 version = "0.0.0"
-description = ""
+description = "A software tool designed to facilitate the measurement and processing of CTD data using Sea-Bird instruments. The program enhances datasets with ship metadata and ensures standardized, consistent data collection."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

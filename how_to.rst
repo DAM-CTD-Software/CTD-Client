@@ -120,9 +120,9 @@ from the same day. Both variants additionally allow a geographical filter,
 that checks the candidate files coordinates against a polygon of coordinates,
 that must be given in any form that geopandas can handle. All the configuration
 options for a single NRT are saved in a .toml file. A template can be obtained
-from inside the software. A configuration file needs to be prefixed with "nrt_"
-and have the .toml extension. The CTD-Client looks for these files in the root
-directory of the CTD-Client installation.
+from inside the software. A configuration file needs to be prefixed with "nrt\_"
+and have the .toml extension. More details concerning configuration can be
+found :doc:`here </installing>`.
 
 Usage
 ^^^^^^^

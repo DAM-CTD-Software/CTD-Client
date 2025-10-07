@@ -17,8 +17,11 @@ The settings of the CTD-Client are stored inside C:/user/USERNAME/AppData/Local/
 All configuration can be done via the GUI of the software. If you still want to
 check on the individual config files, you will find them via the path above.
 The possible configuration files found here are:
+
 - the main config file, ctdclient.toml
+
 - the processing config files, prefixed with "proc\_"
+  
 - the nrt config files, prefixed with "nrt\_"
 
 

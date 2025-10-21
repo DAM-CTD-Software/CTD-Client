@@ -1,9 +1,11 @@
 import logging
+import shutil
 from pathlib import Path
 
 from ctdclient.definitions import config
 from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import event_manager
+from ctdclient.definitions import TEMPLATE_PATH
 from processing.visualize import basic_bokeh_plot
 from processing.visualize import cruise_plots
 
@@ -15,6 +17,16 @@ class Plotting:
         if bool(config.plotting["auto_plot"]):
             event_manager.subscribe(
                 "processing_successful", self.run_auto_plotting
+            )
+        self.config_name = "vis_config.toml"
+        self.config_path = CONFIG_PATH.joinpath(self.config_name)
+        self._check_config()
+        logger.debug(self.config_path)
+
+    def _check_config(self):
+        if not self.config_path.exists():
+            shutil.copy(
+                TEMPLATE_PATH.joinpath(self.config_name), self.config_path
             )
 
     def check_html_dir(self):
@@ -32,7 +44,7 @@ class Plotting:
                 output_directory=config.plotting["plot_dir"],
                 metadata=True,
                 show_plot=show_plot,
-                config_path=CONFIG_PATH.joinpath("vis_config.toml"),
+                config_path=self.config_path,
             )
         except Exception as error:
             logger.error(f"Could not plot {file}: {error}")
@@ -58,6 +70,7 @@ class Plotting:
                 size_limit=int(config.plotting["size_limit"]),
                 filter=config.plotting["filter"],
                 show_html=config.plotting["show_html"],
+                config_path=self.config_path,
             )
         except Exception as error:
             logger.error(f"Could not create cruise plot: {error}")

@@ -6,6 +6,8 @@ from typing import Callable
 
 import customtkinter as ctk
 from ctdclient.definitions import config
+from ctdclient.definitions import CONFIG_PATH
+from ctdclient.utils import call_editor
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.View import ViewMixin
 from CTkMessagebox import CTkMessagebox
@@ -39,6 +41,13 @@ class PlottingFrame(ViewMixin, CtkFrame):
             self.button_frame, text="Plot the cruise", command=self.plot_cruise
         )
         cruise_plot.grid(row=0, column=1, sticky=tk.E, padx=20, pady=20)
+
+        config_button = ctk.CTkButton(
+            self.button_frame,
+            text="Config colors/ranges",
+            command=self.open_config,
+        )
+        config_button.grid(row=0, column=2, sticky=tk.E, padx=20, pady=20)
 
         self.display_options()
 
@@ -156,3 +165,6 @@ class PlottingFrame(ViewMixin, CtkFrame):
 
     def toggle_auto_plot(self, new_value: str):
         self.callbacks["update_auto_plot"](new_value)
+
+    def open_config(self):
+        call_editor(CONFIG_PATH.joinpath("vis_config.toml"))

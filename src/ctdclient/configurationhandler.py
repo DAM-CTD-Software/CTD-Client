@@ -71,6 +71,7 @@ class ConfigurationFile:
             assert isinstance(self.operators, dict)
             self.near_real_time: dict = self.data["near_real_time"]
             assert isinstance(self.near_real_time, dict)
+            self.plotting: dict = self.data["plotting"]
             if not ctd_type:
                 ctd_type = self.last_platform.lower()
             self.read_ctd_config(ctd_type)

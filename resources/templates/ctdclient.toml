@@ -66,6 +66,17 @@ last = ""
 
 [near_real_time]
 
+[plotting]
+# all settings for plotting configuration
+auto_plot = false
+plot_dir = ""
+embed_contents = false
+overwrite = true
+size_limit = "10"
+filter = ""
+show_html = true
+html_title = ""
+
 [ctd]
 
 [ctd.paths]

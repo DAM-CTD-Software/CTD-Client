@@ -1,17 +1,14 @@
 from __future__ import annotations
 
 import logging
-import os
-import platform
-import subprocess
 import sys
 import tkinter.font as tkFont
-from pathlib import Path
 
 import customtkinter as ctk
 from ctdclient.definitions import ICON_PATH
 from ctdclient.model.processing import ProcessingConfig
 from ctdclient.model.processing import ProcessingProcedure
+from ctdclient.utils import call_editor
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.View import ViewMixin
 from processing.gui.procedure_config_view import ProcedureConfigView
@@ -116,18 +113,6 @@ class ProcessingView(ViewMixin, CtkFrame):
             config.grid(row=0, column=2, padx=self.padx, pady=self.pady)
 
         else:
-
-            def call_editor(file_path: Path):
-                if platform.system() == "Windows":
-                    os.startfile(file_path, operation="edit")
-                elif platform.system() == "Darwin":
-                    subprocess.run(["open", file_path])
-                elif platform.system() == "Linux":
-                    editor = os.environ.get("EDITOR", "/usr/bin/vim")
-                    subprocess.call([editor, file_path])
-                else:
-                    raise OSError("Unsupported operating system")
-
             open_editor = ctk.CTkButton(
                 frame,
                 text="open editor",

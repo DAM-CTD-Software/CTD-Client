@@ -1,5 +1,8 @@
 import logging
+import os
+import platform
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -92,3 +95,15 @@ def individual_dship_api_call(url) -> str | None:
             return None
     else:
         return None
+
+
+def call_editor(file_path: Path):
+    if platform.system() == "Windows":
+        os.startfile(file_path, operation="edit")
+    elif platform.system() == "Darwin":
+        subprocess.run(["open", file_path])
+    elif platform.system() == "Linux":
+        editor = os.environ.get("EDITOR", "/usr/bin/vim")
+        subprocess.call([editor, file_path])
+    else:
+        raise OSError("Unsupported operating system")

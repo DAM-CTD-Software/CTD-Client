@@ -5,12 +5,14 @@ from ctdclient.controller.bottlecontroller import BottleController
 from ctdclient.controller.configcontroller import ConfigurationController
 from ctdclient.controller.dshipcontroller import DshipController
 from ctdclient.controller.nrtcontroller import NRTController
+from ctdclient.controller.plottingcontroller import PlottingController
 from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
 from ctdclient.definitions import config
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
 from ctdclient.model.near_real_time_publication import NRTList
+from ctdclient.model.plotting import Plotting
 from ctdclient.model.processing import ProcessingList
 from ctdclient.view.configuration import AboutView
 from ctdclient.view.configuration import ConfigurationView
@@ -18,6 +20,7 @@ from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
 from ctdclient.view.measurement import MeasurementView
 from ctdclient.view.nrtcontrol import NRTControlFrame
+from ctdclient.view.plotting import PlottingFrame
 from ctdclient.view.processing import ProcessingView
 
 logger = logging.getLogger(__name__)
@@ -30,6 +33,7 @@ class MainController:
         self.processing_view = ProcessingView(root_window)
         self.nrt_control_view = NRTControlFrame(root_window)
         self.about_view = AboutView(root_window)
+        self.plotting_view = PlottingFrame(root_window)
 
         self.mainwindow = MainWindow(
             parent=root_window,
@@ -79,6 +83,13 @@ class MainController:
             bottles=self.bottles,
             processing=self.processing,
         )
+        # plotting
+        self.plotting = Plotting()
+        self.plotting_controller = PlottingController(
+            config,
+            self.plotting,
+            self.plotting_view,
+        )
 
         self.mainwindow.grid(row=0, column=0, sticky="nsew")
         self.mainwindow.grid_rowconfigure(0, weight=1)
@@ -90,6 +101,7 @@ class MainController:
             "measurement": self.measurement,
             "processing": self.processing_view,
             "nrt publication": self.nrt_control_view,
+            "plotting": self.plotting_view,
             "settings": self.config_view,
             "help": self.about_view,
         }

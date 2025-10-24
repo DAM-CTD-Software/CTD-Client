@@ -317,12 +317,11 @@ class NearRealTimeTarget:
                         )
                     except (KeyError, ValueError):
                         coordinates = (0, 0)
-                    finally:
-                        if not self.geographic_filter(coordinates):
-                            logger.debug(
-                                f"File {file} failed geographic filter with coordinates: {coordinates}"
-                            )
-                            continue
+                    if not self.geographic_filter(coordinates):
+                        logger.debug(
+                            f"File {file} failed geographic filter with coordinates: {coordinates}"
+                        )
+                        continue
 
             if self.time_filter(file):
                 target_files.append(file)

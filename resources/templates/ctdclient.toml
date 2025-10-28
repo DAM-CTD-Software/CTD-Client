@@ -46,7 +46,7 @@ GPS_Lat = "SYS.STR.PosLat"
 GPS_Lon = "SYS.STR.PosLon"
 Water_Depth = "SYS.CALC.WaterDepth"
 Air_Pressure = "Weatherstation.PEUMA.Air_pressure"
-Position_Alias = "Web.PUP.NextWPName"
+Pos_Alias = "Web.PUP.NextWPName"
 Device = "ActionLog.PUP.DeviceShortName"
 
 [email]

@@ -37,7 +37,7 @@ jinja2==3.1.6
     # via bokeh
 markupsafe==3.0.3
     # via jinja2
-narwhals==2.9.0
+narwhals==2.10.0
     # via bokeh
 numpy==2.2.1
     # via
@@ -61,7 +61,7 @@ pillow==12.0.0
     #   ctkmessagebox
 platformdirs==4.5.0
     # via CTD-Client (pyproject.toml)
-psutil==7.1.1
+psutil==7.1.2
     # via CTD-Client (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via pandas
@@ -73,7 +73,7 @@ requests==2.32.5
     # via CTD-Client (pyproject.toml)
 scipy==1.16.2
     # via ctd-processing
-seabirdfilehandler==0.8.0
+seabirdfilehandler==0.8.1
     # via
     #   CTD-Client (pyproject.toml)
     #   ctd-processing

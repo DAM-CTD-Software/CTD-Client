@@ -98,12 +98,15 @@ def individual_dship_api_call(url) -> str | None:
 
 
 def call_editor(file_path: Path):
-    if platform.system() == "Windows":
-        os.startfile(file_path, operation="edit")
-    elif platform.system() == "Darwin":
-        subprocess.run(["open", file_path])
-    elif platform.system() == "Linux":
-        editor = os.environ.get("EDITOR", "/usr/bin/vim")
-        subprocess.call([editor, file_path])
-    else:
-        raise OSError("Unsupported operating system")
+    try:
+        if platform.system() == "Windows":
+            os.startfile(file_path, operation="edit")
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", file_path])
+        elif platform.system() == "Linux":
+            editor = os.environ.get("EDITOR", "/usr/bin/vim")
+            subprocess.Popen([editor, file_path])
+        else:
+            raise OSError("Unsupported operating system")
+    except Exception as error:
+        logger.error(f"Could not open {file_path}: {error}")

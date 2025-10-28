@@ -6,8 +6,6 @@ from typing import Callable
 
 import customtkinter as ctk
 from ctdclient.definitions import config
-from ctdclient.definitions import CONFIG_PATH
-from ctdclient.utils import call_editor
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.View import ViewMixin
 from CTkMessagebox import CTkMessagebox
@@ -167,4 +165,4 @@ class PlottingFrame(ViewMixin, CtkFrame):
         self.callbacks["update_auto_plot"](new_value)
 
     def open_config(self):
-        call_editor(CONFIG_PATH.joinpath("vis_config.toml"))
+        self.callbacks["open_config"]()

@@ -6,6 +6,7 @@ from ctdclient.definitions import config
 from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import event_manager
 from ctdclient.definitions import TEMPLATE_PATH
+from ctdclient.utils import call_editor
 from processing.visualize import basic_bokeh_plot
 from processing.visualize import cruise_plots
 
@@ -95,3 +96,9 @@ class Plotting:
             event_manager.unsubscribe(
                 "processing_successful", self.run_auto_plotting
             )
+
+    def open_config(self):
+        logger.debug(
+            f"Opening plotting config file: {self.config_path.absolute()}"
+        )
+        call_editor(self.config_path)

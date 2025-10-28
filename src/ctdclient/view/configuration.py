@@ -477,7 +477,7 @@ class AboutView(CtkFrame):
 
             msg = MIMEMultipart()
             msg["From"] = config.email_config["smtp_email"]
-            msg["To"] = email
+            msg["To"] = "emil.michels@io-warnemuende.de"
             msg["Subject"] = subject
             body = f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
             msg.attach(MIMEText(body, "plain"))

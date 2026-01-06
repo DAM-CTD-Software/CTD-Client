@@ -7,7 +7,7 @@ import tkinter.font as tkFont
 import customtkinter as ctk
 from processing.gui.procedure_config_view import ProcedureConfigView
 
-from ctdclient.definitions import ICON_PATH
+from ctdclient.definitions import CONFIG_PATH, ICON_PATH
 from ctdclient.model.processing import ProcessingConfig, ProcessingProcedure
 from ctdclient.utils import call_editor
 from ctdclient.view.ctkframe import CtkFrame
@@ -160,6 +160,7 @@ class ProcessingView(ViewMixin, CtkFrame):
                 "output_dir",
             ],
             title_size=35,
+            default_dir_to_save_in=CONFIG_PATH,
         )
         editor.grid(
             row=0,

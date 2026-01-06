@@ -11,12 +11,12 @@ from tkinter import filedialog as fd
 from tkinter import ttk
 
 import customtkinter as ctk
-from ctdclient.definitions import config
-from ctdclient.definitions import RESOURCES_PATH
+from CTkMessagebox import CTkMessagebox
+
+from ctdclient.definitions import RESOURCES_PATH, config
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.tabview import TabView
 from ctdclient.view.View import ViewMixin
-from CTkMessagebox import CTkMessagebox
 
 
 class ConfigurationView(ViewMixin, CtkFrame):

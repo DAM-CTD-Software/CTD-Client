@@ -3,14 +3,17 @@ import tkinter.font as tkFont
 
 import customtkinter as ctk
 import psutil
-from ctdclient.controller.maincontroller import MainController
-from ctdclient.definitions import config
-from ctdclient.definitions import ICON_PATH
-from ctdclient.definitions import THEMES_PATH
-from ctdclient.definitions import VERSION
-from ctdclient.definitions import WRONG_CONFIG
-from ctdclient.logconfig import LoggingConfig
 from CTkMessagebox import CTkMessagebox
+
+from ctdclient.controller.maincontroller import MainController
+from ctdclient.definitions import (
+    ICON_PATH,
+    THEMES_PATH,
+    VERSION,
+    WRONG_CONFIG,
+    config,
+)
+from ctdclient.logconfig import LoggingConfig
 
 
 def main():

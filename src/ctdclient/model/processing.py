@@ -3,17 +3,19 @@ from __future__ import annotations
 import logging
 import multiprocessing as mp
 import subprocess
-from abc import ABC
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 from collections import UserList
 from pathlib import Path
 
-from ctdclient.definitions import config
-from ctdclient.definitions import CONFIG_PATH
-from ctdclient.definitions import event_manager
-from ctdclient.definitions import TEMPLATE_PATH
 from processing.procedure import Procedure
 from processing.settings import Configuration
+
+from ctdclient.definitions import (
+    CONFIG_PATH,
+    TEMPLATE_PATH,
+    config,
+    event_manager,
+)
 
 logger = logging.getLogger(__name__)
 

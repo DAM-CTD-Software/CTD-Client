@@ -2,6 +2,7 @@ import sys
 import tkinter.font as tkFont
 
 import customtkinter as ctk
+
 from ctdclient.definitions import ICON_PATH
 from ctdclient.model.near_real_time_publication import NearRealTimeTarget
 from ctdclient.view.ctkframe import CtkFrame

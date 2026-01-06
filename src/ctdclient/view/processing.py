@@ -5,13 +5,13 @@ import sys
 import tkinter.font as tkFont
 
 import customtkinter as ctk
+from processing.gui.procedure_config_view import ProcedureConfigView
+
 from ctdclient.definitions import ICON_PATH
-from ctdclient.model.processing import ProcessingConfig
-from ctdclient.model.processing import ProcessingProcedure
+from ctdclient.model.processing import ProcessingConfig, ProcessingProcedure
 from ctdclient.utils import call_editor
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.View import ViewMixin
-from processing.gui.procedure_config_view import ProcedureConfigView
 
 logger = logging.getLogger(__name__)
 

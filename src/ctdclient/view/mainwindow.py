@@ -1,4 +1,5 @@
 import customtkinter as ctk
+
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.tabview import TabView
 

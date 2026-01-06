@@ -1,7 +1,9 @@
 from ctdclient.controller.Controller import Controller
 from ctdclient.definitions import config
-from ctdclient.model.near_real_time_publication import NearRealTimeTarget
-from ctdclient.model.near_real_time_publication import NRTList
+from ctdclient.model.near_real_time_publication import (
+    NearRealTimeTarget,
+    NRTList,
+)
 from ctdclient.view.nrtcontrol import NRTControlFrame
 
 

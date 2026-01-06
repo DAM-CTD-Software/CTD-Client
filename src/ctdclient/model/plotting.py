@@ -2,13 +2,15 @@ import logging
 import shutil
 from pathlib import Path
 
-from ctdclient.definitions import config
-from ctdclient.definitions import CONFIG_PATH
-from ctdclient.definitions import event_manager
-from ctdclient.definitions import TEMPLATE_PATH
+from processing.visualize import basic_bokeh_plot, cruise_plots
+
+from ctdclient.definitions import (
+    CONFIG_PATH,
+    TEMPLATE_PATH,
+    config,
+    event_manager,
+)
 from ctdclient.utils import call_editor
-from processing.visualize import basic_bokeh_plot
-from processing.visualize import cruise_plots
 
 logger = logging.getLogger(__name__)
 

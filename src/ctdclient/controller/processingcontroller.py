@@ -1,6 +1,5 @@
 from ctdclient.controller.Controller import Controller
-from ctdclient.model.processing import ProcessingConfig
-from ctdclient.model.processing import ProcessingList
+from ctdclient.model.processing import ProcessingConfig, ProcessingList
 from ctdclient.view.processing import ProcessingView
 
 

@@ -1,8 +1,9 @@
 import logging
 
 import customtkinter as ctk
-from ctdclient.view.ctkframe import CtkFrame
 from CTkMessagebox import CTkMessagebox
+
+from ctdclient.view.ctkframe import CtkFrame
 
 logger = logging.getLogger(__name__)
 

@@ -1,27 +1,24 @@
 fail_fast: true
 
 repos:
--   repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.13.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.10
     hooks:
-    -   id: reorder-python-imports
-        stages: [pre-commit]
--   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.2
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-check
+        args: [--select, I, --fix]
+      - id: ruff-format
+  - repo: https://github.com/python-poetry/poetry
+    rev: 2.2.0
     hooks:
-    -   id: ruff
-        args: [ --fix ]
-    -   id: ruff-format
--   repo: https://github.com/python-poetry/poetry
-    rev: 2.1.2
-    hooks:
-    -   id: poetry-check
+      - id: poetry-check
         stages: [pre-push]
-    -   id: poetry-lock
+      - id: poetry-lock
         stages: [pre-push]
--   repo: https://github.com/jazzband/pip-tools
+  - repo: https://github.com/jazzband/pip-tools
     rev: 7.4.1
     hooks:
-    -   id: pip-compile
+      - id: pip-compile
         args: [--upgrade]
         stages: [pre-push]

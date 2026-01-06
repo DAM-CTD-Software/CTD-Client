@@ -3,6 +3,7 @@ import tkinter.font as tkFont
 from tkinter import ttk
 
 import customtkinter as ctk
+
 from ctdclient.view.ctkframe import CtkFrame
 
 

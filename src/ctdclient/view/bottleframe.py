@@ -1,6 +1,7 @@
 import tkinter as tk
 
 import customtkinter as ctk
+
 from ctdclient.model.bottles import BottleClosingDepths
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.View import ViewMixin

@@ -3,10 +3,12 @@ import sys
 from pathlib import Path
 
 import tomlkit
-from tomlkit.exceptions import EmptyKeyError
-from tomlkit.exceptions import KeyAlreadyPresent
-from tomlkit.exceptions import NonExistentKey
-from tomlkit.exceptions import UnexpectedCharError
+from tomlkit.exceptions import (
+    EmptyKeyError,
+    KeyAlreadyPresent,
+    NonExistentKey,
+    UnexpectedCharError,
+)
 
 logger = logging.getLogger(__name__)
 

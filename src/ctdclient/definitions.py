@@ -1,14 +1,16 @@
 import sys
 from pathlib import Path
 
-from ctdclient.configurationhandler import ConfigurationFile
-from ctdclient.configurationhandler import InvalidConfigFile
-from ctdclient.eventmanager import EventManager
-from ctdclient.utils import create_new_config_file
-from ctdclient.utils import get_config_path
-from ctdclient.utils import individual_dship_api_call
-from ctdclient.version import __version__
 from platformdirs import user_config_dir
+
+from ctdclient.configurationhandler import ConfigurationFile, InvalidConfigFile
+from ctdclient.eventmanager import EventManager
+from ctdclient.utils import (
+    create_new_config_file,
+    get_config_path,
+    individual_dship_api_call,
+)
+from ctdclient.version import __version__
 
 if getattr(sys, "frozen", False):
     ROOT_PATH = Path(sys.executable).parent

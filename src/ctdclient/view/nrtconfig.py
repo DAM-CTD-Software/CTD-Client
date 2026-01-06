@@ -3,8 +3,9 @@ from pathlib import Path
 from tkinter import ttk
 
 import customtkinter as ctk
-from ctdclient.view.View import ViewMixin
 from processing.gui.toml_editor import TomlEditor
+
+from ctdclient.view.View import ViewMixin
 
 
 class NRTConfigurator(ViewMixin, TomlEditor):

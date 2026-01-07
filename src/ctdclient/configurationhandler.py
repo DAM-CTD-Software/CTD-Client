@@ -107,9 +107,12 @@ class ConfigurationFile:
             self.last_filename: Path = Path(
                 self.data[ctd_type]["memory"]["last_filename"]
             )
-            self.last_processing_file: Path = Path(
-                self.data[ctd_type]["memory"]["last_processing_file"]
-            )
+            self.last_processing_files: list[str] = [
+                Path(file).name
+                for file in self.data[ctd_type]["memory"][
+                    "last_processing_files"
+                ]
+            ]
         except (NonExistentKey, EmptyKeyError, KeyAlreadyPresent) as error:
             logger.error(f"Mistake in update: {error}")
             sys.exit(1)
@@ -126,9 +129,9 @@ class ConfigurationFile:
         self.data[ctd_type]["memory"]["last_filename"] = str(
             self.last_filename
         )
-        self.data[ctd_type]["memory"]["last_processing_file"] = str(
-            self.last_processing_file
-        )
+        self.data[ctd_type]["memory"]["last_processing_files"] = [
+            str(file) for file in self.last_processing_files
+        ]
 
     def write(
         self,

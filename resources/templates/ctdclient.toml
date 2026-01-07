@@ -92,4 +92,4 @@ number_of_bottles = 13
 [ctd.memory]
 last_cast = 0
 last_filename = "."
-last_processing_file = "templates/processing_template.toml"
+last_processing_files = [""]

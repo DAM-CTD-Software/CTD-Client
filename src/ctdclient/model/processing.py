@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import multiprocessing as mp
 import subprocess
+import time
 from abc import ABC, abstractmethod
 from collections import UserList
 from pathlib import Path
@@ -37,6 +38,7 @@ class ProcessingList(UserList):
         for proc_config in self.data:
             if proc_config.active:
                 proc_config.run(Path(file))
+                proc_config.wait()
                 if not proc_config.killed:
                     updated_last_processing_files.append(proc_config.name)
 
@@ -88,7 +90,6 @@ class ProcessingList(UserList):
 
 class ProcessingConfig(ABC):
     current_config: Path
-    process: mp.Process | subprocess.Popen
 
     def __init__(
         self,
@@ -117,12 +118,18 @@ class ProcessingConfig(ABC):
     def update_config(self, path_to_config: Path | str):
         pass
 
+    @abstractmethod
+    def wait(self):
+        pass
+
     def cancel(self):
         self.process.kill()
         self.killed = True
 
 
 class ProcessingProcedure(ProcessingConfig):
+    process: mp.Process
+
     def __init__(self, path_to_config: Path | str):
         super().__init__(path_to_config)
 
@@ -144,11 +151,17 @@ class ProcessingProcedure(ProcessingConfig):
         self.process.start()
         logger.debug(f"Started processing with:\n{self.procedure.config}")
 
+    def wait(self):
+        while self.process.is_alive():
+            time.sleep(0.5)
+
     def apply_procedure(self, file: Path):
         self.procedure.run(file)
 
 
 class ProcessingScript(ProcessingConfig):
+    process: subprocess.Popen
+
     def __init__(self, path_to_config: Path | str):
         super().__init__(path_to_config)
 
@@ -172,5 +185,6 @@ class ProcessingScript(ProcessingConfig):
             raise error
         except TypeError as error:
             logger.error(f"Wrong input type: {error}")
-        else:
-            self.process.wait()
+
+    def wait(self):
+        self.process.wait()

@@ -105,8 +105,12 @@ class NRTList(UserList):
             nrt.stop()
         if nrt.file_path.exists():
             nrt.file_path.unlink()
-        config.near_real_time.pop(nrt.name)
-        config.write()
+        try:
+            config.near_real_time.pop(nrt.name)
+        except KeyError:
+            pass
+        else:
+            config.write()
 
 
 class NearRealTimeTarget:

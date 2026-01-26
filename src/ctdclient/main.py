@@ -18,8 +18,8 @@ from ctdclient.logconfig import LoggingConfig
 
 def main():
     """The main entry point of the software."""
-    # if check_if_running():
-    #     sys.exit("CTD-Client is already running.")
+    if check_if_running():
+        sys.exit("CTD-Client is already running.")
     # set ctk options
     root = ctk.CTk()
     root.title(f"DAM CTD Software {VERSION}")

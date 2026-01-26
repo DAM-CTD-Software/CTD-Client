@@ -39,6 +39,12 @@ class RunController(Controller):
         self.view.add_callback("postruncheck", self.check_correct_filename)
         self.view.add_callback("runprocessing", self.run_processing)
         self.view.add_callback("cancelprocessing", self.cancel_processing)
+        self.view.add_callback("checksamename", self.check_last_filename)
+
+    def check_last_filename(self, current_filename: str):
+        return (
+            current_filename == self.configuration.last_filename.name
+        ) and Path(self.configuration.last_filename).exists()
 
     def run_seasave(
         self,

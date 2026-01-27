@@ -108,5 +108,6 @@ class MainController:
         return tab_dict
 
     def kill_threads(self):
+        config.write()
         self.dship_controller.kill_threads()
         self.nrt.kill_processes()

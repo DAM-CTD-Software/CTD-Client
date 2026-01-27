@@ -54,6 +54,13 @@ class ProcessingList(UserList):
             if proc_config.active:
                 proc_config.cancel()
 
+    def toggle_auto_process(self, new_value: bool | None = None):
+        config.processing["auto_process"] = (
+            new_value
+            if isinstance(new_value, bool)
+            else not config.plotting["auto_process"]
+        )
+
     def toggle_config_activity_state(self, proc_config: ProcessingConfig):
         for proc in self.data:
             if proc == proc_config:
@@ -140,8 +147,10 @@ class ProcessingProcedure(ProcessingConfig):
             proc_config,
             seabird_exe_directory=config.path_to_proc_exes,
             auto_run=False,
-            procedure_fingerprint_directory=config.generate_processing_fingerprint,
-            file_type_dir=config.file_type_dir,
+            procedure_fingerprint_directory=config.processing[
+                "generate_processing_fingerprint"
+            ],
+            file_type_dir=config.processing["file_type_dir"],
         )
         self.modules = proc_config["modules"]
         self.killed = False

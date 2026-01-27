@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import logging
 import sys
+import tkinter as tk
 import tkinter.font as tkFont
+from pathlib import Path
+from tkinter import filedialog as fd
+from typing import Callable
 
 import customtkinter as ctk
 from processing.gui.procedure_config_view import ProcedureConfigView
 
-from ctdclient.definitions import CONFIG_PATH, ICON_PATH
+from ctdclient.definitions import CONFIG_PATH, ICON_PATH, config
 from ctdclient.model.processing import ProcessingConfig, ProcessingProcedure
 from ctdclient.utils import call_editor
 from ctdclient.view.ctkframe import CtkFrame
@@ -53,6 +57,101 @@ class ProcessingView(ViewMixin, CtkFrame):
         )
         for index, processing in enumerate(processing_list, start=row + 1):
             self.create_processing_entry(processing, index)
+            row = index
+
+        ctk.CTkLabel(
+            self,
+            text="General Settings:",
+            font=(tkFont.nametofont("TkDefaultFont"), 20),
+        ).grid(
+            row=row + 1, column=0, sticky="w", padx=self.padx, pady=self.pady
+        )
+
+        settings_frame = ctk.CTkFrame(
+            self, fg_color="transparent", border_width=1, border_color="gray10"
+        )
+        settings_frame.grid(
+            row=row + 2, column=0, sticky="ew", padx=self.padx, pady=self.pady
+        )
+
+        for index, (key, value) in enumerate(config.processing.items()):
+            self.settings_entry(settings_frame, key, value, index)
+
+    def settings_entry(self, parent_frame, key, value, row):
+        frame = ctk.CTkFrame(parent_frame, fg_color="transparent")
+        frame.grid(
+            row=row, column=0, sticky="ew", padx=self.padx, pady=self.pady
+        )
+        frame.grid_columnconfigure(0, weight=1)
+        # name = ctk.CTkLabel(frame, text=key, anchor="w", justify="left")
+        # name.grid(row=0, column=0, padx=self.padx, pady=self.pady, sticky="w")
+        key_label = ctk.CTkLabel(frame, text=key.replace("_", " "), anchor="w")
+        key_label.grid(row=0, column=0, sticky="w", padx=5, pady=2)
+
+        if type(value) is bool:
+            entry = ctk.CTkSwitch(
+                frame,
+                text="",
+                onvalue=True,
+                offvalue=False,
+            )
+            entry.grid(row=0, column=2)
+            if value:
+                entry.select()
+            else:
+                entry.deselect()
+        else:
+            entry = ctk.CTkEntry(frame, width=300)
+            entry.grid(row=0, column=2)
+            entry.insert(0, value)
+            entry.xview(tk.END)
+
+        def update_value(event=None):
+            config.processing[key] = entry.get()
+            if key == "auto_process":
+                self.toggle_auto_process(entry.get())
+
+        if key.endswith(("dir", "fingerprint")):
+            file_picker = self.create_picker_element(
+                frame=frame,
+                entry=entry,
+                callback=update_value,
+            )
+            file_picker.grid(row=0, column=1, padx=5, pady=5)
+
+        entry.bind("<FocusOut>", update_value)
+        entry.bind("<Leave>", update_value)
+
+    def create_picker_element(
+        self,
+        frame: ctk.CTkFrame,
+        entry: ctk.CTkEntry,
+        directory: bool = True,
+        callback: Callable | None = None,
+        initial_dir: Path | str | None = None,
+    ) -> ctk.CTkButton:
+        if directory:
+            command = fd.askdirectory
+            text = "Pick directory"
+            width = 80
+        else:
+            command = fd.askopenfilename
+            text = "Pick file"
+            width = 60
+
+        def open_file_picker():
+            entry.delete(0, tk.END)
+            entry.insert(0, command(initialdir=initial_dir))
+            entry.xview(tk.END)
+            if isinstance(callback, Callable):
+                callback()
+
+        return ctk.CTkButton(
+            frame, command=open_file_picker, text=text, width=width
+        )
+
+    def toggle_auto_process(self, new_value: str):
+        self.callbacks["update_auto_process"](new_value)
 
     def open_template(self):
         template = self.callbacks["new_processing"]()

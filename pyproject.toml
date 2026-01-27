@@ -1,8 +1,6 @@
 [project]
 name = "CTD-Client"
-authors = [
-    { name = "Emil Michels", email = "<emil.michels@io-warnemuende.de>" },
-]
+authors = [{ name = "Emil Michels", email = "<emil.michels@iow.de>" }]
 version = "0.0.0"
 description = "A software tool designed to facilitate the measurement and processing of CTD data using Sea-Bird instruments. The program enhances datasets with ship metadata and ensures standardized, consistent data collection."
 readme = "README.md"

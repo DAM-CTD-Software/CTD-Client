@@ -80,6 +80,8 @@ class RunController(Controller):
 
     def check_correct_filename(self):
         self.update_variables_post_run()
+        if self.configuration.processing["auto_process"]:
+            self.processing.run(self.configuration.last_filename)
         if str(self.current_filename).split("-")[0].endswith("000"):
             self.update_file_information()
 

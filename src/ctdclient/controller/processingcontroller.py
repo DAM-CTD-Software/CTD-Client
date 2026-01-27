@@ -16,7 +16,11 @@ class ProcessingController(Controller):
         self.view.add_callback("update_processing_workflows", self.update)
         self.view.add_callback("delete_processing", self.delete)
         self.view.add_callback("toggle_active", self.toggle_active_state)
+        self.view.add_callback("update_auto_process", self.update_auto_process)
         self.update()
+
+    def update_auto_process(self, auto_process: str):
+        self.model.toggle_auto_process(bool(auto_process))
 
     def update(self):
         self.model.read_processing_files()

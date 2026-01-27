@@ -202,7 +202,7 @@ class ExpertSettings(ctk.CTkScrollableFrame):
         self.platform_options = ["CTD"]
         top_entry_length = len(self.values["base"])
         for index, (setting, inner_dict) in enumerate(self.values.items()):
-            index *= top_entry_length + len(self.platform_options) + 1
+            index *= top_entry_length + len(self.platform_options) + 4
             ctk.CTkLabel(
                 self,
                 text=f"{setting}",

@@ -12,12 +12,6 @@ processing_exes = "C:\\Program Files (x86)\\Sea-Bird\\SeasaveV7\\SBEDataProcessi
 # whether to display the option, to close bottles automatically during downcast.
 # Will be always true otherwise.
 downcast_option = false
-# save the processing workflow file used for processing inside the given directory. 
-# If none given, no fingerprint will be saved.
-generate_processing_fingerprint = ""
-# save all files used/created during the processing workflow in individual directories inside the given directory. 
-# If none given, no files will be saved (additionally to the usual file saving done).
-file_type_dir = ""
 # toggles debugging mode, that displays more (debugging) information
 debugging = false
 # lets the user define a scaling factor of the GUI
@@ -63,6 +57,15 @@ op3 = ""
 op4 = ""
 op5 = ""
 last = ""
+
+[processing]
+# save the processing workflow file used for processing inside the given directory. 
+# If none given, no fingerprint will be saved.
+generate_processing_fingerprint = ""
+# save all files used/created during the processing workflow in individual directories inside the given directory. 
+# If none given, no files will be saved (additionally to the usual file saving done).
+file_type_dir = ""
+auto_process = false
 
 [near_real_time]
 

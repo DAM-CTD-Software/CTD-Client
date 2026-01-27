@@ -1,6 +1,7 @@
 import logging
 
 import customtkinter as ctk
+
 from ctdclient.controller.bottlecontroller import BottleController
 from ctdclient.controller.configcontroller import ConfigurationController
 from ctdclient.controller.dshipcontroller import DshipController
@@ -14,8 +15,7 @@ from ctdclient.model.dshipcaller import DshipCaller
 from ctdclient.model.near_real_time_publication import NRTList
 from ctdclient.model.plotting import Plotting
 from ctdclient.model.processing import ProcessingList
-from ctdclient.view.configuration import AboutView
-from ctdclient.view.configuration import ConfigurationView
+from ctdclient.view.configuration import AboutView, ConfigurationView
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
 from ctdclient.view.measurement import MeasurementView
@@ -108,5 +108,6 @@ class MainController:
         return tab_dict
 
     def kill_threads(self):
+        config.write()
         self.dship_controller.kill_threads()
         self.nrt.kill_processes()

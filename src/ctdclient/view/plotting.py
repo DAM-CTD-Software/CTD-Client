@@ -5,10 +5,11 @@ from tkinter import filedialog as fd
 from typing import Callable
 
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
+
 from ctdclient.definitions import config
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.View import ViewMixin
-from CTkMessagebox import CTkMessagebox
 
 
 class PlottingFrame(ViewMixin, CtkFrame):

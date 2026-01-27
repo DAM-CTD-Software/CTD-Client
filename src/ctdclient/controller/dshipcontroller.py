@@ -1,8 +1,6 @@
 import time
-from multiprocessing import Process
-from multiprocessing import Queue
-from typing import Callable
-from typing import Tuple
+from multiprocessing import Process, Queue
+from typing import Callable, Tuple
 
 from ctdclient.controller.Controller import Controller
 from ctdclient.definitions import last_ctd_station

@@ -23,7 +23,7 @@ jobs:
           git config --global user.name "${{ secrets.GIT_USER_NAME }}"
           git config --global user.email "${{ secrets.GIT_USER_EMAIL }}"
           git config --global credential.helper store
-          echo "https://${{ secrets.GIT_USER_NAME }}:${{ secrets.GIT_TOKEN }}@git.io-warnemuende.de" > ~/.git-credentials
+          echo "https://${{ secrets.GIT_USER_NAME }}:${{ secrets.GIT_TOKEN }}@git.iow.de" > ~/.git-credentials
           chmod 600 ~/.git-credentials
 
       - name: Get PR Description from Gitea API
@@ -31,7 +31,7 @@ jobs:
         run: |
           PR_NUMBER=$(git log -1 --pretty=%B | grep -oP '\(#\d+\)' | grep -oP '\d+')
           PR_DESC=$(curl -s -H "Authorization: token ${{ secrets.GIT_TOKEN }}" \
-                     "https://git.io-warnemuende.de/api/v1/repos/${{ gitea.repository }}/pulls/$PR_NUMBER" | jq -r '.title')
+                     "https://git.iow.de/api/v1/repos/${{ gitea.repository }}/pulls/$PR_NUMBER" | jq -r '.title')
           echo "PR_DESC=$PR_DESC" >> $GITHUB_ENV
           echo "PR_DESC=$PR_DESC" >> $GITHUB_OUTPUT
 
@@ -163,7 +163,7 @@ jobs:
       - name: Create Gitea release
         run: |
           RESPONSE=$(curl -X 'POST' \
-            "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases" \
+            "https://git.iow.de/api/v1/repos/CTD-Software/CTD-Client/releases" \
             -H "Authorization: token $GIT_TOKEN" \
             -H "Content-Type: application/json" \
             -d "{\"body\": \"$PR_DESC\", \"name\": \"Release $NEW_VERSION\", \"tag_name\": \"$NEW_VERSION\"}")
@@ -174,7 +174,7 @@ jobs:
       - name: Upload binary to release
         run: |
           curl -X 'POST' \
-            "https://git.io-warnemuende.de/api/v1/repos/CTD-Software/CTD-Client/releases/$RELEASE_ID/assets?=ctdclient.exe" \
+            "https://git.iow.de/api/v1/repos/CTD-Software/CTD-Client/releases/$RELEASE_ID/assets?=ctdclient.exe" \
             -H "Authorization: token $GIT_TOKEN" \
             -H 'accept: application/json' \
             -H 'Content-Type: multipart/form-data' \

@@ -12,22 +12,23 @@ import subprocess
 import time
 from abc import abstractmethod
 from collections import UserList
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
-from datetime import timezone
+from datetime import date, datetime, timedelta, timezone
 from email.message import EmailMessage
 from pathlib import Path
 from typing import Callable
 
-from ctdclient.definitions import config
-from ctdclient.definitions import CONFIG_PATH
-from ctdclient.definitions import cruise_head
-from ctdclient.definitions import cruise_name
-from ctdclient.definitions import event_manager
-from ctdclient.definitions import TEMPLATE_PATH
+from platformdirs import user_log_dir
 from seabirdfilehandler import DataFile
 from tomlkit.toml_file import TOMLFile
+
+from ctdclient.definitions import (
+    CONFIG_PATH,
+    TEMPLATE_PATH,
+    config,
+    cruise_head,
+    cruise_name,
+    event_manager,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -104,8 +105,12 @@ class NRTList(UserList):
             nrt.stop()
         if nrt.file_path.exists():
             nrt.file_path.unlink()
-        config.near_real_time.pop(nrt.name)
-        config.write()
+        try:
+            config.near_real_time.pop(nrt.name)
+        except KeyError:
+            pass
+        else:
+            config.write()
 
 
 class NearRealTimeTarget:
@@ -209,9 +214,12 @@ class NearRealTimeTarget:
         Creates an email .eml draft file, that can be opened by common email
         programs.
         """
+        draft_dir = Path(user_log_dir("ctdclient")).parent.joinpath("emails")
+        if not draft_dir.exists():
+            draft_dir.mkdir(parents=True, exist_ok=True)
         msg.add_header("X-Unsent", "1")
         file_path = (
-            Path(f"draft_email_to_{msg['to']}.eml")
+            draft_dir.joinpath(f"{str(datetime.now()).replace(' ', 'T')}.eml")
             if file_path == ""
             else Path(file_path)
         )
@@ -242,8 +250,8 @@ class NearRealTimeTarget:
             return
         email_message = self.create_email_message(files_to_attach)
         open_draft = True if self.email_info["open_draft"] == "true" else False
+        draft_path = self.create_email_draft(email_message)
         if run_manually or open_draft:
-            draft_path = self.create_email_draft(email_message)
             self.open_draft_msg(draft_path)
         else:
             self.send_email(email_message)

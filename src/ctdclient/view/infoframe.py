@@ -2,6 +2,7 @@ import tkinter as tk
 from multiprocessing import Queue
 
 import customtkinter as ctk
+
 from ctdclient.model.metadataheader import MetadataHeader
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.ctkspinbox import CTkSpinbox

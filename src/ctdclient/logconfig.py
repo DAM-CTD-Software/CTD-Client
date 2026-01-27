@@ -3,16 +3,15 @@ import mimetypes
 import queue
 import smtplib
 import sys
-from datetime import datetime
-from datetime import timezone
+from datetime import datetime, timezone
 from email.message import EmailMessage
 from pathlib import Path
 
 import customtkinter as ctk
-from ctdclient.definitions import config
-from ctdclient.definitions import cruise_name
 from CTkMessagebox import CTkMessagebox
 from platformdirs import user_log_dir
+
+from ctdclient.definitions import config, cruise_name
 
 
 class LoggingConfig:

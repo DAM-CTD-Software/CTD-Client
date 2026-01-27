@@ -1,6 +1,5 @@
 import logging
-from collections import Counter
-from collections import UserDict
+from collections import Counter, UserDict
 
 logger = logging.getLogger(__name__)
 

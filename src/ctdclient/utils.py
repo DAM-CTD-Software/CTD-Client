@@ -100,7 +100,11 @@ def individual_dship_api_call(url) -> str | None:
 def call_editor(file_path: Path):
     try:
         if platform.system() == "Windows":
-            os.startfile(file_path, operation="edit")
+            try:
+                os.startfile(file_path)
+            except OSError:
+                # if default association fails, use notepad
+                subprocess.Popen(["notepad.exe", file_path])
         elif platform.system() == "Darwin":
             subprocess.Popen(["open", file_path])
         elif platform.system() == "Linux":

@@ -3,8 +3,10 @@ from pathlib import Path
 from tkinter import ttk
 
 import customtkinter as ctk
-from ctdclient.view.View import ViewMixin
 from processing.gui.toml_editor import TomlEditor
+
+from ctdclient.definitions import CONFIG_PATH
+from ctdclient.view.View import ViewMixin
 
 
 class NRTConfigurator(ViewMixin, TomlEditor):
@@ -37,6 +39,7 @@ class NRTConfigurator(ViewMixin, TomlEditor):
             config_file,
             title_size,
             fg_color="gray16",
+            default_dir_to_save_in=CONFIG_PATH,
         )
         self.possible_email_parameters = possible_email_parameters
         self.configure(fg_color="gray16")

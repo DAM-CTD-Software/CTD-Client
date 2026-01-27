@@ -3,17 +3,20 @@ from __future__ import annotations
 import logging
 import multiprocessing as mp
 import subprocess
-from abc import ABC
-from abc import abstractmethod
+import time
+from abc import ABC, abstractmethod
 from collections import UserList
 from pathlib import Path
 
-from ctdclient.definitions import config
-from ctdclient.definitions import CONFIG_PATH
-from ctdclient.definitions import event_manager
-from ctdclient.definitions import TEMPLATE_PATH
 from processing.procedure import Procedure
 from processing.settings import Configuration
+
+from ctdclient.definitions import (
+    CONFIG_PATH,
+    TEMPLATE_PATH,
+    config,
+    event_manager,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +34,20 @@ class ProcessingList(UserList):
                 continue
 
     def run(self, file: Path | str):
+        updated_last_processing_files = []
         for proc_config in self.data:
             if proc_config.active:
                 proc_config.run(Path(file))
+                proc_config.wait()
+                if not proc_config.killed:
+                    updated_last_processing_files.append(proc_config.name)
+
+        if len(updated_last_processing_files) > 0:
+            config.last_processing_files = updated_last_processing_files
+            config.write()
+            event_manager.publish(
+                "processing_successful", target=Path(file).absolute()
+            )
 
     def cancel(self):
         for proc_config in self.data:
@@ -76,7 +90,6 @@ class ProcessingList(UserList):
 
 class ProcessingConfig(ABC):
     current_config: Path
-    process: mp.Process | subprocess.Popen
 
     def __init__(
         self,
@@ -86,7 +99,9 @@ class ProcessingConfig(ABC):
         self.path_to_config = Path(path_to_config)
         self.name = self.path_to_config.name
         self.active = (
-            True if self.name == config.last_processing_file.name else False
+            True
+            if self.name in [file for file in config.last_processing_files]
+            else False
         )
 
     def __str__(self) -> str:
@@ -103,13 +118,9 @@ class ProcessingConfig(ABC):
     def update_config(self, path_to_config: Path | str):
         pass
 
-    def post_processing_clean_up(self, file):
-        if not self.killed:
-            config.last_processing_file = self.path_to_config.absolute()
-            config.write()
-            event_manager.publish(
-                "processing_successful", target=Path(file).absolute()
-            )
+    @abstractmethod
+    def wait(self):
+        pass
 
     def cancel(self):
         self.process.kill()
@@ -117,6 +128,8 @@ class ProcessingConfig(ABC):
 
 
 class ProcessingProcedure(ProcessingConfig):
+    process: mp.Process
+
     def __init__(self, path_to_config: Path | str):
         super().__init__(path_to_config)
 
@@ -138,17 +151,22 @@ class ProcessingProcedure(ProcessingConfig):
         self.process.start()
         logger.debug(f"Started processing with:\n{self.procedure.config}")
 
+    def wait(self):
+        while self.process.is_alive():
+            time.sleep(0.5)
+
     def apply_procedure(self, file: Path):
         self.procedure.run(file)
-        self.post_processing_clean_up(file)
 
 
 class ProcessingScript(ProcessingConfig):
+    process: subprocess.Popen
+
     def __init__(self, path_to_config: Path | str):
         super().__init__(path_to_config)
 
     def update_config(self, path_to_config: Path | str):
-        new_config = Path(path_to_config)
+        new_config = CONFIG_PATH.joinpath(path_to_config)
         self.procedure = [new_config]
         self.killed = False
 
@@ -167,6 +185,6 @@ class ProcessingScript(ProcessingConfig):
             raise error
         except TypeError as error:
             logger.error(f"Wrong input type: {error}")
-        else:
-            self.process.wait()
-            self.post_processing_clean_up(file)
+
+    def wait(self):
+        self.process.wait()

@@ -1,7 +1,9 @@
 from ctdclient.controller.Controller import Controller
-from ctdclient.definitions import config
-from ctdclient.model.near_real_time_publication import NearRealTimeTarget
-from ctdclient.model.near_real_time_publication import NRTList
+from ctdclient.definitions import CONFIG_PATH, config
+from ctdclient.model.near_real_time_publication import (
+    NearRealTimeTarget,
+    NRTList,
+)
 from ctdclient.view.nrtcontrol import NRTControlFrame
 
 
@@ -20,7 +22,15 @@ class NRTController(Controller):
         self.view.add_callback("toggle_activity", self.toggle_activity)
         self.view.add_callback("send_email", self.send_email)
         self.view.add_callback("delete_nrt", self.delete)
+        self.remove_unused_keys()
         self.update()
+
+    def remove_unused_keys(self):
+        for nrt_name in list(config.near_real_time.keys()):
+            if not CONFIG_PATH.joinpath(f"nrt_{nrt_name}.toml").exists():
+                config.near_real_time.pop(nrt_name)
+
+        config.write()
 
     def update(self):
         self.model.update_nrt_data()

@@ -259,29 +259,6 @@ class ExpertSettings(ctk.CTkScrollableFrame):
                     ).grid(row=row, column=2, padx=self.padx, pady=self.pady)
                 elif name.endswith("platforms"):
                     continue
-                    # TODO:will not be shown as long as platforms are not fully
-                    # implemented
-                    #
-                    # self.listbox = CTkListbox(
-                    #     self,
-                    #     multiple_selection=True,
-                    #     width=80,
-                    #     height=90,
-                    #     font=(tkFont.nametofont("TkDefaultFont"), 10),
-                    # )
-                    # self.listbox.grid(
-                    #     row=row,
-                    #     column=1,
-                    #     padx=self.padx,
-                    #     pady=self.pady,
-                    #     sticky=tk.E,
-                    # )
-                    # for index, platform in enumerate(self.platform_options):
-                    #     self.listbox.insert(index, platform)
-                    #     if platform in variable:
-                    #         # TODO: not working for more than one value
-                    #         self.listbox.activate(index)
-
                 else:
                     ctk.CTkEntry(self, textvariable=variable).grid(
                         row=row,
@@ -358,8 +335,6 @@ class ExpertSettings(ctk.CTkScrollableFrame):
             message="You need to restart the application for these settings to have an effect.",
             option_1="Ok",
         )
-        # self.configuration.write(use_internal_values=False)
-        # self.callbacks["save"]()
 
     def select_file(self, name, variable):
         """

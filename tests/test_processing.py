@@ -2,9 +2,7 @@ import logging
 from pathlib import Path
 from time import sleep
 
-import pytest
-from conftest import psa_dir
-from conftest import raw_data_dir
+from conftest import raw_data_dir, check_and_remove_file, data_dir, output_name
 from conftest import target_file
 from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import event_manager
@@ -31,6 +29,8 @@ def test_event_processing_successful(simple_processing: ProcessingProcedure):
     simple_processing.run(target_file)
     sleep(4)
     assert simple_processing.process.exitcode == 0
+    check_and_remove_file(data_dir.joinpath(output_name))
+
 
 def test_processing_list_creation():
     proc_list = ProcessingList()
@@ -38,19 +38,12 @@ def test_processing_list_creation():
     assert len(proc_list) == len([file for file in CONFIG_PATH.glob('*proc*')])
 
 
-@pytest.mark.seabird
 def test_full_processing(processing: ProcessingProcedure):
     processing.procedure = Procedure(
         configuration={
-            "input": [],
-            "psa_directory": psa_dir,
-            "output_type": "",
-            "output_name": "",
-            "output_dir": "",
             "modules": {
-                "datcnv": {"psa": "DatCnv.psa"},
-                "alignctd": {"psa": "AlignCTD.psa"},
-                "binavg": {"psa": "BinAvg_1.psa"},
+                "alignctd": {},
+                "binavg": {},
             },
         },
         auto_run=False,
@@ -64,9 +57,4 @@ def test_full_processing(processing: ProcessingProcedure):
     while processing.process.is_alive():
         sleep(1)
     expected_file = input_file.with_suffix(".cnv")
-    if expected_file.exists():
-        expected_file.unlink()
-        assert True
-    else:
-        logger.error(f"Could not find file {expected_file}.")
-        assert False
+    check_and_remove_file(expected_file)

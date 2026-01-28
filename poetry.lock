@@ -2456,4 +2456,4 @@ dev = ["furo", "myst-parser", "pre-commit", "pyment", "pytest", "pytest-cov", "p
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "17e58c5b10c73d9b51153460fe5f345053faf193285dc195436f3ea8284a81d2"
+content-hash = "d3b1160696cbb611c10a916c6cff4982a025acb1c9b6a8487cc6d29bc6c75d4f"

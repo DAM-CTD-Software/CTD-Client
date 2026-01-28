@@ -39,32 +39,17 @@ class ProcessingView(ViewMixin, CtkFrame):
                 pass
             frame.destroy()
         row = 0
-        if len(processing_list) == 0:
-            header = ctk.CTkLabel(
-                self,
-                text="No processing configured.",
-                font=(tkFont.nametofont("TkDefaultFont"), 20),
-            )
-            header.grid()
-            row += 1
-        new_processing = ctk.CTkButton(
-            self,
-            text="Create new processing workflow",
-            command=self.open_template,
-        )
-        new_processing.grid(
-            row=row, column=0, sticky="ew", padx=self.padx, pady=self.pady
-        )
-        for index, processing in enumerate(processing_list, start=row + 1):
-            self.create_processing_entry(processing, index)
-            row = index
 
         ctk.CTkLabel(
             self,
             text="General Settings:",
             font=(tkFont.nametofont("TkDefaultFont"), 20),
         ).grid(
-            row=row + 1, column=0, sticky="w", padx=self.padx, pady=self.pady
+            row=row,
+            column=0,
+            sticky="w",
+            padx=self.padx,
+            pady=self.pady * 5,
         )
 
         settings_frame = ctk.CTkFrame(
@@ -77,14 +62,47 @@ class ProcessingView(ViewMixin, CtkFrame):
         for index, (key, value) in enumerate(config.processing.items()):
             self.settings_entry(settings_frame, key, value, index)
 
+        ctk.CTkLabel(
+            self,
+            text="Workflows:",
+            font=(tkFont.nametofont("TkDefaultFont"), 20),
+        ).grid(
+            row=row + 3,
+            column=0,
+            sticky="w",
+            padx=self.padx,
+            pady=self.pady * 5,
+        )
+        if len(processing_list) == 0:
+            header = ctk.CTkLabel(
+                self,
+                text="No processing configured.",
+                font=(tkFont.nametofont("TkDefaultFont"), 20),
+            )
+            header.grid()
+            row += 4
+        new_processing = ctk.CTkButton(
+            self,
+            text="Create new processing workflow",
+            command=self.open_template,
+        )
+        new_processing.grid(
+            row=row + 4,
+            column=0,
+            sticky="ew",
+            padx=self.padx,
+            pady=self.pady if len(processing_list) > 0 else 20,
+        )
+        for index, processing in enumerate(processing_list, start=row + 5):
+            self.create_processing_entry(processing, index)
+            row = index
+
     def settings_entry(self, parent_frame, key, value, row):
         frame = ctk.CTkFrame(parent_frame, fg_color="transparent")
         frame.grid(
             row=row, column=0, sticky="ew", padx=self.padx, pady=self.pady
         )
         frame.grid_columnconfigure(0, weight=1)
-        # name = ctk.CTkLabel(frame, text=key, anchor="w", justify="left")
-        # name.grid(row=0, column=0, padx=self.padx, pady=self.pady, sticky="w")
         key_label = ctk.CTkLabel(frame, text=key.replace("_", " "), anchor="w")
         key_label.grid(row=0, column=0, sticky="w", padx=5, pady=2)
 
@@ -172,6 +190,18 @@ class ProcessingView(ViewMixin, CtkFrame):
         )
         name.grid(row=0, column=0, padx=self.padx, pady=self.pady, sticky="w")
 
+        run = ctk.CTkSwitch(
+            frame,
+            text="",
+            command=lambda: self.callbacks["toggle_active"](
+                processing_workflow
+            ),
+        )
+        run.grid(row=0, column=1, padx=self.padx, pady=self.pady)
+
+        if processing_workflow.active:
+            run.select()
+
         if isinstance(processing_workflow, ProcessingProcedure):
 
             def toggle_entry():
@@ -196,7 +226,7 @@ class ProcessingView(ViewMixin, CtkFrame):
                 text="show/hide modules",
                 command=lambda: toggle_entry(),
             )
-            info_toggle.grid(row=0, column=1, padx=self.padx, pady=self.pady)
+            info_toggle.grid(row=0, column=2, padx=self.padx, pady=self.pady)
 
             info = ctk.CTkFrame(
                 frame,
@@ -209,7 +239,7 @@ class ProcessingView(ViewMixin, CtkFrame):
                 text="edit/details",
                 command=lambda: self.open_config(processing_workflow),
             )
-            config.grid(row=0, column=2, padx=self.padx, pady=self.pady)
+            config.grid(row=0, column=3, padx=self.padx, pady=self.pady)
 
         else:
             open_editor = ctk.CTkButton(
@@ -219,7 +249,7 @@ class ProcessingView(ViewMixin, CtkFrame):
                     processing_workflow.path_to_config
                 ),
             )
-            open_editor.grid(row=0, column=2, padx=self.padx, pady=self.pady)
+            open_editor.grid(row=0, column=4, padx=self.padx, pady=self.pady)
 
         delete = ctk.CTkButton(
             frame,
@@ -228,19 +258,7 @@ class ProcessingView(ViewMixin, CtkFrame):
                 processing_workflow
             ),
         )
-        delete.grid(row=0, column=3, padx=self.padx, pady=self.pady)
-
-        run = ctk.CTkSwitch(
-            frame,
-            text="",
-            command=lambda: self.callbacks["toggle_active"](
-                processing_workflow
-            ),
-        )
-        run.grid(row=0, column=4, padx=self.padx, pady=self.pady)
-
-        if processing_workflow.active:
-            run.select()
+        delete.grid(row=0, column=5, padx=self.padx, pady=self.pady)
 
     def display_modules(
         self, frame: ctk.CTkFrame, processing_workflow: ProcessingProcedure

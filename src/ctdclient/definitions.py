@@ -41,10 +41,6 @@ cruise_name = individual_dship_api_call(
     f"{url}/{config.dship_api_target_names['Cruise']}"
 )
 cruise_name = cruise_name if cruise_name else "unknown"
-# TODO: add cruise head parameter
-# cruise_head = individual_dship_api_call(
-#     f'{url}/ADD_PARAMETER_HERE')
-# cruise_head = cruise_head if cruise_head else "unknown"
 cruise_head = "unknown"
 
 global last_ctd_station

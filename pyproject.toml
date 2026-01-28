@@ -6,17 +6,16 @@ description = "A software tool designed to facilitate the measurement and proces
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "ctd-processing[vis]>=1.9.1",
-    "seabirdfilehandler>=0.7.3",
-    "tomlkit>=0.12.3",
+    "ctd-processing[vis]>=1.11.7",
+    "seabirdfilehandler>=0.13.1",
     "xmltodict>=0.13.0",
     "requests>=2.31.0",
     "customtkinter>=5.2.2",
     "ctkmessagebox>=2.5",
     "ctklistbox>=1.4",
     "psutil>=5.9.8",
-    "numpy==2.2.1",
     "platformdirs>=4.4.0",
+    "numpy==2.2.1",
 ]
 
 [project.optional-dependencies]
@@ -37,19 +36,13 @@ packages = [{ include = "ctdclient", from = "src" }]
 
 [tool.pytest.ini_options]
 pythonpath = [".", "src", "src/ctdclient"]
-filterwarnings = [
-    "error",
-    "ignore::UserWarning",
-    'ignore::DeprecationWarning',
-    # note the use of single quote below to denote "raw" strings in TOML
-    'ignore: datetime.datetime.utcfromtimestamp\(\) is deprecated:DeprecationWarning',
-]
 
 [tool.ruff]
 line-length = 79
 exclude = ["tests", '__init__.py']
 
 [tool.ruff.lint]
+select = ["ERA001"]
 ignore = ["F403", "F821"]
 
 [build-system]

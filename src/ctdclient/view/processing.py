@@ -103,8 +103,6 @@ class ProcessingView(ViewMixin, CtkFrame):
             row=row, column=0, sticky="ew", padx=self.padx, pady=self.pady
         )
         frame.grid_columnconfigure(0, weight=1)
-        # name = ctk.CTkLabel(frame, text=key, anchor="w", justify="left")
-        # name.grid(row=0, column=0, padx=self.padx, pady=self.pady, sticky="w")
         key_label = ctk.CTkLabel(frame, text=key.replace("_", " "), anchor="w")
         key_label.grid(row=0, column=0, sticky="w", padx=5, pady=2)
 

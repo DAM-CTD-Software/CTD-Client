@@ -17,5 +17,3 @@ class MainWindow(ctk.CTkFrame):
             tabs=tab_dict,
         )
         self.tabs.grid(row=0, column=0, sticky="nsew")
-        # self.tabs.grid_rowconfigure(0, weight=1)
-        # self.tabs.grid_columnconfigure(0, weight=1)

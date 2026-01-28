@@ -1,8 +1,8 @@
+import socket
 import sys
 import tkinter.font as tkFont
 
 import customtkinter as ctk
-import psutil
 from CTkMessagebox import CTkMessagebox
 
 from ctdclient.controller.maincontroller import MainController
@@ -14,6 +14,9 @@ from ctdclient.definitions import (
     config,
 )
 from ctdclient.logconfig import LoggingConfig
+
+# global variable to keep the socket lock alive
+_lock_socket = None
 
 
 def main():
@@ -53,21 +56,16 @@ def main():
 
 
 def check_if_running() -> bool:
-    """Checks, whether CTD-Client is already running"""
-    current_process_name = "ctdclient"
-    current_process_name += ".exe" if sys.platform.startswith("win") else ""
-    for process in psutil.process_iter():
-        try:
-            # skip the process if its this one (using the process' creation
-            # time here, as this software is multithreaded and spans three
-            # processes upon starting, so PID would not be enough.)
-            if process.create_time() != psutil.Process().create_time():
-                if current_process_name == process.name():
-                    return True
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            pass
+    """Checks whether CTD-Client is already running using a socket lock"""
+    global _lock_socket
 
-    return False
+    _lock_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    try:
+        _lock_socket.bind(("127.0.0.1", 59432))
+        return False
+    except OSError:
+        return True
 
 
 def inform_about_bad_config(main_window):

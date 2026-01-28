@@ -15,6 +15,7 @@ dependencies = [
     "ctklistbox>=1.4",
     "psutil>=5.9.8",
     "platformdirs>=4.4.0",
+    "numpy==2.2.1",
 ]
 
 [project.optional-dependencies]

@@ -41,6 +41,7 @@ line-length = 79
 exclude = ["tests", '__init__.py']
 
 [tool.ruff.lint]
+select = ["ERA001"]
 ignore = ["F403", "F821"]
 
 [build-system]

@@ -2,8 +2,6 @@ import logging
 from pathlib import Path
 from time import sleep
 
-import pytest
-from conftest import psa_dir
 from conftest import raw_data_dir
 from conftest import target_file
 from ctdclient.definitions import CONFIG_PATH
@@ -38,19 +36,12 @@ def test_processing_list_creation():
     assert len(proc_list) == len([file for file in CONFIG_PATH.glob('*proc*')])
 
 
-@pytest.mark.seabird
 def test_full_processing(processing: ProcessingProcedure):
     processing.procedure = Procedure(
         configuration={
-            "input": [],
-            "psa_directory": psa_dir,
-            "output_type": "",
-            "output_name": "",
-            "output_dir": "",
             "modules": {
-                "datcnv": {"psa": "DatCnv.psa"},
-                "alignctd": {"psa": "AlignCTD.psa"},
-                "binavg": {"psa": "BinAvg_1.psa"},
+                "alignctd": {},
+                "binavg": {},
             },
         },
         auto_run=False,

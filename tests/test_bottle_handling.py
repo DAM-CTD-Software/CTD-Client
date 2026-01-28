@@ -1,7 +1,7 @@
 import logging
 
+from conftest import example_data
 import pytest
-from conftest import psa_dir
 from ctdclient.model.bottles import BottleClosingDepths
 from ctdclient.model.psa import SeasavePsa
 
@@ -10,7 +10,7 @@ logger.propagate = True
 
 @pytest.fixture
 def psa() -> SeasavePsa:
-    return SeasavePsa(psa_dir.joinpath("Seasave.psa"))
+    return SeasavePsa(example_data.joinpath("psa","Seasave.psa"))
 
 
 def test_comma2dot(psa):

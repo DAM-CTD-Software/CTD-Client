@@ -1,9 +1,12 @@
+import logging
 from pathlib import Path
 
 import pytest
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.model.processing import ProcessingProcedure
 from processing.procedure import Procedure
+
+logger = logging.getLogger(__name__)
 
 example_data = Path("seabird_example_data")
 data_dir = example_data.joinpath("cnv")
@@ -65,3 +68,12 @@ def fresh_target_file() -> Path:
 @pytest.fixture
 def config() -> ConfigurationFile:
     return ConfigurationFile(config_template)
+
+def check_and_remove_file(expected_file: Path):
+    if expected_file.exists():
+        expected_file.unlink()
+        assert True
+    else:
+        logger.error(f"Could not find file {expected_file}.")
+        assert False
+

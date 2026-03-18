@@ -8,8 +8,8 @@ from abc import ABC, abstractmethod
 from collections import UserList
 from pathlib import Path
 
-from processing.procedure import Procedure
-from processing.settings import Configuration
+from ctdam.proc.procedure import Procedure
+from ctdam.proc.settings import Configuration
 
 from ctdclient.definitions import (
     CONFIG_PATH,

@@ -9,7 +9,7 @@ from tkinter import filedialog as fd
 from typing import Callable
 
 import customtkinter as ctk
-from processing.gui.procedure_config_view import ProcedureConfigView
+from ctdam.entry.gui.procedure_config_view import ProcedureConfigView
 
 from ctdclient.definitions import CONFIG_PATH, ICON_PATH, config
 from ctdclient.model.processing import ProcessingConfig, ProcessingProcedure

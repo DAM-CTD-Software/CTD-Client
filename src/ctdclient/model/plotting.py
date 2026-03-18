@@ -2,7 +2,7 @@ import logging
 import shutil
 from pathlib import Path
 
-from processing.visualize import basic_bokeh_plot, cruise_plots
+from ctdam.vis import basic_bokeh_plot, cruise_plots
 
 from ctdclient.definitions import (
     CONFIG_PATH,

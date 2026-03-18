@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.model.processing import ProcessingProcedure
-from processing.procedure import Procedure
+from ctdam.proc.procedure import Procedure
 
 logger = logging.getLogger(__name__)
 

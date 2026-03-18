@@ -8,7 +8,7 @@ from ctdclient.definitions import CONFIG_PATH
 from ctdclient.definitions import event_manager
 from ctdclient.model.processing import ProcessingList
 from ctdclient.model.processing import ProcessingProcedure
-from processing.procedure import Procedure
+from ctdam.proc.procedure import Procedure
 
 logger = logging.getLogger(__name__)
 

@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from seabirdfilehandler import PsaFile
+from ctdam.parser import PsaFile
 
 logger = logging.getLogger(__name__)
 

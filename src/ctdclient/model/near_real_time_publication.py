@@ -17,8 +17,8 @@ from email.message import EmailMessage
 from pathlib import Path
 from typing import Callable
 
+from ctdam.parser import DataFile
 from platformdirs import user_log_dir
-from seabirdfilehandler import DataFile
 from tomlkit.toml_file import TOMLFile
 
 from ctdclient.definitions import (

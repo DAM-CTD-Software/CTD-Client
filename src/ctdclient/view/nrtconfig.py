@@ -3,7 +3,7 @@ from pathlib import Path
 from tkinter import ttk
 
 import customtkinter as ctk
-from processing.gui.toml_editor import TomlEditor
+from ctdam.entry.gui.toml_editor import TomlEditor
 
 from ctdclient.definitions import CONFIG_PATH
 from ctdclient.view.View import ViewMixin

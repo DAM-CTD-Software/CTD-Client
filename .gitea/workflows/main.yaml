@@ -92,12 +92,16 @@ jobs:
         with:
           python-version: "3.14"
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v7.3.1
+        with:
+          enable-cache: true
+
       - name: Update documentation
         run: |
-          pip install -r requirements.txt
-          pip install sphinx sphinx-autodoc-typehints myst-parser furo
-          sphinx-apidoc -f -e -o docs/source src/ctdclient
-          sphinx-build -b html docs/source /htmls
+          uv sync --extra docs
+          uv run sphinx-apidoc -feo docs/source src/ctdclient
+          uv run sphinx-build -b html docs/source /htmls
 
       - name: Checkout pages branch
         run: |

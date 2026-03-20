@@ -2,16 +2,19 @@
 from PyInstaller.utils.hooks import copy_metadata
 from pathlib import Path
 import customtkinter
+import ctdam
 
 customtkinter_path = Path(customtkinter.__file__).parent.absolute()
+ctdam_path = Path(ctdam.__file__).parent.joinpath('conv', 'sensor_mapping.toml')
 
 datas=[
         (customtkinter_path, 'customtkinter/'),
         ('resources', '.'),
         ('/htmls', 'htmls'),
+        (ctdam_path, 'ctdam/conv/'),
 ]
 
-datas += copy_metadata("ctd-processing")
+datas += copy_metadata("ctdam")
 
 a = Analysis(
     ['src/ctdclient/main.py'],

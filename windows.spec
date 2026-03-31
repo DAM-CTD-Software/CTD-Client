@@ -9,7 +9,7 @@ ctdam_path = Path(ctdam.__file__).parent.joinpath('conv', 'sensor_mapping.toml')
 
 datas=[
         (customtkinter_path, 'customtkinter/'),
-        ('resources', '.'),
+        ('src/ctdclient/resources', '.'),
         ('/htmls', 'htmls'),
         (ctdam_path, 'ctdam/conv/'),
 ]
@@ -21,7 +21,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=datas,
-    hiddenimports=['scipy._cyutility'],
+    hiddenimports=['scipy._cyutility', 'numpy._core._exceptions'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -49,6 +49,6 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['resources/icon.ico'],
+    icon=['src/ctdclient/resources/icon.ico'],
     version='version.txt',
 )

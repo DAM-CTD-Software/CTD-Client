@@ -4,8 +4,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import pytest
-from conftest import output_name
-from conftest import target_file
+from conftest import output_name, data_dir, example_data, target_file
 from ctdclient.definitions import event_manager
 from ctdclient.model.near_real_time_publication import DailyPublication
 from ctdclient.model.near_real_time_publication import (
@@ -39,8 +38,8 @@ daily_email_test_info = {
 
 daily_copy_test_info = {
     "recipient_name": "something",
-    "recipient_address": "tests/data/backup",
-    "target_file_directory": "seabird_example_data/cnv",
+    "recipient_address": example_data,
+    "target_file_directory": data_dir,
     "target_file_suffix": "_4coriolis",
     "frequency_of_action": "daily",
 }
@@ -122,7 +121,7 @@ def test_send_email(mocker, fresh_target_file):
 
 def test_correct_target_files(fresh_target_file: Path):
     assert NearRealTimeTarget(**daily_copy_test_info).get_target_files() == [
-        Path("seabird_example_data/cnv/test_4coriolis.cnv"),
+        data_dir.joinpath("test_4coriolis.cnv"),
     ]
     fresh_target_file.unlink()
 

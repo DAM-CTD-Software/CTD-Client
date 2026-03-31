@@ -51,7 +51,7 @@ def test_full_processing(processing: ProcessingProcedure):
     processing.active = True
     # proc_list = ProcessingList()
     # proc_list.data = [processing]
-    input_file = raw_data_dir.joinpath("basic_emb.hex")
+    input_file = raw_data_dir.joinpath("EMB356_11-1.hex")
     # proc_list.run(input_file)
     processing.run(input_file)
     while processing.process.is_alive():

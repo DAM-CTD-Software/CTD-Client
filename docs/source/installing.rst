@@ -1,14 +1,14 @@
 Installation
 ============
 
-The CTD-Client is distributed as windows executable (.exe). You can find the latest version
+The CTD-Client is distributed as self-contained windows binary (.exe). You can find the latest version
 `here
-<https://git.io-warnemuende.de/CTD-Software/CTD-Client/releases/latest>`_.
-You do not need anything else and can put the .exe file anywhere you want to,
+<https://github.com/DAM-CTD-Software/CTD-Client/releases/latest>`_.
+You do not need anything else and can put the ctdclient.exe file anywhere you want to,
 but it is recommended to use a default path, like C:/Programs. To update the
 software, just replace the exe with a more recent one. You can get notified
-about new versions by subscribing to this rss feed:
-https://git.io-warnemuende.de/CTD-Software/CTD-Client/releases.rss
+about new versions and their features by subscribing to this rss feed:
+https://github.com/DAM-CTD-Software/CTD-Client/releases.atom
 
 Configuration
 =============
@@ -21,7 +21,7 @@ The possible configuration files found here are:
 - the main config file, ctdclient.toml
 
 - the processing config files, prefixed with "proc\_"
-  
+
 - the nrt config files, prefixed with "nrt\_"
 
 

@@ -10,7 +10,7 @@ autodoc_mock_imports = [
 ]
 
 project = "ctdclient"
-copyright = "2024-2025, Emil Michels"
+copyright = "2024-2026, Emil Michels"
 author = "Emil Michels"
 
 extensions = [
@@ -20,7 +20,6 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinx.ext.todo",
     "sphinx.ext.linkcode",
-    "myst_parser",
 ]
 
 
@@ -31,7 +30,7 @@ def linkcode_resolve(domain, info):
         return None
     filename = info["module"].replace(".", "/")
     return (
-        "https://git.io-warnemuende.de/CTD-Software/CTD-Client/src/branch/main/src/%s.py"
+        "https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/%s.py"
         % filename
     )
 

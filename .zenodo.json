@@ -1,0 +1,27 @@
+{
+    "title": "CTD-Client: A program designed to facilitate the measurement and processing of Sea-Bird SBE9/11 CTD data",
+    "version": "1.15.1",
+    "creators": [
+        {
+            "name": "Michels, Emil",
+            "orcid": "0009-0003-0300-9465",
+            "affiliation": "German Marine Research Alliance (DAM)"
+        }
+    ],
+    "keywords": [
+        "CTD",
+        "GUI",
+        "processing",
+        "visualization",
+        "oceanography",
+        "seabird"
+    ],
+    "access_right": "open",
+    "license": "GPL-3.0",
+    "upload_type": "software",
+    "communities": [
+        {
+            "identifier": "DAM"
+        }
+    ]
+}

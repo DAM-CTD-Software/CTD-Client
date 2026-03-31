@@ -390,22 +390,10 @@ class AboutView(CtkFrame):
         contact_links = ctk.CTkFrame(self, fg_color="transparent")
         contact_links.grid(row=4, column=0, padx=self.padx, pady=self.pady)
 
-        # offline link to contact details
-        ctk.CTkLabel(
-            contact_links, text="You can find my contact details here:"
-        ).grid(row=0)
-        ctk.CTkButton(
-            contact_links,
-            text="Contact Details",
-            command=lambda: webbrowser.open_new_tab(
-                f"file://{RESOURCES_PATH.absolute()}/contact_info/contact_page.html"
-            ),
-        ).grid(row=1, column=0, padx=self.padx, pady=self.pady)
-
         # email form
         ctk.CTkLabel(
             contact_links,
-            text="Or you can send me an email using the following form (and the local email server):",
+            text="You can send me an email using the following form (and the local email server):",
         ).grid(row=2)
         email_form = ctk.CTkFrame(
             contact_links,

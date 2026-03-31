@@ -1,8 +1,10 @@
 import sys
+from importlib.resources import files
 from pathlib import Path
 
 from platformdirs import user_config_dir
 
+from ctdclient.__init__ import __version__
 from ctdclient.configurationhandler import ConfigurationFile, InvalidConfigFile
 from ctdclient.eventmanager import EventManager
 from ctdclient.utils import (
@@ -10,14 +12,12 @@ from ctdclient.utils import (
     get_config_path,
     individual_dship_api_call,
 )
-from ctdclient.version import __version__
 
 if getattr(sys, "frozen", False):
     ROOT_PATH = Path(sys.executable).parent
     RESOURCES_PATH = Path(sys._MEIPASS)
 else:
-    ROOT_PATH = Path(__file__).absolute().parents[2]
-    RESOURCES_PATH = ROOT_PATH.joinpath("resources")
+    RESOURCES_PATH = files("ctdclient.resources")
 VERSION = __version__
 THEMES_PATH = RESOURCES_PATH.joinpath("ctktheme.json")
 ICON_PATH = RESOURCES_PATH.joinpath("icon.ico")

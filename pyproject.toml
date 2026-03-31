@@ -1,9 +1,9 @@
 [project]
 name = "CTD-Client"
 authors = [{ name = "Emil Michels", email = "emil.michels@iow.de" }]
-version = "0.0.0"
-description = "A software tool designed to facilitate the measurement and processing of CTD data using Sea-Bird instruments. The program enhances datasets with ship metadata and ensures standardized, consistent data collection."
-readme = "README.md"
+version = "1.15.1"
+description = "A program designed to facilitate the measurement and processing of Sea-Bird SBE9/11 CTD data. The program enhances datasets with ship metadata and ensures standardized, consistent data collection."
+readme = "README.rst"
 requires-python = ">=3.12"
 dependencies = [
     "ctdam[all]>=1.1.2",
@@ -18,9 +18,15 @@ docs = [
     "sphinx>=8.1.3",
     "sphinx-autodoc-typehints>=2.5.0",
     "pyment>=0.3.3",
-    "myst-parser>=4.0.1",
     "furo>=2024.8.6",
 ]
+
+[project.urls]
+Homepage = "https://github.com/DAM-CTD-Software/CTD-Client"
+Repository = "https://github.com/DAM-CTD-Software/CTD-Client"
+Documentation = "https://dam-ctd-software.github.io/CTD-Client"
+Issues = "https://github.com/DAM-CTD-Software/CTD-Client/issues"
+Changelog = "https://github.com/DAM-CTD-Software/CTD-Client/blob/main/CHANGELOG.md"
 
 [tool.pytest.ini_options]
 pythonpath = [".", "src", "src/ctdclient"]
@@ -32,6 +38,15 @@ exclude = ["tests", '__init__.py']
 [tool.ruff.lint]
 select = ["ERA001"]
 ignore = ["F403", "F821"]
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+version_variables = [
+    ".zenodo.json:version:nf",
+    "src/ctdclient/__init__.py:__version__",
+]
+build_command = "uv build"
+upload_to_vcs_release = true
 
 [build-system]
 requires = ["hatchling"]

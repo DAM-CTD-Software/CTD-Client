@@ -8,10 +8,10 @@ from ctdam.proc.procedure import Procedure
 
 logger = logging.getLogger(__name__)
 
-example_data = Path("seabird_example_data")
+example_data = Path("sbs_data")
 data_dir = example_data.joinpath("cnv")
 raw_data_dir = example_data.joinpath("hex")
-target_file = data_dir.joinpath("multiple_soaking.cnv")
+target_file = data_dir.joinpath("MSM138_10-1.cnv")
 output_name = "basic_emb_4coriolis.cnv"
 templates_dir = Path("resources/templates")
 config_template = templates_dir.joinpath("ctdclient.toml")

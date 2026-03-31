@@ -1,29 +1,92 @@
+CTD-Client
+==========
+
+Intro
+-----
+
+The CTD-Client is a program that supports the measurement of CTD-data with
+Sea-Bird CTDs. Calls Sea-Birds measuring software, Seasave, with certain
+parameters and alters its configuration file prior to measurements. This way,
+a variety of functions can be achieved:
+
+- primarily tags data files with metadata from the ship information system
+  available on german research vessels (DSHIP)
+- allows for programmed bottle closing time configuration
+- can run processing scripts using Sea-Bird processing modules and
+  custom ones, via `the ctdam python package <https://dam-ctd-software.github.io/ctdam/usage.html#processing-workflows>`_.
+- supports Near-Real-Time distribution of CTD data via email
+- saves relevant usage data for continuous operation
+
+Basic feature description
+-------------------------
+
+Metadata injection
+------------------
+
+Using DSHIP, or a comparable ship information system whose data can be
+retrieved via simple TCP/IP-calls, all kinds of ship metadata can be saved
+to the Sea-Bird custom header. This way, all data files, from raw .hex data,
+to .btl or .cnv data files will feature the metadata information.
+Additionally, other metadata, like a continuous bottle number for a whole
+cruise, can be put into the metadata header. The file name of the data file
+will also be build from different pieces of metadata.
+
+Programmable bottle closing
+---------------------------
+
+If the automatic firing of water bottles is wanted, for example when using
+free-flow bottles, those can be programmed inside the CTD-Client. The
+software can also adjust for hardware-specific time delays between firing
+individual bottles.
+
+Processing
+----------
+
+Processing raw data after measurements is also supported. The different
+processing steps to run can be configured in a separate tab, while the
+execution will be a single bottom press on the main page. That way, the data
+can be easily processed in seconds after a successful measurement. The
+configuration window does also feature a very intuitive alteration of
+processing workflows, allowing for quick and constant playing around with
+the data.
+
+Near-Real-Time data distribution
+--------------------------------
+
+All acquired data can automatically send to different stakeholders or other
+interested parties. The distribution protocol is email and can be set to
+sending daily to a specific time or after each processing workflow.
+
+GUI showcase
+------------
 
 Overview
-----
-.. image:: ../images/main_overview.png
+^^^^^^^^
+.. image:: docs/images/main_overview.png
 
 CTD-Client uses tabs to display different pieces of information to the user.
 Simply clicking on one entry will let you switch to that tab.
 
-.. image:: ../images/tabs.png
+.. image:: docs/images/tabs.png
 
 How to measure
------
+^^^^^^^^^^^
 .. important:: The CTD-Client comes with sensible defaults, but some things need to be configured before using it first time. So have a look at :doc:`the configuration info </installing>` to set up for measurement.
 For measurements you can safely stay inside of the tab of the same name. Here,
 you can see different areas to interact with:
 
 DSHIP information
-^^^^
+""
+
 This panel displays selected DSHIP parameters that can be chosen inside of the
 configuration tabs. You cannot interact with these values in any way, they are
 solely meant for information. Internally, these values are used for the
 metadata header and the file name.
 
 Water bottles
-^^^^
-.. image:: ../images/bottles.png
+""""""""""""
+
+.. image:: docs/images/bottles.png
 Here, you can see the number of water bottles that are set up and can assign depth
 values to them. After starting a measurement, these values are used for
 automatic bottle firing. You can insert any value you want, but only positive
@@ -38,8 +101,9 @@ can also keep an eye on any pieces of information that has been entered here
 previous to measurement.
 
 Data file and metadata information
-^^^^
-.. image:: ../images/info.png
+""""""""""""""""""""""""""""
+
+.. image:: docs/images/info.png
 Shows the currently generated file name, the last file name written and allows
 selection of operator, which will be used as metadata point inside the .hex
 header. Additionally allows to manipulate the 'Cast' number, a basic counter of
@@ -49,23 +113,25 @@ provider does not work for this cast or is not wanted.
 
 
 Stopwatch
-^^^^
-.. image:: ../images/stopwatch.png
+"""""""""
+
+.. image:: docs/images/stopwatch.png
 Basic stopwatch that can only be set back to zero upon clicking on the watch
 widget. Will count up until infinity. Can be used to track all kinds of CTD
 cast specific waiting times. We use it mostly to ensure a constant soaking time
 before each cast.
 
 Measurement and Processing start/stop bottoms
-^^^^^^^
-.. image:: ../images/run_buttons.png
+""""""""""""""""
+
+.. image:: docs/images/run_buttons.png
 Allows to start a measurement (calling Seasave) or a processing (see below).
 After starting either one of these, the respective button changes to a 'cancel'
 button. When clicking this, the corresponding process will be killed immediately.
 
 
 How to process
-----
+^^^^^
 
 Processing a .hex or .cnv file can be done by clicking 'Run Processing' on the
 measurement tab. This opens a file selector where the target file to process
@@ -73,8 +139,8 @@ can be selected. The selected file will be used as input for all scripts and/or
 processing workflows selected in the processing tab.
 These workflows basically allow the user to easilly build a series of processing
 steps that are meant to be run on the target data file. In-depth description of
-processing workflows can be found in `the documentation of the respective
-python package <https://ctd-software.pages.io-warnemuende.de/processing/usage.html#workflow-files>`_.
+processing workflows can be found in `the documentation of the ctdam
+python package <https://dam-ctd-software.github.io/ctdam>`_.
 
 Available processing modules are the standard Sea-Bird ones (which need to be
 installed on your machine), custom ones from the growing collection inside the
@@ -92,7 +158,7 @@ available workflow files and other scripts can be seen.
 .. info:: For other, custom processing scripts to appear here, they need to be
    put into the :doc:`configuration directory </installing>`
 
-.. image:: ../images/proc.png
+.. image:: docs/images/proc.png
 
 They can be turned on and off by a switch, which means that they are going to
 run upon clicking 'Run Processing'. Note that all activated workflows will run
@@ -100,14 +166,14 @@ sequentaly, sorted by alphabet, as in the 'processing' tab.
 To edit the individual files, click 'edit/details'. That will
 open a new window with the respective files configuration:
 
-.. image:: ../images/proc_workflow.png
+.. image:: docs/images/proc_workflow.png
 
 
 How to use Near-Real-Time Publications
-----------
+^^^^^
 
 Intro
-^^^^^^
+""
 A Near-Real-Time Publication (NRT), in the context of this software, is any kind 
 of distribution of data. There are to ways of distribution available: simple
 copying to a target location and the sending of emails, with the data files
@@ -125,8 +191,8 @@ and have the .toml extension. More details concerning configuration can be
 found :doc:`here </installing>`.
 
 Usage
-^^^^^^^
-.. image:: ../images/nrt.png
+""
+.. image:: docs/images/nrt.png
 
 To configure and use NRTs you need to open the
 'nrt publication' tab. Here, all the necessary information is displayed for
@@ -140,7 +206,7 @@ pre-filled with template information.
 
 NRT Configurator
 """"""""""""""""
-.. image:: ../images/nrt_config.png
+.. image:: docs/images/nrt_config.png
 
 Short description of the individual field values and their uses:
 
@@ -174,3 +240,15 @@ Short description of the individual field values and their uses:
    to test the email settings by setting the 'open_draft' option to true. That
    way, instead of sending the emails directly, the draft will be opened in the system
    email program, to allow reviewing its contents prior to sending.
+
+Context
+-------
+
+This software is developed at the `Leibniz-Institute for Baltic Sea Research, Germany (IOW)
+<https://io-warnemuende.de/en_index.html>`_
+for the `German Marine Research Alliance
+(DAM) <https://www.allianz-meeresforschung.de/en>`__ in the context of
+the Underway Research Data Project. It is therefore primarily targeted for
+use on german research vessels, which are all using the DHSIP-information
+managing system. Feel free to reach out, if you think we should generalize
+to other forms of ship information systems.

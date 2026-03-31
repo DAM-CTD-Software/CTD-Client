@@ -1,3 +1,3 @@
-[submodule "seabird_example_data"]
-	path = seabird_example_data
-	url = https://git.iow.de/CTD-Software/seabird_example_data.git
+[submodule "sbs_data"]
+	path = sbs_data
+	url = https://github.com/DAM-CTD-Software/sbs_data.git

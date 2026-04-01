@@ -1,6 +1,24 @@
 CTD-Client
 ==========
 
+.. image:: https://img.shields.io/python/required-version-toml?tomlFilePath=https://raw.githubusercontent.com/DAM-CTD-Software/CTD-Client/main/pyproject.toml
+        :target: https://github.com/DAM-CTD-Software/CTD-Client/blob/main/pyproject.toml
+
+.. image:: https://img.shields.io/badge/docs-darkorange?logo=readdotcv
+        :target: https://dam-ctd-software.github.io/CTD-Client
+
+.. image:: https://img.shields.io/github/v/release/DAM-CTD-Software/CTD-Client
+        :target: https://github.com/DAM-CTD-Software/CTD-Client/releases/latest
+
+.. image:: https://img.shields.io/github/license/DAM-CTD-Software/CTD-Client
+        :target: https://github.com/DAM-CTD-Software/CTD-Client/blob/main/LICENSE
+
+.. image:: https://img.shields.io/badge/DAM-midnightblue
+        :target: https://www.allianz-meeresforschung.de/en
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.19233531.svg
+        :target: https://doi.org/10.5281/zenodo.19233531
+
 Intro
 -----
 

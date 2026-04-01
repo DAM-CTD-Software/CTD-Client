@@ -78,8 +78,7 @@ jobs:
   build_binary:
     needs: release
     if: needs.release.outputs.exists == 'true'
-    container:
-      image: batonogov/pyinstaller-windows:v4.11.1
+    runs-on: batonogov/pyinstaller-windows:v4.11.1
     steps:
       - name: Install missing dependencies
         run: apt update && apt install -y nodejs curl git jq

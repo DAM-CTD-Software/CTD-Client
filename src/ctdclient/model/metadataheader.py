@@ -6,6 +6,10 @@ logger = logging.getLogger(__name__)
 
 
 class MetadataHeader:
+    """
+    Collects all methods for filling the custom metadata header.
+    """
+
     dship_values = {}
 
     @classmethod
@@ -24,11 +28,18 @@ class MetadataHeader:
 
         Parameters
         ----------
-        operator :
-
-
-        Returns
-        -------
+        psa: SeasavePsa
+            The config file to edit
+        platform: str
+            The instrument name
+        cast: str
+            The cast number
+        operator: str
+            The CTD operator name
+        pos_alias: str
+            A station name alias
+        autostart: bool :
+            Whether to start seasave automatically
 
         """
         if platform == "Scanfish":
@@ -67,10 +78,38 @@ class MetadataHeader:
 
     @classmethod
     def create_metadata_header_line(cls, name, value):
+        """
+        Helper method to contruct key-value information in metadata header.
+
+        Parameters
+        ----------
+        name :
+            key
+        value :
+            value
+
+        Returns
+        -------
+        Formatted key-value string.
+        """
         return f"{name} = {value}"
 
     @classmethod
     def format_dship_response(cls, name, value):
+        """
+        Parse DSHIP API responses.
+
+        Parameters
+        ----------
+        name :
+            key
+        value :
+            value
+
+        Returns
+        -------
+        Formatted value.
+        """
         if name == "Station":
             try:
                 _, action_log_info = value.split("_")
@@ -109,6 +148,22 @@ class MetadataHeader:
         cast_number: int,
         platform: str,
     ):
+        """
+        Assemble new file name.
+
+        Parameters
+        ----------
+        dship_values: dict
+            DSHIP responses
+        cast_number: int
+            The CTD cast number
+        platform: str
+            The CTD platform type
+
+        Returns
+        -------
+        The new file name.
+        """
         try:
             cruise = dship_values["Cruise"]
             # handle special case when a cruise consists of two separate legs

@@ -38,6 +38,22 @@ def instantiate_near_real_time_target(
     frequency_of_action: str = "23:59:00",
     **kwargs,
 ) -> NearRealTimeTarget:
+    """
+    Differentiate the two NRT modes and instantiates respecive classes.
+
+    Parameters
+    ----------
+    *args :
+        Are given to NRT classes
+    frequency_of_action: str
+        The information to distinguish the two NRT modes
+    **kwargs :
+        Are given to NRT classes
+
+    Returns
+    -------
+    A fresh NearRealTimeTarget instance.
+    """
     if ":" in frequency_of_action:
         class_to_instantiate = DailyPublication
         kwargs["time_to_run_at"] = frequency_of_action
@@ -51,11 +67,21 @@ def instantiate_near_real_time_target(
 
 
 class NRTList(UserList):
+    """A collection of NearRealTimeTargets."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.data = []
 
     def update_nrt_data(self, clear_data: bool = True):
+        """
+        Fills collection with NRT instances.
+
+        Parameters
+        ----------
+        clear_data: bool :
+            Whether to reset previous data when updating
+        """
         if clear_data:
             self.kill_processes()
             self.data = []
@@ -69,6 +95,18 @@ class NRTList(UserList):
                 continue
 
     def create_nrt_instance(self, path: Path):
+        """
+        Get new instance of NearRealTimeTarget.
+
+        Parameters
+        ----------
+        path: Path
+            File path to toml config file
+
+        Returns
+        -------
+        NearRealTimeTarget instance.
+        """
         toml_file = TOMLFile(path).read()
         name = path.stem[4:]
         active = (
@@ -85,6 +123,18 @@ class NRTList(UserList):
     def get_template(
         self, template_path: Path = TEMPLATE_PATH.joinpath("nrt_template.toml")
     ):
+        """
+        Create template NearRealTimeTarget instance.
+
+        Parameters
+        ----------
+        template_path: Path :
+            File path to template file config
+
+        Returns
+        -------
+        NearRealTimeTarget instance.
+        """
         if not template_path.exists():
             return None
         template = self.create_nrt_instance(template_path)
@@ -92,14 +142,31 @@ class NRTList(UserList):
         return template
 
     def toggle_activity(self, nrt: NearRealTimeTarget):
+        """
+        Toggle whether a particluar NearRealTimeTarget is active or not.
+
+        Parameters
+        ----------
+        nrt: NearRealTimeTarget
+            The target instance to toggle
+        """
         if nrt in self.data:
             nrt.toggle_activity()
 
     def kill_processes(self):
+        """Kills a running NearRealTimeTarget action."""
         for nrt in self.data:
             nrt.stop()
 
     def delete_nrt(self, nrt: NearRealTimeTarget):
+        """
+        Removes a NearRealTimeTarget from the collection.
+
+        Parameters
+        ----------
+        nrt: NearRealTimeTarget
+            The instance to remove
+        """
         self.data.remove(nrt)
         if isinstance(nrt, DailyPublication):
             nrt.stop()
@@ -118,6 +185,23 @@ class NearRealTimeTarget:
     Stores information for near-real-time distribution of latest CTD data files.
     Can work in two modes: email or rsync/copy. Will distinguish between these
     by checking 'recipient_adress' for an '@'.
+
+    Parameters
+    ----------
+    recipient_address: str
+        Target of the action, email address or file path
+    target_file_suffix: str
+        File suffix to select target files with
+    target_file_directory: Path | str
+        The directory to look for target files
+    geo_filter: str
+        A geographic location to filter target files with
+    email_info: dict
+        Collection of email information
+    file_path: Path | str
+        File path to config file
+    active: bool
+        Whether the NRT job is active
     """
 
     def __init__(
@@ -143,10 +227,22 @@ class NearRealTimeTarget:
 
     @abstractmethod
     def toggle_activity(self):
+        """Toggles the NRT activity."""
         pass
 
     def _is_email(self, target: str = "") -> bool:
-        """Basic check, whether we are dealing with email or not."""
+        """
+        Basic check, whether we are dealing with email or not.
+
+        Parameters
+        ----------
+        target: str
+            The target info to distinguish
+
+        Returns
+        -------
+        Whether sending email or copying files.
+        """
         target = str(self.address) if len(target) == 0 else target
         return "@" in target
 
@@ -162,7 +258,26 @@ class NearRealTimeTarget:
         subject: str = "",
         body: str = "",
     ):
-        """Creates an email with target files attached."""
+        """
+        Creates an email with target files attached.
+
+        Parameters
+        ----------
+        target_files: list[Path]
+            Target files to attach
+        to_address: str
+            Email address to send to
+        from_address: str
+            Email address to send from
+        subject: str :
+            Email subject line
+        body: str :
+            Email text
+
+        Returns
+        -------
+        Assembled email message.
+        """
         to_address = self.address if to_address == "" else to_address
         smtp_email = self.email_info["smtp_email"]
         if smtp_email.startswith("$"):
@@ -213,6 +328,17 @@ class NearRealTimeTarget:
         """
         Creates an email .eml draft file, that can be opened by common email
         programs.
+
+        Parameters
+        ----------
+        msg: EmailMessage
+            Assembled email message ready for sending
+        file_path: Path | str
+            File path to save .eml draft file to
+
+        Returns
+        -------
+        File path .eml draft has been saved to.
         """
         draft_dir = Path(user_log_dir("ctdclient")).parent.joinpath("emails")
         if not draft_dir.exists():
@@ -228,7 +354,14 @@ class NearRealTimeTarget:
         return file_path
 
     def open_draft_msg(self, file_path: Path | str):
-        """Open an .eml file using the default email program."""
+        """
+        Open an .eml file using the default email program.
+
+        Parameters
+        ----------
+        file_path: Path | str
+            File path to .eml file
+        """
         if platform.system() == "Windows":
             os.startfile(file_path)
         elif platform.system() == "Darwin":
@@ -243,6 +376,16 @@ class NearRealTimeTarget:
         files_to_attach: list,
         run_manually: bool = False,
     ):
+        """
+        Master method to coordinate email assembly and sending.
+
+        Parameters
+        ----------
+        files_to_attach: list
+            List of target files to attach to email
+        run_manually: bool
+            Whether to automatically send email or open draft message for editing
+        """
         if not run_manually and len(files_to_attach) == 0:
             logger.info(
                 "Automatic email not sent because no files are available."
@@ -259,6 +402,11 @@ class NearRealTimeTarget:
     def send_email(self, msg: EmailMessage):
         """
         Sends the email message using the given smtp server configuration.
+
+        Parameters
+        ----------
+        msg: EmailMessage
+            Assembled email message to send
         """
         try:
             smtp_server = self.email_info["smtp_server"]
@@ -280,7 +428,14 @@ class NearRealTimeTarget:
                 logger.info(f"Email sent to {msg['To']}")
 
     def copy_files(self, target_file: Path):
-        """Copies target files to given location."""
+        """
+        Copies target files to given location.
+
+        Parameters
+        ----------
+        target_file: Path
+            The target file to copy
+        """
         target_dir = Path(self.address)
         if not target_dir.exists():
             target_dir.mkdir(parents=True)
@@ -291,7 +446,18 @@ class NearRealTimeTarget:
             logger.info(f"Copied {file} to {target_dir}")
 
     def get_target_files(self, target_file: Path = Path(".")) -> list[Path]:
-        """Creates a list of paths to files that are meant to be published."""
+        """
+        Creates a list of paths to files that are meant to be published.
+
+        Parameters
+        ----------
+        target_file: Path
+            File path to target file
+
+        Returns
+        -------
+        List of target files that passed geo and time filter and have not been published previously.
+        """
         file_name = "" if target_file == Path(".") else str(target_file.stem)
         target_files = []
         for file in self.dir.glob(f"*{file_name}{self.suffix}*"):
@@ -337,6 +503,18 @@ class NearRealTimeTarget:
         return target_files
 
     def deg_min_to_deg_decimal(self, value: str) -> float:
+        """
+        Converts coordinates from deg minutes to decimal degrees.
+
+        Parameters
+        ----------
+        value: str
+            Coordinate information
+
+        Returns
+        -------
+        Decimal degree float.
+        """
         deg, minutes, direction = re.split(r"\s+", value)
         return (float(deg) + float(minutes) / 60) * (
             -1 if direction in ["W", "S"] else 1
@@ -345,8 +523,18 @@ class NearRealTimeTarget:
     def geographic_filter(self, coordinate_pair: tuple) -> bool:
         """
         Checks, whether we are inside of a certain polygon.
+
         The polygon will usually be the EEZ of a certain country. Does support
         all data formats that geopandas can handle.
+
+        Parameters
+        ----------
+        coordinate_pair: tuple
+            Coordinates of the target file
+
+        Returns
+        -------
+        Whether inside target area or not.
         """
         available_filters = {
             "germany": [
@@ -371,9 +559,16 @@ class NearRealTimeTarget:
         """
         Check if a point is inside a polygon using the Ray Casting Algorithm.
 
-        :param point: Tuple (x, y) representing the point to check.
-        :param polygon: List of tuples [(x1, y1), (x2, y2), ...] representing the polygon vertices.
-        :return: True if the point is inside the polygon, False otherwise.
+        Parameters
+        ----------
+        point :
+            Tuple (x, y) representing the point to check.
+        polygon :
+            List of tuples [(x1, y1), (x2, y2), ...] representing the polygon vertices.
+
+        Returns
+        -------
+        True if the point is inside the polygon, False otherwise.
         """
         x, y = point
         n = len(polygon)
@@ -396,13 +591,35 @@ class NearRealTimeTarget:
         return inside
 
     def time_filter(self, file: Path) -> bool:
-        """Ensure, that file has been modified in the last 24 hours."""
+        """
+        Ensure, that file has been modified in the last 24 hours.
+
+        Parameters
+        ----------
+        file: Path
+            Target file to check
+
+        Returns
+        -------
+        Whether recently modified or not.
+        """
         last_twenty_four_hours = datetime.now() + timedelta(days=-1)
         file_modification_time = datetime.fromtimestamp(file.stat().st_mtime)
         return datetime.now() > file_modification_time > last_twenty_four_hours
 
 
 class DailyPublication(NearRealTimeTarget):
+    """
+    Automatic publication once a day.
+
+    Parameters
+    ----------
+    time_to_run_at: str
+        The time point to publish
+    single_run: bool
+        Whether to run once or infinitely
+    """
+
     def __init__(
         self,
         *args,
@@ -420,6 +637,7 @@ class DailyPublication(NearRealTimeTarget):
             self.start()
 
     def action(self):
+        """Multiprocessing target method that run publication logic."""
         list_to_process = self.get_target_files()
         if self._is_email():
             self.run_email_logic(list_to_process)
@@ -428,6 +646,7 @@ class DailyPublication(NearRealTimeTarget):
                 self.copy_files(file)
 
     def start(self):
+        """Activates multiprocessing process to repeatedly publish."""
         self.process = mp.Process(
             target=timer,
             args=[self.time_to_run_at, self.action, self.single_run],
@@ -435,6 +654,7 @@ class DailyPublication(NearRealTimeTarget):
         self.process.start()
 
     def stop(self):
+        """Stops multiprocessing process."""
         try:
             self.process.terminate()
             self.process.join(timeout=2)
@@ -442,6 +662,7 @@ class DailyPublication(NearRealTimeTarget):
             pass
 
     def toggle_activity(self):
+        """Sets activity on or off."""
         self.active = not self.active
         if self.active:
             self.start()
@@ -450,7 +671,21 @@ class DailyPublication(NearRealTimeTarget):
 
 
 def timer(time_to_run_at: datetime, function: Callable, single_run: bool):
+    """
+    Timer to next publication moment.
+
+    Parameters
+    ----------
+    time_to_run_at: datetime
+        Next target time
+    function: Callable
+        Action to perform on publication time
+    single_run: bool
+        Whether to run only once
+    """
+
     def calculate_delay():
+        """ """
         now = datetime.now()
         target_time = datetime.combine(date.today(), time_to_run_at.time())
         if now > target_time:
@@ -471,6 +706,8 @@ def timer(time_to_run_at: datetime, function: Callable, single_run: bool):
 
 
 class EachProcessingPublication(NearRealTimeTarget):
+    """Automatic publication every processing."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.active:
@@ -478,6 +715,7 @@ class EachProcessingPublication(NearRealTimeTarget):
         self.address = Path(self.address)
 
     def toggle_activity(self):
+        """Sets activity on or off."""
         self.active = not self.active
         if self.active:
             event_manager.subscribe("processing_successful", self.run)
@@ -485,6 +723,14 @@ class EachProcessingPublication(NearRealTimeTarget):
             event_manager.unsubscribe("processing_successful", self.run)
 
     def run(self, target: Path = Path(".")):
+        """
+        The action to perform after processing.
+
+        Parameters
+        ----------
+        target: Path
+            The file path to retrieve target files from
+        """
         target_files = self.get_target_files(target)
         if self._is_email():
             self.run_email_logic(target_files)
@@ -492,6 +738,7 @@ class EachProcessingPublication(NearRealTimeTarget):
             self.copy_files(target)
 
     def stop(self):
+        """Stops automatic publication."""
         try:
             event_manager.unsubscribe("processing_successful", self.run)
         except (NameError, AttributeError):

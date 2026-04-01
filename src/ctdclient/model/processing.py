@@ -22,9 +22,12 @@ logger = logging.getLogger(__name__)
 
 
 class ProcessingList(UserList):
+    """Collection of processing workflows."""
+
     data: list[ProcessingConfig]
 
     def read_processing_files(self):
+        """Fills collection with processing workflows."""
         # reset processing configs
         self.data = []
         for file in CONFIG_PATH.glob("*proc*"):
@@ -34,6 +37,14 @@ class ProcessingList(UserList):
                 continue
 
     def run(self, file: Path | str):
+        """
+        Runs all active processing workflows.
+
+        Parameters
+        ----------
+        file: Path | str
+            The target file to process
+        """
         updated_last_processing_files = []
         for proc_config in self.data:
             if proc_config.active:
@@ -50,11 +61,20 @@ class ProcessingList(UserList):
             )
 
     def cancel(self):
+        """Cancels all running processing workflows."""
         for proc_config in self.data:
             if proc_config.active:
                 proc_config.cancel()
 
     def toggle_auto_process(self, new_value: bool | None = None):
+        """
+        Toggle the automatic processing of new files.
+
+        Parameters
+        ----------
+        new_value: bool | None
+            The value to set auto-processing to
+        """
         config.processing["auto_process"] = (
             new_value
             if isinstance(new_value, bool)
@@ -62,6 +82,18 @@ class ProcessingList(UserList):
         )
 
     def toggle_config_activity_state(self, proc_config: ProcessingConfig):
+        """
+        Sets active state of specific processing workflow.
+
+        Parameters
+        ----------
+        proc_config: ProcessingConfig
+            The processing workflow to toggle
+
+        Returns
+        -------
+        Whether state has been altered.
+        """
         for proc in self.data:
             if proc == proc_config:
                 proc.active = not proc.active
@@ -72,6 +104,18 @@ class ProcessingList(UserList):
         return False
 
     def create_new_processing_config(self, file: Path) -> ProcessingConfig:
+        """
+        Assembles new processing workflow.
+
+        Parameters
+        ----------
+        file: Path
+            Path to processing workflow configuration file
+
+        Returns
+        -------
+        A new ProcessingConfig instance.
+        """
         if file.suffix == ".toml":
             return ProcessingProcedure(file)
         else:
@@ -83,6 +127,18 @@ class ProcessingList(UserList):
             "processing_template.toml"
         ),
     ):
+        """
+        Creates a new processing workflow from template.
+
+        Parameters
+        ----------
+        template_path: Path
+            The file path to the template file
+
+        Returns
+        -------
+        ProcessingConfig instance of the template.
+        """
         if not template_path.exists():
             return None
         template = self.create_new_processing_config(template_path)
@@ -90,12 +146,22 @@ class ProcessingList(UserList):
         return template
 
     def remove_config(self, config: ProcessingConfig):
+        """
+        Removes processing workflow from collection.
+
+        Parameters
+        ----------
+        config: ProcessingConfig
+            The processing workflow configuration
+        """
         self.data.remove(config)
         if config.path_to_config.exists():
             config.path_to_config.unlink()
 
 
 class ProcessingConfig(ABC):
+    """Generic processing workflow."""
+
     current_config: Path
 
     def __init__(
@@ -119,28 +185,56 @@ class ProcessingConfig(ABC):
 
     @abstractmethod
     def run(self, file: Path):
+        """
+        Performs processing logic.
+
+        Parameters
+        ----------
+        file: Path
+            The target file to process
+        """
         pass
 
     @abstractmethod
     def update_config(self, path_to_config: Path | str):
+        """
+        Updates processing workflow information.
+
+        Parameters
+        ----------
+        path_to_config: Path | str
+            File path to processing workflow configuration
+        """
         pass
 
     @abstractmethod
     def wait(self):
+        """Waits for processing workflow to finish."""
         pass
 
     def cancel(self):
+        """Cancels a running processing workflow."""
         self.process.kill()
         self.killed = True
 
 
 class ProcessingProcedure(ProcessingConfig):
+    """Processing workflow from ctdam python package workflows."""
+
     process: mp.Process
 
     def __init__(self, path_to_config: Path | str):
         super().__init__(path_to_config)
 
     def update_config(self, path_to_config: Path | str):
+        """
+        Updates processing workflow information.
+
+        Parameters
+        ----------
+        path_to_config: Path | str
+            File path to processing workflow configuration
+        """
         new_config = Path(path_to_config)
         proc_config = Configuration(new_config)
         self.procedure = Procedure(
@@ -156,30 +250,65 @@ class ProcessingProcedure(ProcessingConfig):
         self.killed = False
 
     def run(self, file: Path):
+        """
+        Performs processing logic.
+
+        Parameters
+        ----------
+        file: Path
+            The target file to process
+        """
         self.process = mp.Process(target=self.apply_procedure, args=[file])
         self.process.start()
         logger.debug(f"Started processing with:\n{self.procedure.config}")
 
     def wait(self):
+        """Waits for processing workflow to finish."""
         while self.process.is_alive():
             time.sleep(0.5)
 
     def apply_procedure(self, file: Path):
+        """
+        The processing logic to run in multiprocessing.
+
+        Parameters
+        ----------
+        file: Path
+            The target file to process
+        """
         self.procedure.run(file)
 
 
 class ProcessingScript(ProcessingConfig):
+    """Processing workflow from scripts."""
+
     process: subprocess.Popen
 
     def __init__(self, path_to_config: Path | str):
         super().__init__(path_to_config)
 
     def update_config(self, path_to_config: Path | str):
+        """
+        Updates processing workflow information.
+
+        Parameters
+        ----------
+        path_to_config: Path | str
+            File path to processing workflow configuration
+        """
         new_config = CONFIG_PATH.joinpath(path_to_config)
         self.procedure = [new_config]
         self.killed = False
 
     def run(self, file: Path):
+        """
+        Performs processing logic.
+
+        Parameters
+        ----------
+        file: Path
+            The target file to process
+        """
         assert isinstance(self.procedure, list)
         if self.procedure[0].suffix == ".bat" and file.suffix == ".hex":
             file = file.with_suffix("")
@@ -196,4 +325,5 @@ class ProcessingScript(ProcessingConfig):
             logger.error(f"Wrong input type: {error}")
 
     def wait(self):
+        """Waits for processing workflow to finish."""
         self.process.wait()

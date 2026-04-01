@@ -2,6 +2,19 @@ from pathlib import Path
 
 
 class UpdateFiles:
+    """
+    Uses a station log to restrospectively set metadata header and file name.
+
+    Parameters
+    ----------
+    file_path: str | Path
+        The path to the file to edit
+    file_dir: str | Path,
+        The directory of the file
+    station_event_info: str,
+        The station information of the last CTD cast
+    """
+
     def __init__(
         self,
         file_path: str | Path,
@@ -19,6 +32,12 @@ class UpdateFiles:
         self.rename_files(self.file_list, self.new_name)
 
     def find_all_files(self) -> list[Path]:
+        """
+        Gets the files to update from the target directory.
+
+        Assures, that all possible files, like .hex, .cnv. .xmlcon, .bl, .hdr,
+        .ros or .btl are treated equally.
+        """
         out_list = []
         for file in self.file_dir.iterdir():
             if file.stem == self.file_name:
@@ -26,10 +45,35 @@ class UpdateFiles:
         return out_list
 
     def rename_files(self, file_list: list[Path], new_name: str):
+        """
+        Applies the new file name to all target files.
+
+        Parameters
+        ----------
+        file_list: list[Path]
+            The list of target files to rename
+        new_name: str :
+            The new name
+
+        """
         for file in file_list:
             file.rename(f"{self.file_dir}/{new_name}{file.suffix}")
 
     def create_new_file_name(self, old_name: str, station_data: str) -> str:
+        """
+        Builds a new file name from station information.
+
+        Parameters
+        ----------
+        old_name: str
+            The old files name
+        station_data: str
+            The station information
+
+        Returns
+        -------
+        The new name.
+        """
         individual_name_parts = old_name.split("_")
         try:
             cruise_id, station_event_info = station_data.split("_")
@@ -46,6 +90,15 @@ class UpdateFiles:
         return "_".join(individual_name_parts)
 
     def replace_metadata_header_info(self, station_event_info):
+        """
+        Fill the custom metadata header with content.
+
+        Parameters
+        ----------
+        station_event_info:
+            The station information from manida export
+
+        """
         with open(self.file_dir.joinpath(self.file_path), "r") as file:
             contents = file.readlines()
 

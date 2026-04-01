@@ -16,6 +16,11 @@ class DshipCaller:
     """
     Fetches DSHIP information via API or UDP telegram and generates
     Seabird-specific XML from that.
+
+    Parameters
+    ----------
+    config: ConfigurationFile
+
     """
 
     def __init__(
@@ -71,15 +76,10 @@ class DshipCaller:
 
         Parameters
         ----------
-        url :
-
-        dict_of_samples :
-
-        timeout :
-             (Default value = 0.1)
-
-        Returns
-        -------
+        url: str | None :
+            The base url of DSHIP
+        dict_of_samples: dict | None :
+            The DSHIP values to get
 
         """
         url = self.source if url is None else url
@@ -112,6 +112,22 @@ class DshipCaller:
 
 
 def get_station_log(cruise_id: str) -> None | str:
+    """
+    Retrieve a rudimentary ship station log via the manida DSHIP extension.
+
+    Manida is an API-like endpoint to retrieve different ship logs from.
+
+
+    Parameters
+    ----------
+    cruise_id: str
+        The id of the current cruise
+
+    Returns
+    -------
+    The API answer.
+
+    """
     manida_url = f"http://{config.dship_ip}:8080/manida-v3/"
     station_log_url = (
         f"{manida_url}station?expeditionId={cruise_id}&format=JSON"
@@ -133,6 +149,18 @@ def get_station_log(cruise_id: str) -> None | str:
 
 
 def get_ctd_last_event(station_log_json: str) -> dict:
+    """
+    Retrieve the last CTD station from a manida export (see get_station_log).
+
+    Parameters
+    ----------
+    station_log_json: str
+        A path to a manida export json file
+
+    Returns
+    -------
+    The CTD station information as dictionary.
+    """
     stations_info = json.loads(station_log_json)
     last_ctd_entry = {}
     for entry in stations_info["list"]:
@@ -142,11 +170,30 @@ def get_ctd_last_event(station_log_json: str) -> dict:
 
 
 def get_station_id(event_json: dict) -> str:
+    """
+    Retrieve the station id from a manida export event (see get_station_log).
+
+    Parameters
+    ----------
+    event_json: dict
+        A single station entry from a manida export
+
+    Returns
+    -------
+    The station number.
+    """
     station_id = event_json["Device Operation"]
     return station_id.replace("/", "_")
 
 
 def retrieve_station_and_event_info() -> str | None:
+    """
+    Retrieves mandia station log and extracts the last CTD station number.
+
+    Returns
+    -------
+    The station number of the last CTD cast.
+    """
     try:
         url_to_get_cruise_id = (
             f"{config.dship_ip}/{config.dship_api_target_names['Cruise']}"

@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 class Plotting:
+    """Organizes plotting logic."""
+
     def __init__(self) -> None:
         if bool(config.plotting["auto_plot"]):
             event_manager.subscribe(
@@ -27,17 +29,29 @@ class Plotting:
         logger.debug(self.config_path)
 
     def _check_config(self):
+        """Handles initialization of new config if none found."""
         if not self.config_path.exists():
             shutil.copy(
                 TEMPLATE_PATH.joinpath(self.config_name), self.config_path
             )
 
     def check_html_dir(self):
+        """Handles initialization of new html directory if none found."""
         html_dir = Path(config.plotting["plot_dir"]).absolute()
         if not html_dir.exists():
             html_dir.mkdir(parents=True)
 
     def plot_file(self, file: Path | str = "", show_plot: bool = True):
+        """
+        Runs plotting logic from ctdam python package on single file.
+
+        Parameters
+        ----------
+        file: Path | str
+            The target file to plot
+        show_plot: bool
+            Whether to open the plot in webbrowser automatically
+        """
         self.check_html_dir()
         try:
             basic_bokeh_plot(
@@ -57,6 +71,16 @@ class Plotting:
         dir: str = "",
         no_new_plots: bool = False,
     ):
+        """
+        Runs plotting logic from ctdam python package on whole cruise.
+
+        Parameters
+        ----------
+        dir: str
+            The directory of target files to plot
+        no_new_plots: bool
+            Whether to overwrite existing plots or not
+        """
         self.check_html_dir()
         dir = dir if dir else str(config.output_directory)
         logger.debug(f"Plotting configuration: {config.plotting}")
@@ -79,12 +103,28 @@ class Plotting:
             logger.error(f"Could not create cruise plot: {error}")
 
     def run_auto_plotting(self, target: Path):
+        """
+        Performs single plotting and update of cruise plot html.
+
+        Parameters
+        ----------
+        target: Path
+            The target file to plot
+        """
         if not target.exists():
             return
         self.plot_file(target, show_plot=False)
         self.plot_cruise(no_new_plots=True)
 
     def toggle_auto_plot(self, new_value: bool | None = None):
+        """
+        Toggle whether to automatically plot new files or not.
+
+        Parameters
+        ----------
+        new_value: bool | None
+            The new plot option
+        """
         config.plotting["auto_plot"] = (
             new_value
             if isinstance(new_value, bool)
@@ -100,6 +140,7 @@ class Plotting:
             )
 
     def open_config(self):
+        """Open plot configuration in a file editor."""
         logger.debug(
             f"Opening plotting config file: {self.config_path.absolute()}"
         )

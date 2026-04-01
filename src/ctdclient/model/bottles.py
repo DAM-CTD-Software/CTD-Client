@@ -17,6 +17,11 @@ class BottleClosingDepths(UserDict):
                     1: 4,
                     2: 6,
                     6: Bo}
+
+    Parameters
+    ----------
+    config: ConfigurationFile
+
     """
 
     def __init__(self, config) -> None:
@@ -31,6 +36,20 @@ class BottleClosingDepths(UserDict):
         }
 
     def check_bottle_data(self, bottle_data_table: dict):
+        """
+        Assures that are a maximum of two bottles are closed at the same depth.
+
+        Sea-Birds water carousel is physically to slow to support the
+        guaranteed closing of more bottles. To enable the input of more
+        bottles on the same depth, they get shifted by a user-definable
+        constant time.
+
+        Parameters
+        ----------
+        bottle_data_table: dict
+            The bottle data information
+
+        """
         bottle_data_table = {
             k: str(float(v.replace(",", ".")))
             for k, v in bottle_data_table.items()

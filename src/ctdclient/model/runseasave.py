@@ -15,6 +15,25 @@ class RunSeasave:
     Calls the seasave.exe with the specified command line arguments.
     In preparation for this, the Seasave.psa will be configured with the paths
     to XMLCON and hex file.
+
+    Parameters
+    ----------
+    current_filename: Path
+        The file name of the new file
+    bottles: BottleClosingDepths
+        The water bottle information
+    platform: str
+        CTD platform descriptor
+    cast: str
+        CTD cast number
+    operator: str
+        The name of the CTD operator
+    station: str
+        The DSHIP station information
+    downcast: bool = True
+        Whether to close water bottles on downcast
+    autostart: bool = True
+        Whether to skip confirmations inside seasave and just run
     """
 
     def __call__(
@@ -52,13 +71,13 @@ class RunSeasave:
         Parameters
         ----------
         downcast :
-             (Default value = True)
+            Whether to close water bottles on downcast
         autostart :
-             (Default value = True)
+            Whether to skip confirmations inside seasave and just run
 
         Returns
         -------
-
+        A subprocess Popen instance of the seasave process.
         """
         run_command = [
             self.path_to_seasave_exe
@@ -89,6 +108,32 @@ class RunSeasave:
         station: str,
         autostart: bool = False,
     ) -> bool:
+        """
+        Writes custom metadata and water bottle depths to SeasavePsa.
+
+        Parameters
+        ----------
+        current_filename: Path
+            The file name of the new file
+        bottles: BottleClosingDepths
+            The water bottle information
+        platform: str
+            CTD platform descriptor
+        cast: str
+            CTD cast number
+        operator: str
+            The name of the CTD operator
+        station: str
+            The DSHIP station information
+        downcast: bool = True
+            Whether to close water bottles on downcast
+        autostart: bool = True
+            Whether to skip confirmations inside seasave and just run
+
+        Returns
+        -------
+        Whether opereration has been successful.
+        """
         # set psa values
         if self.path_to_psa == Path("."):
             logger.error(
@@ -124,14 +169,14 @@ class RunSeasave:
 
         Parameters
         ----------
-        downcast :
-
-        autostart :
-
+        downcast: bool = True
+            Whether to close water bottles on downcast
+        autostart: bool = True
+            Whether to skip confirmations inside seasave and just run
 
         Returns
         -------
-
+        A list of command line parameters.
         """
         parameters = []
         if autostart:

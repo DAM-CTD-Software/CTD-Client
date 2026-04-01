@@ -18,9 +18,8 @@ class SeasavePsa(PsaFile):
 
     Parameters
     ----------
-    path_to_file: Path | str :
-        The path to the Seasave.psa file
-
+    path_to_file: Path | file
+        File path to seasave psa
     """
 
     def __init__(self, path_to_file: Path | str):
@@ -46,15 +45,10 @@ class SeasavePsa(PsaFile):
 
         Parameters
         ----------
-        metadata_list : str :
+        metadata_list : str
             A list of metadata points to include in the header.
-
-        header_prompt: bool = False:
-             Whether to prompt for confirmation on the metadata header.
-
-        Returns
-        -------
-
+        header_prompt : bool
+            Whether to prompt for confirmation on the metadata header.
         """
         headerform = self.settings_part["HeaderForm"]
         header_dict = {}
@@ -80,13 +74,12 @@ class SeasavePsa(PsaFile):
 
         Parameters
         ----------
-        header_line: str :
+        header_line : str
             The metadata header line to 'sanitize'.
 
         Returns
         -------
-        A header line that SeaSave can work with.
-
+        A umlaut-free string.
         """
         return (
             header_line.replace("ä", "ae")
@@ -120,10 +113,10 @@ class SeasavePsa(PsaFile):
 
         Parameters
         ----------
-        bottle_info: dict = {}:
-            Bottle number to water depth mapping.
-        number_of_bottles: int = 13 :
-             The number of water bottles that are set up.
+        bottle_info: dict
+            Water bottle information
+        number_of_bottles: int
+            The number of bottles
         """
         watersampler = self.settings_part["WaterSamplerConfiguration"]
         for row in watersampler["AutoFireData"]["DataTable"]["Row"]:
@@ -155,9 +148,8 @@ class SeasavePsa(PsaFile):
 
         Parameters
         ----------
-        xmlcon_path: str :
-            Path to XMLCON.
-
+        xmlcon_path: Path | str
+            File path to .xmlcon
         """
         self.settings_part["ConfigurationFilePath"]["@value"] = str(
             xmlcon_path
@@ -169,8 +161,7 @@ class SeasavePsa(PsaFile):
 
         Parameters
         ----------
-        hex_path: str :
-            New path of the hex.
-
+        hex_path: Path | str
+            File path to .hex
         """
         self.settings_part["DataFilePath"]["@value"] = str(hex_path)

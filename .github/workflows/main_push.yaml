@@ -56,7 +56,7 @@ jobs:
           mkdir docs/build/docs/ -p
           cp docs/images docs/build/docs -r
           uv run sphinx-apidoc -feo docs/source src/ctdclient
-          uv run sphinx-build -b html docs docs/build
+          uv run sphinx-build -b html docs/source docs/build
 
       - name: Deploy to gh-pages
         if: "contains(github.event.head_commit.message, 'docs')"

@@ -1,0 +1,7 @@
+ctdclient.controller.metadatacontroller module
+==============================================
+
+.. automodule:: ctdclient.controller.metadatacontroller
+   :members:
+   :show-inheritance:
+   :undoc-members:

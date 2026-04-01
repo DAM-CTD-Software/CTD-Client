@@ -1,0 +1,7 @@
+ctdclient.view.nrtconfig module
+===============================
+
+.. automodule:: ctdclient.view.nrtconfig
+   :members:
+   :show-inheritance:
+   :undoc-members:

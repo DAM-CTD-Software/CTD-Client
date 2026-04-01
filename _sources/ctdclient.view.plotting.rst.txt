@@ -1,0 +1,7 @@
+ctdclient.view.plotting module
+==============================
+
+.. automodule:: ctdclient.view.plotting
+   :members:
+   :show-inheritance:
+   :undoc-members:

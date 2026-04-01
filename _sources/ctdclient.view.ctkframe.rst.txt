@@ -1,0 +1,7 @@
+ctdclient.view.ctkframe module
+==============================
+
+.. automodule:: ctdclient.view.ctkframe
+   :members:
+   :show-inheritance:
+   :undoc-members:

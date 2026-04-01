@@ -1,0 +1,27 @@
+ctdclient.model package
+=======================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ctdclient.model.Model
+   ctdclient.model.bottles
+   ctdclient.model.dshipcaller
+   ctdclient.model.fileupdater
+   ctdclient.model.metadataheader
+   ctdclient.model.near_real_time_publication
+   ctdclient.model.plotting
+   ctdclient.model.processing
+   ctdclient.model.psa
+   ctdclient.model.runseasave
+
+Module contents
+---------------
+
+.. automodule:: ctdclient.model
+   :members:
+   :show-inheritance:
+   :undoc-members:

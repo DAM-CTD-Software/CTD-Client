@@ -1,0 +1,7 @@
+ctdclient.controller.nrtcontroller module
+=========================================
+
+.. automodule:: ctdclient.controller.nrtcontroller
+   :members:
+   :show-inheritance:
+   :undoc-members:

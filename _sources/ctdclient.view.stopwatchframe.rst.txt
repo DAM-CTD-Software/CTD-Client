@@ -1,0 +1,7 @@
+ctdclient.view.stopwatchframe module
+====================================
+
+.. automodule:: ctdclient.view.stopwatchframe
+   :members:
+   :show-inheritance:
+   :undoc-members:

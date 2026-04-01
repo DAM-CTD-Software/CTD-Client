@@ -1,0 +1,7 @@
+ctdclient.view.infoframe module
+===============================
+
+.. automodule:: ctdclient.view.infoframe
+   :members:
+   :show-inheritance:
+   :undoc-members:

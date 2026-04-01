@@ -1,0 +1,7 @@
+ctdclient.controller.Controller module
+======================================
+
+.. automodule:: ctdclient.controller.Controller
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,790 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="ctdclient.model.plotting module" href="ctdclient.model.plotting.html"><link rel="prev" title="ctdclient.model.metadataheader module" href="ctdclient.model.metadataheader.html">
+        <link rel="prefetch" href="_static/ctd_rosette.svg" as="image">
+
+    <link rel="shortcut icon" href="_static/ctd_rosette.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>ctdclient.model.near_real_time_publication module - ctdclient documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">ctdclient  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="_static/ctd_rosette.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">ctdclient  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installing.html#configuration">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bugs.html">Bugs</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">API</a><input aria-label="Toggle navigation of API" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="ctdclient.html">ctdclient package</a><input aria-label="Toggle navigation of ctdclient package" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="ctdclient.controller.html">ctdclient.controller package</a><input aria-label="Toggle navigation of ctdclient.controller package" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.Controller.html">ctdclient.controller.Controller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.bottlecontroller.html">ctdclient.controller.bottlecontroller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.configcontroller.html">ctdclient.controller.configcontroller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.dshipcontroller.html">ctdclient.controller.dshipcontroller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.maincontroller.html">ctdclient.controller.maincontroller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.metadatacontroller.html">ctdclient.controller.metadatacontroller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.nrtcontroller.html">ctdclient.controller.nrtcontroller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.plottingcontroller.html">ctdclient.controller.plottingcontroller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.processingcontroller.html">ctdclient.controller.processingcontroller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.controller.runcontroller.html">ctdclient.controller.runcontroller module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="ctdclient.model.html">ctdclient.model package</a><input aria-label="Toggle navigation of ctdclient.model package" checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.Model.html">ctdclient.model.Model module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.bottles.html">ctdclient.model.bottles module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.dshipcaller.html">ctdclient.model.dshipcaller module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.fileupdater.html">ctdclient.model.fileupdater module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.metadataheader.html">ctdclient.model.metadataheader module</a></li>
+<li class="toctree-l4 current current-page"><a class="current reference internal" href="#">ctdclient.model.near_real_time_publication module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.plotting.html">ctdclient.model.plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.processing.html">ctdclient.model.processing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.psa.html">ctdclient.model.psa module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.model.runseasave.html">ctdclient.model.runseasave module</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="ctdclient.view.html">ctdclient.view package</a><input aria-label="Toggle navigation of ctdclient.view package" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.View.html">ctdclient.view.View module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.bottleframe.html">ctdclient.view.bottleframe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.configuration.html">ctdclient.view.configuration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.ctkframe.html">ctdclient.view.ctkframe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.ctkspinbox.html">ctdclient.view.ctkspinbox module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.dshipframe.html">ctdclient.view.dshipframe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.headerframe.html">ctdclient.view.headerframe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.infoframe.html">ctdclient.view.infoframe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.mainwindow.html">ctdclient.view.mainwindow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.measurement.html">ctdclient.view.measurement module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.nrtconfig.html">ctdclient.view.nrtconfig module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.nrtcontrol.html">ctdclient.view.nrtcontrol module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.plotting.html">ctdclient.view.plotting module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.processing.html">ctdclient.view.processing module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.runframe.html">ctdclient.view.runframe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.stopwatchframe.html">ctdclient.view.stopwatchframe module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ctdclient.view.tabview.html">ctdclient.view.tabview module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="ctdclient.configurationhandler.html">ctdclient.configurationhandler module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ctdclient.definitions.html">ctdclient.definitions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ctdclient.eventmanager.html">ctdclient.eventmanager module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ctdclient.logconfig.html">ctdclient.logconfig module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ctdclient.main.html">ctdclient.main module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ctdclient.utils.html">ctdclient.utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/DAM-CTD-Software/CTD-Client"> Code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://www.allianz-meeresforschung.de/kernbereiche/datenmanagement-und-digitalisierung#unterwegs"> DAM Underway Project</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://iow.de/en_index.html"> IOW</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/ctdclient.model.near_real_time_publication.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="module-ctdclient.model.near_real_time_publication">
+<span id="ctdclient-model-near-real-time-publication-module"></span><h1>ctdclient.model.near_real_time_publication module<a class="headerlink" href="#module-ctdclient.model.near_real_time_publication" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.instantiate_near_real_time_target">
+<span class="sig-prename descclassname"><span class="pre">ctdclient.model.near_real_time_publication.</span></span><span class="sig-name descname"><span class="pre">instantiate_near_real_time_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_of_action</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'23:59:00'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.instantiate_near_real_time_target" title="Link to this definition">¶</a></dt>
+<dd><p>Differentiate the two NRT modes and instantiates respecive classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Are given to NRT classes</p></li>
+<li><p><strong>frequency_of_action</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The information to distinguish the two NRT modes</p></li>
+<li><p><strong>**kwargs</strong> – Are given to NRT classes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget" title="ctdclient.model.near_real_time_publication.NearRealTimeTarget"><code class="xref py py-class docutils literal notranslate"><span class="pre">NearRealTimeTarget</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NRTList">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ctdclient.model.near_real_time_publication.</span></span><span class="sig-name descname"><span class="pre">NRTList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NRTList" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UserList</span></code></p>
+<p>A collection of NearRealTimeTargets.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NRTList.update_nrt_data">
+<span class="sig-name descname"><span class="pre">update_nrt_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clear_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NRTList.update_nrt_data" title="Link to this definition">¶</a></dt>
+<dd><p>Fills collection with NRT instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>clear_data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to reset previous data when updating</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NRTList.create_nrt_instance">
+<span class="sig-name descname"><span class="pre">create_nrt_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NRTList.create_nrt_instance" title="Link to this definition">¶</a></dt>
+<dd><p>Get new instance of NearRealTimeTarget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – File path to toml config file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>NearRealTimeTarget instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NRTList.get_template">
+<span class="sig-name descname"><span class="pre">get_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/CTD-Client/CTD-Client/src/ctdclient/resources/templates/nrt_template.toml')</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NRTList.get_template" title="Link to this definition">¶</a></dt>
+<dd><p>Create template NearRealTimeTarget instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>template_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – File path to template file config</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>NearRealTimeTarget instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NRTList.toggle_activity">
+<span class="sig-name descname"><span class="pre">toggle_activity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nrt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NRTList.toggle_activity" title="Link to this definition">¶</a></dt>
+<dd><p>Toggle whether a particluar NearRealTimeTarget is active or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nrt</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget" title="ctdclient.model.near_real_time_publication.NearRealTimeTarget"><code class="xref py py-class docutils literal notranslate"><span class="pre">NearRealTimeTarget</span></code></a></span>) – The target instance to toggle</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NRTList.kill_processes">
+<span class="sig-name descname"><span class="pre">kill_processes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NRTList.kill_processes" title="Link to this definition">¶</a></dt>
+<dd><p>Kills a running NearRealTimeTarget action.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NRTList.delete_nrt">
+<span class="sig-name descname"><span class="pre">delete_nrt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nrt</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NRTList.delete_nrt" title="Link to this definition">¶</a></dt>
+<dd><p>Removes a NearRealTimeTarget from the collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nrt</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget" title="ctdclient.model.near_real_time_publication.NearRealTimeTarget"><code class="xref py py-class docutils literal notranslate"><span class="pre">NearRealTimeTarget</span></code></a></span>) – The instance to remove</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ctdclient.model.near_real_time_publication.</span></span><span class="sig-name descname"><span class="pre">NearRealTimeTarget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recipient_address</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_file_suffix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_file_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Stores information for near-real-time distribution of latest CTD data files.
+Can work in two modes: email or rsync/copy. Will distinguish between these
+by checking ‘recipient_adress’ for an ‘&#64;’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>recipient_address</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Target of the action, email address or file path</p></li>
+<li><p><strong>target_file_suffix</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – File suffix to select target files with</p></li>
+<li><p><strong>target_file_directory</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The directory to look for target files</p></li>
+<li><p><strong>geo_filter</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – A geographic location to filter target files with</p></li>
+<li><p><strong>email_info</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – Collection of email information</p></li>
+<li><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – File path to config file</p></li>
+<li><p><strong>active</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether the NRT job is active</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.toggle_activity">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">toggle_activity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.toggle_activity" title="Link to this definition">¶</a></dt>
+<dd><p>Toggles the NRT activity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.run">
+<span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.run" title="Link to this definition">¶</a></dt>
+<dd><p>Will move the recent files to the target location.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.create_email_message">
+<span class="sig-name descname"><span class="pre">create_email_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_address</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.create_email_message" title="Link to this definition">¶</a></dt>
+<dd><p>Creates an email with target files attached.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_files</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Target files to attach</p></li>
+<li><p><strong>to_address</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Email address to send to</p></li>
+<li><p><strong>from_address</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Email address to send from</p></li>
+<li><p><strong>subject</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Email subject line</p></li>
+<li><p><strong>body</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Email text</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Assembled email message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.create_email_draft">
+<span class="sig-name descname"><span class="pre">create_email_draft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.create_email_draft" title="Link to this definition">¶</a></dt>
+<dd><p>Creates an email .eml draft file, that can be opened by common email
+programs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmailMessage</span></code></span>) – Assembled email message ready for sending</p></li>
+<li><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – File path to save .eml draft file to</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.open_draft_msg">
+<span class="sig-name descname"><span class="pre">open_draft_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.open_draft_msg" title="Link to this definition">¶</a></dt>
+<dd><p>Open an .eml file using the default email program.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – File path to .eml file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.run_email_logic">
+<span class="sig-name descname"><span class="pre">run_email_logic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files_to_attach</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_manually</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.run_email_logic" title="Link to this definition">¶</a></dt>
+<dd><p>Master method to coordinate email assembly and sending.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>files_to_attach</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span>) – List of target files to attach to email</p></li>
+<li><p><strong>run_manually</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to automatically send email or open draft message for editing</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.send_email">
+<span class="sig-name descname"><span class="pre">send_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.send_email" title="Link to this definition">¶</a></dt>
+<dd><p>Sends the email message using the given smtp server configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>msg</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmailMessage</span></code></span>) – Assembled email message to send</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.copy_files">
+<span class="sig-name descname"><span class="pre">copy_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_file</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.copy_files" title="Link to this definition">¶</a></dt>
+<dd><p>Copies target files to given location.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The target file to copy</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.get_target_files">
+<span class="sig-name descname"><span class="pre">get_target_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('.')</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.get_target_files" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a list of paths to files that are meant to be published.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – File path to target file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.deg_min_to_deg_decimal">
+<span class="sig-name descname"><span class="pre">deg_min_to_deg_decimal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.deg_min_to_deg_decimal" title="Link to this definition">¶</a></dt>
+<dd><p>Converts coordinates from deg minutes to decimal degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Coordinate information</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.geographic_filter">
+<span class="sig-name descname"><span class="pre">geographic_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinate_pair</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.geographic_filter" title="Link to this definition">¶</a></dt>
+<dd><p>Checks, whether we are inside of a certain polygon.</p>
+<p>The polygon will usually be the EEZ of a certain country. Does support
+all data formats that geopandas can handle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coordinate_pair</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></span>) – Coordinates of the target file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.point_in_polygon">
+<span class="sig-name descname"><span class="pre">point_in_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polygon</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.point_in_polygon" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a point is inside a polygon using the Ray Casting Algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point</strong> – Tuple (x, y) representing the point to check.</p></li>
+<li><p><strong>polygon</strong> – List of tuples [(x1, y1), (x2, y2), …] representing the polygon vertices.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the point is inside the polygon, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.NearRealTimeTarget.time_filter">
+<span class="sig-name descname"><span class="pre">time_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.time_filter" title="Link to this definition">¶</a></dt>
+<dd><p>Ensure, that file has been modified in the last 24 hours.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Target file to check</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.DailyPublication">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ctdclient.model.near_real_time_publication.</span></span><span class="sig-name descname"><span class="pre">DailyPublication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_to_run_at</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'23:59:30'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.DailyPublication" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget" title="ctdclient.model.near_real_time_publication.NearRealTimeTarget"><code class="xref py py-class docutils literal notranslate"><span class="pre">NearRealTimeTarget</span></code></a></p>
+<p>Automatic publication once a day.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_to_run_at</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The time point to publish</p></li>
+<li><p><strong>single_run</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to run once or infinitely</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.DailyPublication.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.DailyPublication.action" title="Link to this definition">¶</a></dt>
+<dd><p>Multiprocessing target method that run publication logic.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.DailyPublication.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.DailyPublication.start" title="Link to this definition">¶</a></dt>
+<dd><p>Activates multiprocessing process to repeatedly publish.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.DailyPublication.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.DailyPublication.stop" title="Link to this definition">¶</a></dt>
+<dd><p>Stops multiprocessing process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.DailyPublication.toggle_activity">
+<span class="sig-name descname"><span class="pre">toggle_activity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.DailyPublication.toggle_activity" title="Link to this definition">¶</a></dt>
+<dd><p>Sets activity on or off.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.timer">
+<span class="sig-prename descclassname"><span class="pre">ctdclient.model.near_real_time_publication.</span></span><span class="sig-name descname"><span class="pre">timer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_to_run_at</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_run</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.timer" title="Link to this definition">¶</a></dt>
+<dd><p>Timer to next publication moment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_to_run_at</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></span>) – Next target time</p></li>
+<li><p><strong>function</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span>) – Action to perform on publication time</p></li>
+<li><p><strong>single_run</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to run only once</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.EachProcessingPublication">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ctdclient.model.near_real_time_publication.</span></span><span class="sig-name descname"><span class="pre">EachProcessingPublication</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.EachProcessingPublication" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget" title="ctdclient.model.near_real_time_publication.NearRealTimeTarget"><code class="xref py py-class docutils literal notranslate"><span class="pre">NearRealTimeTarget</span></code></a></p>
+<p>Automatic publication every processing.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.EachProcessingPublication.toggle_activity">
+<span class="sig-name descname"><span class="pre">toggle_activity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.EachProcessingPublication.toggle_activity" title="Link to this definition">¶</a></dt>
+<dd><p>Sets activity on or off.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.EachProcessingPublication.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('.')</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.EachProcessingPublication.run" title="Link to this definition">¶</a></dt>
+<dd><p>The action to perform after processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The file path to retrieve target files from</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.model.near_real_time_publication.EachProcessingPublication.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/model/near_real_time_publication.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.model.near_real_time_publication.EachProcessingPublication.stop" title="Link to this definition">¶</a></dt>
+<dd><p>Stops automatic publication.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="ctdclient.model.plotting.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">ctdclient.model.plotting module</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="ctdclient.model.metadataheader.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">ctdclient.model.metadataheader module</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024-2026, Emil Michels
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ctdclient.model.near_real_time_publication module</a><ul>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.instantiate_near_real_time_target"><code class="docutils literal notranslate"><span class="pre">instantiate_near_real_time_target()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NRTList"><code class="docutils literal notranslate"><span class="pre">NRTList</span></code></a><ul>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NRTList.update_nrt_data"><code class="docutils literal notranslate"><span class="pre">NRTList.update_nrt_data()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NRTList.create_nrt_instance"><code class="docutils literal notranslate"><span class="pre">NRTList.create_nrt_instance()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NRTList.get_template"><code class="docutils literal notranslate"><span class="pre">NRTList.get_template()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NRTList.toggle_activity"><code class="docutils literal notranslate"><span class="pre">NRTList.toggle_activity()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NRTList.kill_processes"><code class="docutils literal notranslate"><span class="pre">NRTList.kill_processes()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NRTList.delete_nrt"><code class="docutils literal notranslate"><span class="pre">NRTList.delete_nrt()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget</span></code></a><ul>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.toggle_activity"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.toggle_activity()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.run"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.run()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.create_email_message"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.create_email_message()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.create_email_draft"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.create_email_draft()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.open_draft_msg"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.open_draft_msg()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.run_email_logic"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.run_email_logic()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.send_email"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.send_email()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.copy_files"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.copy_files()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.get_target_files"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.get_target_files()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.deg_min_to_deg_decimal"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.deg_min_to_deg_decimal()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.geographic_filter"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.geographic_filter()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.point_in_polygon"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.point_in_polygon()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.NearRealTimeTarget.time_filter"><code class="docutils literal notranslate"><span class="pre">NearRealTimeTarget.time_filter()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.DailyPublication"><code class="docutils literal notranslate"><span class="pre">DailyPublication</span></code></a><ul>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.DailyPublication.action"><code class="docutils literal notranslate"><span class="pre">DailyPublication.action()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.DailyPublication.start"><code class="docutils literal notranslate"><span class="pre">DailyPublication.start()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.DailyPublication.stop"><code class="docutils literal notranslate"><span class="pre">DailyPublication.stop()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.DailyPublication.toggle_activity"><code class="docutils literal notranslate"><span class="pre">DailyPublication.toggle_activity()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.timer"><code class="docutils literal notranslate"><span class="pre">timer()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.EachProcessingPublication"><code class="docutils literal notranslate"><span class="pre">EachProcessingPublication</span></code></a><ul>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.EachProcessingPublication.toggle_activity"><code class="docutils literal notranslate"><span class="pre">EachProcessingPublication.toggle_activity()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.EachProcessingPublication.run"><code class="docutils literal notranslate"><span class="pre">EachProcessingPublication.run()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.model.near_real_time_publication.EachProcessingPublication.stop"><code class="docutils literal notranslate"><span class="pre">EachProcessingPublication.stop()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>

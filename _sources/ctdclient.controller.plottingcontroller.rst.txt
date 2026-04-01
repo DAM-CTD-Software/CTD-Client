@@ -1,0 +1,7 @@
+ctdclient.controller.plottingcontroller module
+==============================================
+
+.. automodule:: ctdclient.controller.plottingcontroller
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+ctdclient.view.headerframe module
+=================================
+
+.. automodule:: ctdclient.view.headerframe
+   :members:
+   :show-inheritance:
+   :undoc-members:

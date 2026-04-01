@@ -1,0 +1,7 @@
+ctdclient.model.processing module
+=================================
+
+.. automodule:: ctdclient.model.processing
+   :members:
+   :show-inheritance:
+   :undoc-members:

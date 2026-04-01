@@ -1,0 +1,7 @@
+ctdclient.main module
+=====================
+
+.. automodule:: ctdclient.main
+   :members:
+   :show-inheritance:
+   :undoc-members:

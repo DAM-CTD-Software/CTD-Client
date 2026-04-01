@@ -1,0 +1,7 @@
+ctdclient.view.measurement module
+=================================
+
+.. automodule:: ctdclient.view.measurement
+   :members:
+   :show-inheritance:
+   :undoc-members:

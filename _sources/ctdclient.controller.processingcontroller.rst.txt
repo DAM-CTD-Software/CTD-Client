@@ -1,0 +1,7 @@
+ctdclient.controller.processingcontroller module
+================================================
+
+.. automodule:: ctdclient.controller.processingcontroller
+   :members:
+   :show-inheritance:
+   :undoc-members:

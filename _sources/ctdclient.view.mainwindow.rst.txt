@@ -1,0 +1,7 @@
+ctdclient.view.mainwindow module
+================================
+
+.. automodule:: ctdclient.view.mainwindow
+   :members:
+   :show-inheritance:
+   :undoc-members:

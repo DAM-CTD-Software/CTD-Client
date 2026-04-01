@@ -1,0 +1,7 @@
+ctdclient.logconfig module
+==========================
+
+.. automodule:: ctdclient.logconfig
+   :members:
+   :show-inheritance:
+   :undoc-members:

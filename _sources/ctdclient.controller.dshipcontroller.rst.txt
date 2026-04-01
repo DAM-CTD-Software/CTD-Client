@@ -1,0 +1,7 @@
+ctdclient.controller.dshipcontroller module
+===========================================
+
+.. automodule:: ctdclient.controller.dshipcontroller
+   :members:
+   :show-inheritance:
+   :undoc-members:

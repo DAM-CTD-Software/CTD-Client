@@ -1,0 +1,7 @@
+ctdclient.eventmanager module
+=============================
+
+.. automodule:: ctdclient.eventmanager
+   :members:
+   :show-inheritance:
+   :undoc-members:

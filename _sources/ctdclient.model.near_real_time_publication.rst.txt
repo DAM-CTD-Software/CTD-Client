@@ -1,0 +1,7 @@
+ctdclient.model.near\_real\_time\_publication module
+====================================================
+
+.. automodule:: ctdclient.model.near_real_time_publication
+   :members:
+   :show-inheritance:
+   :undoc-members:

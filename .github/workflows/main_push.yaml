@@ -91,7 +91,7 @@ jobs:
           pip download gsw==3.6.19 --platform win_amd64 --python-version 3.12 --only-binary :all:
           mv gsw-3.6.19-cp312-cp312-win_amd64.whl gsw-3.6.19-cp313-cp313-win_amd64.whl
           pip install gsw-3.6.19-cp313-cp313-win_amd64.whl
-          pip install -r requirements.txt
+          pip install .
 
       - name: Build Windows binary
         run: |

@@ -3,7 +3,7 @@ name = "CTD-Client"
 authors = [{ name = "Emil Michels", email = "emil.michels@iow.de" }]
 version = "1.15.1"
 description = "A program designed to facilitate the measurement and processing of Sea-Bird SBE9/11 CTD data. The program enhances datasets with ship metadata and ensures standardized, consistent data collection."
-readme = "README.rst"
+readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "ctdam[all]>=1.1.2",
@@ -19,6 +19,8 @@ docs = [
     "sphinx-autodoc-typehints>=2.5.0",
     "pyment>=0.3.3",
     "furo>=2024.8.6",
+    "myst-parser>=4.0.1",
+    "click-extra[sphinx]>=7.9.0",
 ]
 
 [project.urls]

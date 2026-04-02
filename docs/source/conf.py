@@ -20,7 +20,11 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinx.ext.todo",
     "sphinx.ext.linkcode",
+    "myst_parser",
+    "click_extra.sphinx",
 ]
+
+myst_enable_extensions = ["colon_fence"]
 
 
 def linkcode_resolve(domain, info):

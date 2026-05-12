@@ -473,7 +473,7 @@ class NearRealTimeTarget:
                     file_metadata = DataFile(
                         path_to_file=file,
                         only_header=True,
-                    ).metadata
+                    )
                 except PermissionError as error:
                     message = (
                         f"Insufficient permissions to read {file}: {error}"
@@ -481,14 +481,7 @@ class NearRealTimeTarget:
                     logger.error(message)
                 else:
                     try:
-                        coordinates = (
-                            self.deg_min_to_deg_decimal(
-                                file_metadata["GPS_Lon"]
-                            ),
-                            self.deg_min_to_deg_decimal(
-                                file_metadata["GPS_Lat"]
-                            ),
-                        )
+                        coordinates = file_metadata.start_position
                     except (KeyError, ValueError):
                         coordinates = (0, 0)
                     if not self.geographic_filter(coordinates):

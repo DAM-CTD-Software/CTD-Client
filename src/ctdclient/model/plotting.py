@@ -55,7 +55,7 @@ class Plotting:
         self.check_html_dir()
         try:
             basic_bokeh_plot(
-                cnv=file,
+                ctd_data=file,
                 print_plot=True,
                 output_name=Path(file).with_suffix(".html").name,
                 output_directory=config.plotting["plot_dir"],

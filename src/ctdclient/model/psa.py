@@ -120,7 +120,10 @@ class SeasavePsa(PsaFile):
         """
         watersampler = self.settings_part["WaterSamplerConfiguration"]
         for row in watersampler["AutoFireData"]["DataTable"]["Row"]:
-            bottle_number = int(row["@BottleNumber"])
+            # ensure correct/complete mapping of bottle_numbers to indices
+            index = int(row["@index"])
+            bottle_number = index + 1
+            row["@BottleNumber"] = bottle_number
             if bottle_number <= number_of_bottles:
                 user_input = bottle_info[bottle_number].replace(",", ".")
                 try:

@@ -1,21 +1,18 @@
 import time
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytest
-from conftest import output_name, data_dir, example_data, target_file
+from conftest import data_dir, example_data, output_name, target_file
+
 from ctdclient.definitions import event_manager
-from ctdclient.model.near_real_time_publication import DailyPublication
 from ctdclient.model.near_real_time_publication import (
+    DailyPublication,
     EachProcessingPublication,
-)
-from ctdclient.model.near_real_time_publication import (
+    NearRealTimeTarget,
     instantiate_near_real_time_target,
 )
-from ctdclient.model.near_real_time_publication import NearRealTimeTarget
 from ctdclient.model.processing import ProcessingProcedure
-
 
 daily_email_test_info = {
     "recipient_name": "coriolis",
@@ -137,9 +134,9 @@ def test_active_state_each_proc(simple_processing: ProcessingProcedure):
     pubs.active = True
     pubs.toggle_activity()
     simple_processing.run(target_file)
-    expected_path = Path(each_processing_copy_test_info["recipient_address"]).joinpath(
-        output_name
-    )
+    expected_path = Path(
+        each_processing_copy_test_info["recipient_address"]
+    ).joinpath(output_name)
     if expected_path.exists():
         expected_path.unlink()
         assert False

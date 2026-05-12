@@ -490,8 +490,7 @@ class NearRealTimeTarget:
                         )
                         continue
 
-            if self.time_filter(file):
-                target_files.append(file)
+            target_files.append(file)
         self.files_already_sent = [*self.files_already_sent, *target_files]
         return target_files
 
@@ -583,23 +582,6 @@ class NearRealTimeTarget:
 
         return inside
 
-    def time_filter(self, file: Path) -> bool:
-        """
-        Ensure, that file has been modified in the last 24 hours.
-
-        Parameters
-        ----------
-        file: Path
-            Target file to check
-
-        Returns
-        -------
-        Whether recently modified or not.
-        """
-        last_twenty_four_hours = datetime.now() + timedelta(days=-1)
-        file_modification_time = datetime.fromtimestamp(file.stat().st_mtime)
-        return datetime.now() > file_modification_time > last_twenty_four_hours
-
 
 class DailyPublication(NearRealTimeTarget):
     """
@@ -629,9 +611,28 @@ class DailyPublication(NearRealTimeTarget):
         if self.active:
             self.start()
 
+    def time_filter(self, file: Path) -> bool:
+        """
+        Ensure, that file has been modified in the last 24 hours.
+
+        Parameters
+        ----------
+        file: Path
+            Target file to check
+
+        Returns
+        -------
+        Whether recently modified or not.
+        """
+        last_twenty_four_hours = datetime.now() + timedelta(days=-1)
+        file_modification_time = datetime.fromtimestamp(file.stat().st_mtime)
+        return datetime.now() > file_modification_time > last_twenty_four_hours
+
     def action(self):
         """Multiprocessing target method that run publication logic."""
-        list_to_process = self.get_target_files()
+        list_to_process = [
+            f for f in self.get_target_files() if self.time_filter(f)
+        ]
         if self._is_email():
             self.run_email_logic(list_to_process)
         else:

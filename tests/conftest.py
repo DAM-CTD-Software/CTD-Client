@@ -2,9 +2,10 @@ import logging
 from pathlib import Path
 
 import pytest
+from ctdam.proc.procedure import Procedure
+
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.model.processing import ProcessingProcedure
-from ctdam.proc.procedure import Procedure
 
 logger = logging.getLogger(__name__)
 
@@ -65,9 +66,11 @@ def fresh_target_file() -> Path:
     fresh_file.touch()
     return fresh_file
 
+
 @pytest.fixture
 def config() -> ConfigurationFile:
     return ConfigurationFile(config_template)
+
 
 def check_and_remove_file(expected_file: Path):
     if expected_file.exists():
@@ -76,4 +79,3 @@ def check_and_remove_file(expected_file: Path):
     else:
         logger.error(f"Could not find file {expected_file}.")
         assert False
-

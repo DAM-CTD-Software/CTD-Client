@@ -2,13 +2,17 @@ import logging
 from pathlib import Path
 from time import sleep
 
-from conftest import raw_data_dir, check_and_remove_file, data_dir, output_name
-from conftest import target_file
-from ctdclient.definitions import CONFIG_PATH
-from ctdclient.definitions import event_manager
-from ctdclient.model.processing import ProcessingList
-from ctdclient.model.processing import ProcessingProcedure
+from conftest import (
+    check_and_remove_file,
+    data_dir,
+    output_name,
+    raw_data_dir,
+    target_file,
+)
 from ctdam.proc.procedure import Procedure
+
+from ctdclient.definitions import CONFIG_PATH, event_manager
+from ctdclient.model.processing import ProcessingList, ProcessingProcedure
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +39,7 @@ def test_event_processing_successful(simple_processing: ProcessingProcedure):
 def test_processing_list_creation():
     proc_list = ProcessingList()
     proc_list.read_processing_files()
-    assert len(proc_list) == len([file for file in CONFIG_PATH.glob('*proc*')])
+    assert len(proc_list) == len([file for file in CONFIG_PATH.glob("*proc*")])
 
 
 def test_full_processing(processing: ProcessingProcedure):
@@ -49,10 +53,7 @@ def test_full_processing(processing: ProcessingProcedure):
         auto_run=False,
     )
     processing.active = True
-    # proc_list = ProcessingList()
-    # proc_list.data = [processing]
     input_file = raw_data_dir.joinpath("EMB356_11-1.hex")
-    # proc_list.run(input_file)
     processing.run(input_file)
     while processing.process.is_alive():
         sleep(1)

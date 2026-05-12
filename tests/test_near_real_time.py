@@ -20,8 +20,8 @@ from ctdclient.model.processing import ProcessingProcedure
 daily_email_test_info = {
     "recipient_name": "coriolis",
     "recipient_address": "to@example.com",
-    "target_file_directory": "seabird_example_data/cnv",
-    "target_file_suffix": "_4coriolis",
+    "target_file_directory": data_dir,
+    "target_file_suffix": ".cnv",
     "frequency_of_action": "daily",
     "geo_filter": "germany",
     "email_info": {
@@ -93,7 +93,7 @@ def test_geo_filter():
     pubs = EachProcessingPublication(
         **each_processing_copy_test_info, event_manager=event_manager
     )
-    assert pubs.geographic_filter((11, 54))
+    assert pubs.geographic_filter((54, 11))
     assert not pubs.geographic_filter((50, 20))
 
 
@@ -108,6 +108,7 @@ def test_send_email(mocker, fresh_target_file):
     pubs.send_email(msg)
     mock_smtp.assert_called_once_with("localhost", 587)
     email_message_object = mock_smtp.return_value.send_message
+    assert len(target_files) > 0
     for attachement, file_name in zip(
         email_message_object.iter_attachements(), target_files
     ):

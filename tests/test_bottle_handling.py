@@ -38,8 +38,10 @@ def test_comma2dot(psa):
     for row in psa.settings_part["WaterSamplerConfiguration"]["AutoFireData"][
         "DataTable"
     ]["Row"]:
-        if row["@BottleNumber"] in expected_bottle_values:
-            assert row["@FireAt"] == expected_bottle_values[row["@BottleNumber"]]
+        bottle_number = row["@BottleNumber"]
+        if bottle_number in expected_bottle_values:
+            assert row["@FireAt"] == expected_bottle_values[bottle_number]
+        assert int(bottle_number) == int(row['@index']) + 1
 
 
 @pytest.mark.parametrize(

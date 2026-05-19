@@ -77,7 +77,7 @@ jobs:
 
   build_binary:
     needs: release
-    if: needs.release.outputs.exists == 'true'
+    if: needs.release.check_dist.outputs.exists == 'true'
     runs-on: batonogov/pyinstaller-windows:v4.11.1
     steps:
       - name: Install missing dependencies

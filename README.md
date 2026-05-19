@@ -256,6 +256,13 @@ that will be substituted by a timestamp
 > instead of sending the emails directly, the draft will be opened in the
 > system email program, to allow reviewing its contents prior to sending.
 
+### How to plot
+
+![image](docs/images/plotting.png)
+
+Here you can plot individual casts, all casts of a directory or configure the
+CTD-Client to automatically create plots of processed files.
+
 <!-- end usage -->
 
 ## Context

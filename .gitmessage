@@ -21,11 +21,9 @@
 #    revert   (revert a previous commit)
 # --------------------
 # Scope can be:
-#    conv       (changes to conv package)
-#    entry      (changes to entry package)
-#    parser     (changes to parser package)
-#    proc       (changes to processor package)
-#    vis        (changes to vis package)
+#    model      (changes to model)
+#    view       (changes to view)
+#    controller (changes to controller)
 #    deps       (dependency updates)
 #    ci         (CI/CD changes)
 #    docs       (documentation)

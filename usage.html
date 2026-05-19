@@ -8,7 +8,7 @@
 
     <link rel="shortcut icon" href="_static/ctd_rosette.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>Usage - CTD-Client documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80449d92" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=1206595f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
@@ -314,12 +314,12 @@ user. Simply clicking on one entry will let you switch to that tab.</p>
 <p><img alt="image" src="docs/images/tabs.png" /></p>
 <section id="how-to-measure">
 <h2>How to measure<a class="headerlink" href="#how-to-measure" title="Link to this heading">¶</a></h2>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>The CTD-Client comes with sensible defaults, but some things need to be
+<blockquote>
+<div><p>[!IMPORTANT]
+The CTD-Client comes with sensible defaults, but some things need to be
 configured before using it first time. So have a look at <a class="reference external" href="https://dam-ctd-software.github.io/CTD-Client/installing.html#configuration">the configuration info</a>
 to set up for measurement.</p>
-</div>
+</div></blockquote>
 <p>For measurements you can safely stay inside of the tab of the same name.
 Here, you can see different areas to interact with:</p>
 <section id="dship-information">
@@ -390,20 +390,20 @@ to be installed on your machine), custom ones from the growing
 collection inside ctdam and all TEOS-10
 functions, through the <a class="reference external" href="https://teos-10.github.io/GSW-Python">gsw python
 package</a>.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Orchestrating all these modules with their diverse background is quite
+<blockquote>
+<div><p>[!IMPORTANT]
+Orchestrating all these modules with their diverse background is quite
 complex, if one aims for a drag-and-drop behavior. So be forgiving if
 some combinations need some more tinkering. You can also file a <a class="reference external" href="https://dam-ctd-software.github.io/CTD-Client/bugs.html">bug</a>,
 if things go really wrong.</p>
-</div>
+</div></blockquote>
 <p>You can customize workflows in the ‘Processing’ Tab. Here, a list of
 the available workflow files and other scripts can be seen.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For other custom processing scripts to appear here, they need to be put
+<blockquote>
+<div><p>[!NOTE]
+For other custom processing scripts to appear here, they need to be put
 into the <a class="reference external" href="https://dam-ctd-software.github.io/CTD-Client/installing.html#configuration">configuration directory</a></p>
-</div>
+</div></blockquote>
 <p><img alt="image" src="docs/images/proc.png" /></p>
 <p>They can be turned on and off by a switch, which means that they are
 going to run upon clicking ‘Run Processing’. Note that all activated
@@ -468,14 +468,20 @@ email client instead of directly sending the email blindly</p>
 <p><strong>subject</strong>: the email messages subject</p>
 <p><strong>body</strong>: the text of the email message. Does take a placeholder {date}
 that will be substituted by a timestamp</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>When creating a new NRT that is going to send emails, make sure to test
+<blockquote>
+<div><p>[!IMPORTANT]
+When creating a new NRT that is going to send emails, make sure to test
 the email settings by setting the ‘open_draft’ option to true. That way,
 instead of sending the emails directly, the draft will be opened in the
 system email program, to allow reviewing its contents prior to sending.</p>
-</div>
+</div></blockquote>
 </section>
+</section>
+<section id="how-to-plot">
+<h2>How to plot<a class="headerlink" href="#how-to-plot" title="Link to this heading">¶</a></h2>
+<p><img alt="image" src="docs/images/plotting.png" /></p>
+<p>Here you can plot individual casts, all casts of a directory or configure the
+CTD-Client to automatically create plots of processed files.</p>
 </section>
 </section>
 
@@ -556,6 +562,7 @@ system email program, to allow reviewing its contents prior to sending.</p>
 <li><a class="reference internal" href="#nrt-configurator">NRT Configurator</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#how-to-plot">How to plot</a></li>
 </ul>
 </li>
 </ul>

@@ -53,10 +53,12 @@ version_variables = [
 build_command = "uv build"
 upload_to_vcs_release = true
 
+[tool.semantic_release.changelog]
+exclude_commit_patterns = ["chore", "docs", "style", "ci", "test"]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/ctdclient"]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-

@@ -71,8 +71,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
       - name: Install python dependencies
         run: |
@@ -82,11 +80,6 @@ jobs:
       - name: Build Windows binary
         shell: bash
         run: |
-          git fetch
-          git branch -f pages origin/gh-pages
-          git checkout pages -- .
-          mkdir htmls
-          cp -rt htmls *.html *.inv *.js _static _sources _images
           python -m generate_rc_file
           pyinstaller -y windows.spec
 

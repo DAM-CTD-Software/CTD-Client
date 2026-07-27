@@ -10,7 +10,7 @@ ctdam_path = Path(ctdam.__file__).parent.joinpath('conv', 'sensor_mapping.toml')
 datas=[
         (customtkinter_path, 'customtkinter/'),
         ('src/ctdclient/resources', '.'),
-        ('/htmls', 'htmls'),
+        ('htmls', 'htmls'),
         (ctdam_path, 'ctdam/conv/'),
 ]
 

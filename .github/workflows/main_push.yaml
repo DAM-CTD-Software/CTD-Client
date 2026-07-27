@@ -82,8 +82,9 @@ jobs:
     if: needs.release.outputs.exists == 'true'
     runs-on: windows-latest
     steps:
-      - name: Install missing dependencies
-        run: apt update && apt install -y nodejs curl git jq
+      - name: Install build tools
+        shell: pwsh
+        run: choco install nodejs curl git jq -y
 
       - uses: actions/checkout@v6
 

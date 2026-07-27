@@ -14,8 +14,6 @@ jobs:
       issues: write
       pull-requests: write
       id-token: write
-    outputs:
-      exists: ${{ steps.check_dist.outputs.exists }}
 
     steps:
       - uses: actions/create-github-app-token@v1
@@ -68,18 +66,8 @@ jobs:
           publish_dir: ./docs/build
           publish_branch: gh-pages
 
-      - name: Check if dist files exist
-        id: check_dist
-        run: |
-          if [ -d "dist" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
   build_binary:
     needs: release
-    if: needs.release.outputs.exists == 'true'
     runs-on: windows-latest
     steps:
       - name: Install build tools

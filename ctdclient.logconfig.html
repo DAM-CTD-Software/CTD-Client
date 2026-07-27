@@ -8,7 +8,7 @@
 
     <link rel="shortcut icon" href="_static/ctd_rosette.svg"><!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>ctdclient.logconfig module - CTD-Client documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=1206595f" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=df9b8798" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
       </label>
     </div>
@@ -301,13 +301,50 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
           </label>
         </div>
         <article role="main" id="furo-main-content">
           <section id="module-ctdclient.logconfig">
 <span id="ctdclient-logconfig-module"></span><h1>ctdclient.logconfig module<a class="headerlink" href="#module-ctdclient.logconfig" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ctdclient.logconfig.LoggingConfig">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">ctdclient.logconfig.</span></span><span class="sig-name descname"><span class="pre">LoggingConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ctdclient'</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/logconfig.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.logconfig.LoggingConfig" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.logconfig.LoggingConfig.configure_logging">
+<span class="sig-name descname"><span class="pre">configure_logging</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/logconfig.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.logconfig.LoggingConfig.configure_logging" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ctdclient.logconfig.LoggingConfig.QueueHandler">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">QueueHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_queue</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/logconfig.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.logconfig.LoggingConfig.QueueHandler" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Handler</span></code></p>
+<p>Custom logging handler that puts log records into a queue.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.logconfig.LoggingConfig.QueueHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/logconfig.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.logconfig.LoggingConfig.QueueHandler.emit" title="Link to this definition">¶</a></dt>
+<dd><p>Do whatever it takes to actually log the specified logging record.</p>
+<p>This version is intended to be implemented by subclasses and so
+raises a NotImplementedError.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.logconfig.LoggingConfig.process_log_queue">
+<span class="sig-name descname"><span class="pre">process_log_queue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/logconfig.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.logconfig.LoggingConfig.process_log_queue" title="Link to this definition">¶</a></dt>
+<dd><p>Process log messages from the queue and display them in a messagebox.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ctdclient.logconfig.LoggingConfig.send_email">
+<span class="sig-name descname"><span class="pre">send_email</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/DAM-CTD-Software/ctd-client/src/branch/main/src/ctdclient/logconfig.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ctdclient.logconfig.LoggingConfig.send_email" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
         </article>
@@ -360,8 +397,36 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">ctdclient.logconfig module</a><ul>
+<li><a class="reference internal" href="#ctdclient.logconfig.LoggingConfig"><code class="docutils literal notranslate"><span class="pre">LoggingConfig</span></code></a><ul>
+<li><a class="reference internal" href="#ctdclient.logconfig.LoggingConfig.configure_logging"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.configure_logging()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.logconfig.LoggingConfig.QueueHandler"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.QueueHandler</span></code></a><ul>
+<li><a class="reference internal" href="#ctdclient.logconfig.LoggingConfig.QueueHandler.emit"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.QueueHandler.emit()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ctdclient.logconfig.LoggingConfig.process_log_queue"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.process_log_queue()</span></code></a></li>
+<li><a class="reference internal" href="#ctdclient.logconfig.LoggingConfig.send_email"><code class="docutils literal notranslate"><span class="pre">LoggingConfig.send_email()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

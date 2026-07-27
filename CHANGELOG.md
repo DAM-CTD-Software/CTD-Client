@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v1.17.1 (2026-07-27)
+
+### Bug Fixes
+
+- **model**: Nrt coordinates and draft email path
+  ([`e80e45e`](https://github.com/DAM-CTD-Software/CTD-Client/commit/e80e45eebef4925ed75febe56ea867b5d0191266))
+
+- **view**: Dangling print statement
+  ([`69acbd3`](https://github.com/DAM-CTD-Software/CTD-Client/commit/69acbd3ce4f9e6b28f53cd26dba3744a1ee1d688))
+
+
 ## v1.17.0 (2026-05-23)
 
 ### Features

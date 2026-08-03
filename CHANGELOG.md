@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.17.2 (2026-08-03)
+
+### Bug Fixes
+
+- **model**: Replace timestamp name in nrt draft eml with uuid
+  ([`6e21bd5`](https://github.com/DAM-CTD-Software/CTD-Client/commit/6e21bd5ca72300d530c73aa6adf257805685869d))
+
+
 ## v1.17.1 (2026-07-27)
 
 ### Bug Fixes

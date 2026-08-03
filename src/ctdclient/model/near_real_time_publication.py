@@ -10,6 +10,7 @@ import shutil
 import smtplib
 import subprocess
 import time
+import uuid
 from abc import abstractmethod
 from collections import UserList
 from datetime import date, datetime, timedelta, timezone
@@ -23,6 +24,7 @@ from tomlkit.toml_file import TOMLFile
 
 from ctdclient.definitions import (
     CONFIG_PATH,
+    RESOURCES_PATH,
     TEMPLATE_PATH,
     config,
     cruise_head,
@@ -345,12 +347,18 @@ class NearRealTimeTarget:
             draft_dir.mkdir(parents=True, exist_ok=True)
         msg.add_header("X-Unsent", "1")
         file_path = (
-            draft_dir.joinpath(rf"{str(datetime.now()).replace(' ', 'T')}.eml")
+            (draft_dir / uuid.uuid4().hex).with_suffix(".eml")
             if file_path == ""
             else Path(file_path)
         )
-        with open(file_path, "w") as f:
-            f.write(msg.as_string())
+        try:
+            with open(file_path, "w") as f:
+                f.write(msg.as_string())
+        except Exception as error:
+            logger.error(f"Failed to write draft email to disk: {error}")
+            file_path = (RESOURCES_PATH / uuid.uuid4().hex).with_suffix(".eml")
+            with open(file_path, "w") as f:
+                f.write(msg.as_string())
         return file_path
 
     def open_draft_msg(self, file_path: Path | str):

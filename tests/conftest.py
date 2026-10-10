@@ -2,7 +2,6 @@ import logging
 from pathlib import Path
 
 import pytest
-from ctdam.proc.procedure import Procedure
 
 from ctdclient.configurationhandler import ConfigurationFile
 from ctdclient.model.processing import ProcessingProcedure
@@ -25,21 +24,21 @@ def processing() -> ProcessingProcedure:
 
 
 @pytest.fixture
-def simple_processing(processing: ProcessingProcedure) -> ProcessingProcedure:
+def simple_processing(
+    processing: ProcessingProcedure, tmp_path: Path
+) -> ProcessingProcedure:
     # very easy, one step processing that outputs a standard file name
-    processing.procedure = Procedure(
-        configuration={
-            "input": [target_file],
-            "output_type": "cnv",
-            "output_name": output_name,
-            "modules": {
-                "alignctd": {
-                    "sbeox0ML/L": None,
-                },
+    processing.configuration = {
+        "input": [target_file],
+        "output_type": "cnv",
+        "output_name": output_name,
+        "output_dir": str(tmp_path),
+        "modules": {
+            "alignctd": {
+                "oxygen": 0,
             },
         },
-        auto_run=False,
-    )
+    }
     processing.killed = False
     return processing
 
@@ -47,15 +46,12 @@ def simple_processing(processing: ProcessingProcedure) -> ProcessingProcedure:
 @pytest.fixture
 def empty_processing(processing: ProcessingProcedure) -> ProcessingProcedure:
     # serves only as trigger for nrt pubs
-    processing.procedure = Procedure(
-        configuration={
-            "input": [target_file],
-            "output_type": "cnv",
-            "output_name": str(target_file),
-            "modules": {},
-        },
-        auto_run=False,
-    )
+    processing.configuration = {
+        "input": [target_file],
+        "output_type": "cnv",
+        "output_name": str(target_file),
+        "modules": {},
+    }
     return processing
 
 

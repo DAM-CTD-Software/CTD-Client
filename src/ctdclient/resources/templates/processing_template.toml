@@ -42,6 +42,6 @@ output_columns = [
 
 [modules.celltm]
 
-[modules.create_bottle_file]
+[modules.bottlefile]
 
 [modules.binavg]

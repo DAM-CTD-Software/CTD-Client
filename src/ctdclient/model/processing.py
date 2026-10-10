@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from collections import UserList
 from pathlib import Path
 
-from ctdam.proc.procedure import Procedure
+from ctdam import process
 from ctdam.proc.settings import Configuration
 
 from ctdclient.definitions import (
@@ -236,17 +236,8 @@ class ProcessingProcedure(ProcessingConfig):
             File path to processing workflow configuration
         """
         new_config = Path(path_to_config)
-        proc_config = Configuration(new_config)
-        self.procedure = Procedure(
-            proc_config,
-            seabird_exe_directory=config.path_to_proc_exes,
-            auto_run=False,
-            procedure_fingerprint_directory=config.processing[
-                "generate_processing_fingerprint"
-            ],
-            file_type_dir=config.processing["file_type_dir"],
-        )
-        self.modules = proc_config["modules"]
+        self.configuration = Configuration(new_config)
+        self.modules = self.configuration["modules"]
         self.killed = False
 
     def run(self, file: Path):
@@ -260,7 +251,7 @@ class ProcessingProcedure(ProcessingConfig):
         """
         self.process = mp.Process(target=self.apply_procedure, args=[file])
         self.process.start()
-        logger.debug(f"Started processing with:\n{self.procedure.config}")
+        logger.debug(f"Started processing with:\n{self.configuration}")
 
     def wait(self):
         """Waits for processing workflow to finish."""
@@ -276,7 +267,11 @@ class ProcessingProcedure(ProcessingConfig):
         file: Path
             The target file to process
         """
-        self.procedure.run(file)
+        return process(
+            input=file,
+            other_settings=dict(self.configuration),
+            use_multiprocessing=False,
+        )
 
 
 class ProcessingScript(ProcessingConfig):

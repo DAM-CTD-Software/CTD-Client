@@ -1,9 +1,9 @@
-from datetime import datetime
+"""from datetime import datetime
 from pathlib import Path
 from tkinter import ttk
 
 import customtkinter as ctk
-from ctdam.entry.gui.toml_editor import TomlEditor
+#from ctdam.entry.gui import TomlEditor
 
 from ctdclient.definitions import CONFIG_PATH
 from ctdclient.view.View import ViewMixin
@@ -168,3 +168,4 @@ if __name__ == "__main__":
     app.grid_rowconfigure(0, weight=1)
     app.grid_columnconfigure(0, weight=1)
     app.mainloop()
+"""

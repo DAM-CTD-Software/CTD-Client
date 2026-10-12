@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import sys
 import tkinter as tk
 import tkinter.font as tkFont
 from pathlib import Path
@@ -10,7 +9,7 @@ from typing import Callable
 
 import customtkinter as ctk
 
-from ctdclient.definitions import CONFIG_PATH, ICON_PATH, config
+from ctdclient.definitions import config
 from ctdclient.model.processing import ProcessingConfig, ProcessingProcedure
 from ctdclient.utils import call_editor
 from ctdclient.view.ctkframe import CtkFrame
@@ -83,7 +82,6 @@ class ProcessingView(ViewMixin, CtkFrame):
         new_processing = ctk.CTkButton(
             self,
             text="Create new processing workflow",
-            command=self.open_template,
             state="disabled",
         )
         new_processing.grid(
@@ -171,11 +169,6 @@ class ProcessingView(ViewMixin, CtkFrame):
     def toggle_auto_process(self, new_value: str):
         self.callbacks["update_auto_process"](new_value)
 
-    def open_template(self):
-        template = self.callbacks["new_processing"]()
-        if template:
-            self.open_config(template)
-
     def create_processing_entry(
         self, processing_workflow: ProcessingConfig, row: int
     ):
@@ -237,7 +230,6 @@ class ProcessingView(ViewMixin, CtkFrame):
             config = ctk.CTkButton(
                 frame,
                 text="edit/details",
-                command=lambda: self.open_config(processing_workflow),
                 state="disabled",
             )
             config.grid(row=0, column=3, padx=self.padx, pady=self.pady)
@@ -266,40 +258,3 @@ class ProcessingView(ViewMixin, CtkFrame):
     ):
         for index, module in enumerate(processing_workflow.modules.keys()):
             ctk.CTkLabel(frame, text=module).grid(row=index, column=0)
-
-    def open_config(self, processing_workflow: ProcessingConfig):
-        config_window = ctk.CTkToplevel(self)
-
-        editor = ProcedureConfigView(
-            master=config_window,
-            config_file=processing_workflow.path_to_config,
-            possible_parameters=[
-                "psa_directory",
-                "output_dir",
-            ],
-            title_size=35,
-            default_dir_to_save_in=CONFIG_PATH,
-        )
-        editor.grid(
-            row=0,
-            column=0,
-            sticky="nswe",
-            padx=self.padx,
-            pady=self.pady,
-        )
-
-        editor.bind(
-            "<Destroy>",
-            command=lambda e: self.callbacks["update_processing_workflows"](),
-        )
-        config_window.title(
-            f"Configuration of processing workflow {processing_workflow.name}"
-        )
-        if sys.platform.startswith("win"):
-            config_window.after(
-                200, lambda: config_window.iconbitmap(ICON_PATH)
-            )
-        config_window.grid_rowconfigure(0, weight=1)
-        config_window.grid_columnconfigure(0, weight=1)
-        config_window.geometry("700x850")
-        config_window.grab_set()

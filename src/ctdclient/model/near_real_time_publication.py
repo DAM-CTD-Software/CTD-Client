@@ -18,7 +18,7 @@ from email.message import EmailMessage
 from pathlib import Path
 from typing import Callable
 
-from ctdam.parser import DataFile
+from ctdam.parser.seabird_data_files import SeabirdDataFile
 from platformdirs import user_log_dir
 from tomlkit.toml_file import TOMLFile
 
@@ -478,7 +478,7 @@ class NearRealTimeTarget:
                 continue
             if len(self.geo_filter) > 0:
                 try:
-                    file_metadata = DataFile(
+                    file_metadata = SeabirdDataFile(
                         path_to_file=file,
                         only_header=True,
                     )

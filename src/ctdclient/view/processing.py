@@ -9,7 +9,6 @@ from tkinter import filedialog as fd
 from typing import Callable
 
 import customtkinter as ctk
-from ctdam.entry.gui.procedure_config_view import ProcedureConfigView
 
 from ctdclient.definitions import CONFIG_PATH, ICON_PATH, config
 from ctdclient.model.processing import ProcessingConfig, ProcessingProcedure
@@ -85,6 +84,7 @@ class ProcessingView(ViewMixin, CtkFrame):
             self,
             text="Create new processing workflow",
             command=self.open_template,
+            state="disabled",
         )
         new_processing.grid(
             row=row + 4,
@@ -238,6 +238,7 @@ class ProcessingView(ViewMixin, CtkFrame):
                 frame,
                 text="edit/details",
                 command=lambda: self.open_config(processing_workflow),
+                state="disabled",
             )
             config.grid(row=0, column=3, padx=self.padx, pady=self.pady)
 

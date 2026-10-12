@@ -2,7 +2,7 @@ import logging
 import math
 from pathlib import Path
 
-from ctdam.parser import PsaFile
+from ctdam.parser.xmlfiles import PsaFile
 
 logger = logging.getLogger(__name__)
 

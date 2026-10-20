@@ -82,7 +82,7 @@ class ProcessingView(ViewMixin, CtkFrame):
         new_processing = ctk.CTkButton(
             self,
             text="Create new processing workflow",
-            state="disabled",
+            command=self.create_workflow,
         )
         new_processing.grid(
             row=row + 4,
@@ -94,6 +94,14 @@ class ProcessingView(ViewMixin, CtkFrame):
         for index, processing in enumerate(processing_list, start=row + 5):
             self.create_processing_entry(processing, index)
             row = index
+
+    def create_workflow(self):
+        dialog = ctk.CTkInputDialog(
+            text="Workflow name:", title="New processing workflow"
+        )
+        name = dialog.get_input()
+        if name and name.strip():
+            self.callbacks["new_processing"](name.strip())
 
     def settings_entry(self, parent_frame, key, value, row):
         frame = ctk.CTkFrame(parent_frame, fg_color="transparent")
@@ -198,8 +206,9 @@ class ProcessingView(ViewMixin, CtkFrame):
         if isinstance(processing_workflow, ProcessingProcedure):
 
             def toggle_entry():
-                global hidden
-                if hidden:
+                if info.winfo_ismapped():
+                    info.grid_remove()
+                else:
                     info.grid(
                         row=1,
                         column=0,
@@ -207,17 +216,11 @@ class ProcessingView(ViewMixin, CtkFrame):
                         pady=self.pady,
                         sticky="w",
                     )
-                else:
-                    info.grid_remove()
-                hidden = not hidden
-
-            global hidden
-            hidden = True
 
             info_toggle = ctk.CTkButton(
                 frame,
                 text="show/hide modules",
-                command=lambda: toggle_entry(),
+                command=toggle_entry,
             )
             info_toggle.grid(row=0, column=2, padx=self.padx, pady=self.pady)
 
@@ -227,12 +230,14 @@ class ProcessingView(ViewMixin, CtkFrame):
             )
             self.display_modules(info, processing_workflow)
 
-            config = ctk.CTkButton(
+            edit = ctk.CTkButton(
                 frame,
-                text="edit/details",
-                state="disabled",
+                text="edit",
+                command=lambda: self.callbacks["edit_processing"](
+                    processing_workflow
+                ),
             )
-            config.grid(row=0, column=3, padx=self.padx, pady=self.pady)
+            edit.grid(row=0, column=3, padx=self.padx, pady=self.pady)
 
         else:
             open_editor = ctk.CTkButton(

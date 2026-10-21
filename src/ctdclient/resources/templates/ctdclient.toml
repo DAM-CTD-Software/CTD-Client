@@ -73,7 +73,6 @@ auto_process = false
 # all settings for plotting configuration
 auto_plot = false
 plot_dir = ""
-embed_contents = false
 overwrite = true
 size_limit = "10"
 filter = ""

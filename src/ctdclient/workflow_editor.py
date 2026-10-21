@@ -1,3 +1,5 @@
+"""for now neccassary to run the workflow editor as a standalone app since it uses pyside6 and not customtk"""
+
 import sys
 
 from ctdam.entry.gui import MainWindow

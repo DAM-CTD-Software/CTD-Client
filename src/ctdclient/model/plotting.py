@@ -2,7 +2,7 @@ import logging
 import shutil
 from pathlib import Path
 
-from ctdam.vis import basic_bokeh_plot, cruise_plots
+from ctdam import parse, plot
 
 from ctdclient.definitions import (
     CONFIG_PATH,
@@ -40,6 +40,7 @@ class Plotting:
         html_dir = Path(config.plotting["plot_dir"]).absolute()
         if not html_dir.exists():
             html_dir.mkdir(parents=True)
+        return html_dir
 
     def plot_file(self, file: Path | str = "", show_plot: bool = True):
         """
@@ -52,13 +53,13 @@ class Plotting:
         show_plot: bool
             Whether to open the plot in webbrowser automatically
         """
-        self.check_html_dir()
+        html_dir = self.check_html_dir()
         try:
-            basic_bokeh_plot(
-                ctd_data=file,
+            data = parse(file)
+            data.vis.bokeh(
                 print_plot=True,
                 output_name=Path(file).with_suffix(".html").name,
-                output_directory=config.plotting["plot_dir"],
+                output_directory=html_dir,
                 metadata=True,
                 show_plot=show_plot,
                 config_path=self.config_path,
@@ -81,16 +82,15 @@ class Plotting:
         no_new_plots: bool
             Whether to overwrite existing plots or not
         """
-        self.check_html_dir()
+        html_dir = self.check_html_dir()
         dir = dir if dir else str(config.output_directory)
         logger.debug(f"Plotting configuration: {config.plotting}")
         config.write()
         try:
-            cruise_plots(
-                directory=dir,
-                output_directory=config.plotting["plot_dir"],
+            plot(
+                input=dir,
+                output_directory=html_dir,
                 output_name="main.html",
-                embed_contents=config.plotting["embed_contents"],
                 html_title=config.plotting["html_title"],
                 overwrite=config.plotting["overwrite"],
                 no_new_plots=no_new_plots,
@@ -98,6 +98,7 @@ class Plotting:
                 filter=config.plotting["filter"],
                 show_html=config.plotting["show_html"],
                 config_path=self.config_path,
+                use_multiprocessing=False,
             )
         except Exception as error:
             logger.error(f"Could not create cruise plot: {error}")

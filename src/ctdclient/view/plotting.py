@@ -140,7 +140,11 @@ class PlottingFrame(ViewMixin, CtkFrame):
             title="Open a file for plotting",
             initialdir=config.output_directory,
             initialfile=config.last_filename,
-            filetypes=[("cnv files", "*.cnv")],
+            filetypes=[
+                ("cnv files", "*.cnv"),
+                ("hex files", "*.hex"),
+                ("All", "*"),
+            ],
         )
         if file:
             # warn before plotting large files

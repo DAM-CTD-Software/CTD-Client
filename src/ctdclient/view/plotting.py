@@ -55,6 +55,8 @@ class PlottingFrame(ViewMixin, CtkFrame):
             widget.destroy()
         row_index = 0
         for key, value in config.plotting.items():
+            if key == "embed_contents":
+                continue
             self.create_key_value_field(
                 self.option_frame, key, value, row=row_index
             )
@@ -99,8 +101,11 @@ class PlottingFrame(ViewMixin, CtkFrame):
             )
             file_picker.grid(row=0, column=1, padx=5, pady=5)
 
-        entry.bind("<FocusOut>", update_value)
-        entry.bind("<Leave>", update_value)
+        if type(value) is bool:
+            entry.configure(command=update_value)
+        else:
+            entry.bind("<FocusOut>", update_value)
+            entry.bind("<Leave>", update_value)
 
     def create_picker_element(
         self,

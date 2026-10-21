@@ -78,10 +78,6 @@ def test_cnv_processing_successful(simple_processing: ProcessingProcedure):
         )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="CTDAM 2.14 needs upstream CNV export fixes for binned data",
-)
 def test_full_processing(processing: ProcessingProcedure, tmp_path: Path):
     processing.configuration = {
         "modules": {"alignctd": {}, "binavg": {}},

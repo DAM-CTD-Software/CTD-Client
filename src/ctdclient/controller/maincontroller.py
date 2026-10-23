@@ -5,18 +5,21 @@ import customtkinter as ctk
 from ctdclient.controller.bottlecontroller import BottleController
 from ctdclient.controller.configcontroller import ConfigurationController
 from ctdclient.controller.dshipcontroller import DshipController
+from ctdclient.controller.nrtcontroller import NRTController
 from ctdclient.controller.plottingcontroller import PlottingController
 from ctdclient.controller.processingcontroller import ProcessingController
 from ctdclient.controller.runcontroller import RunController
 from ctdclient.definitions import config
 from ctdclient.model import BottleClosingDepths
 from ctdclient.model.dshipcaller import DshipCaller
+from ctdclient.model.near_real_time_publication import NRTList
 from ctdclient.model.plotting import Plotting
 from ctdclient.model.processing import ProcessingList
 from ctdclient.view.configuration import AboutView, ConfigurationView
 from ctdclient.view.ctkframe import CtkFrame
 from ctdclient.view.mainwindow import MainWindow
 from ctdclient.view.measurement import MeasurementView
+from ctdclient.view.nrtcontrol import NRTControlFrame
 from ctdclient.view.plotting import PlottingFrame
 from ctdclient.view.processing import ProcessingView
 
@@ -28,6 +31,7 @@ class MainController:
         self.measurement = MeasurementView(root_window)
         self.config_view = ConfigurationView(root_window)
         self.processing_view = ProcessingView(root_window)
+        self.nrt_control_view = NRTControlFrame(root_window)
         self.plotting_view = PlottingFrame(root_window)
         self.about_view = AboutView(root_window)
 
@@ -41,6 +45,11 @@ class MainController:
             config,
             self.processing,
             self.processing_view,
+        )
+        # nrt
+        self.nrt = NRTList()
+        self.nrt_controller = NRTController(
+            config, self.nrt, self.nrt_control_view
         )
         # config
         self.config_controller = ConfigurationController(
@@ -91,6 +100,7 @@ class MainController:
         tab_dict = {
             "measurement": self.measurement,
             "processing": self.processing_view,
+            "nrt publication": self.nrt_control_view,
             "plotting": self.plotting_view,
             "settings": self.config_view,
             "help": self.about_view,
@@ -100,3 +110,4 @@ class MainController:
     def kill_threads(self):
         config.write()
         self.dship_controller.kill_threads()
+        self.nrt.kill_processes()

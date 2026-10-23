@@ -6,7 +6,7 @@ description = "A program designed to facilitate the measurement and processing o
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "ctdam[all]>=1.1.2",
+    "ctdam[all]>=1.1.2, <2",
     "requests>=2.31.0",
     "ctkmessagebox>=2.5",
     "psutil>=5.9.8",

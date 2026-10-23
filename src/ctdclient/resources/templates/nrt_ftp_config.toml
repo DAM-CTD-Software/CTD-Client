@@ -1,0 +1,12 @@
+method = "ftp"
+recipient_address = ""
+target_file_directory = ""
+target_file_suffix = ""
+frequency_of_action = ""
+geo_filter = ""
+
+[ftp_info]
+port = 
+user_name = ""
+password = ""
+remote_directory = ""

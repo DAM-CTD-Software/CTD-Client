@@ -216,6 +216,8 @@ class NearRealTimeTarget:
         email_info: dict = {},
         file_path: Path | str = "",
         active: bool = False,
+        method: str = "",
+        ftp_info: dict | None = None,
         **kwargs,
     ):
         self.address = recipient_address
@@ -223,6 +225,8 @@ class NearRealTimeTarget:
         self.suffix = target_file_suffix
         self.geo_filter = geo_filter
         self.email_info = email_info
+        self.method = method
+        self.ftp_info = ftp_info
         self.file_path = Path(file_path)
         self.name = self.file_path.stem[4:]
         self.files_already_sent = []
@@ -257,27 +261,31 @@ class NearRealTimeTarget:
         """Recursively create remote_dir, like mkdir -p."""
         if remote_dir == Path("."):
             return
-        for path in reversed(
-            list(remote_dir.absolute().parents)[:-1] + [remote_dir.absolute()]
-        ):
+        for path in reversed([remote_dir, *remote_dir.parents]):
+            if path.as_posix() in (".", "/"):
+                continue
             try:
-                ftp.mkd(str(path))
-            except error_perm as e:
-                # 550/553 = directory already exists
-                if not str(e).startswith(("550", "553")):
-                    raise
+                ftp.mkd(path.as_posix())
+            except error_perm:
+                current_dir = ftp.pwd()
+                ftp.cwd(path.as_posix())
+                ftp.cwd(current_dir)
 
-    def perform_ftp_transmission(
-        self,
-        target_files: list[Path],
-        to_address: str = "",
-        user_name: str = "",
-        passwd: str = "",
-        path: str = "",
-    ):
-        ftp = FTP(to_address, user_name, passwd)
-        self._ftp_mkdir_p(ftp, Path(path))
-        ftp.cwd(path)
+    def perform_ftp_transmission(self, target_files: list[Path]):
+        """Upload files using the FTP settings loaded from ftp config TOML"""
+        if not target_files:
+            return
+
+        with FTP() as ftp:
+            ftp.connect(str(self.address), self.ftp_info["port"])
+            ftp.login(self.ftp_info["user_name"], self.ftp_info["password"])
+            remote_dir = Path(self.ftp_info["remote_directory"])
+            self._ftp_mkdir_p(ftp, remote_dir)
+            ftp.cwd(remote_dir.as_posix())
+            for file in target_files:
+                with file.open("rb") as data:
+                    ftp.storbinary(f"STOR {file.name}", data)
+                logger.info(f"Uploaded {file.name} to {self.address}")
 
     def create_email_message(
         self,

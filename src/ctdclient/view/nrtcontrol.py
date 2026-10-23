@@ -17,7 +17,7 @@ class NRTControlFrame(ViewMixin, CtkFrame):
     def reload(self):
         self.callbacks["update_nrts"]()
 
-    def instantiate(self, nrt_list: list):
+    def instantiate(self, nrt_list: list, ftp_active: bool = False):
         # clean slate before refilling the frame
         for frame in self.winfo_children():
             try:
@@ -25,14 +25,14 @@ class NRTControlFrame(ViewMixin, CtkFrame):
             except AttributeError:
                 pass
             frame.destroy()
-        row = 0
+        row = 1
         if len(nrt_list) == 0:
             header = ctk.CTkLabel(
                 self,
                 text="No NRT publications configured.",
                 font=(tkFont.nametofont("TkDefaultFont"), 20),
             )
-            header.grid()
+            header.grid(row=row, column=0)
             row += 1
         new_nrt_pub = ctk.CTkButton(
             self,
@@ -44,6 +44,13 @@ class NRTControlFrame(ViewMixin, CtkFrame):
         )
         for index, nrt in enumerate(nrt_list, start=row + 1):
             self.create_nrt_overview(nrt, index)
+
+        self.ftp_button = ctk.CTkButton(
+            self,
+            text="Disable FTP" if ftp_active else "Enable FTP",
+            command=self.callbacks["toggle_ftp"],
+        )
+        self.ftp_button.grid(row=0, column=0, sticky="w")
 
     def open_template(self):
         template = self.callbacks["get_template"]()

@@ -1,5 +1,5 @@
 from ctdclient.controller.Controller import Controller
-from ctdclient.definitions import CONFIG_PATH, config
+from ctdclient.definitions import CONFIG_PATH, TEMPLATE_PATH, config
 from ctdclient.model.near_real_time_publication import (
     NearRealTimeTarget,
     NRTList,
@@ -16,12 +16,16 @@ class NRTController(Controller):
         super().__init__(*args, **kwargs)
         self.model: NRTList
         self.view: NRTControlFrame
+        self.ftp = self.model.create_nrt_instance(
+            TEMPLATE_PATH / "nrt_ftp_config.toml"
+        )
         self.view.add_callback("get_template", self.fetch_template)
         self.view.add_callback("new_nrt", self.add_new_nrt_pub)
         self.view.add_callback("update_nrts", self.update)
         self.view.add_callback("toggle_activity", self.toggle_activity)
         self.view.add_callback("send_email", self.send_email)
         self.view.add_callback("delete_nrt", self.delete)
+        self.view.add_callback("toggle_ftp", self.toggle_ftp)
         self.remove_unused_keys()
         self.update()
 
@@ -34,7 +38,13 @@ class NRTController(Controller):
 
     def update(self):
         self.model.update_nrt_data()
-        self.view.instantiate(self.model.data)
+        self.view.instantiate(self.model.data, ftp_active=self.ftp.active)
+
+    def toggle_ftp(self):
+        self.ftp.toggle_activity()
+        self.view.ftp_button.configure(
+            text="Disable FTP" if self.ftp.active else "Enable FTP"
+        )
 
     def fetch_template(self):
         return self.model.get_template()
@@ -59,4 +69,4 @@ class NRTController(Controller):
 
     def delete(self, nrt: NearRealTimeTarget):
         self.model.delete_nrt(nrt)
-        self.view.instantiate(self.model.data)
+        self.view.instantiate(self.model.data, ftp_active=self.ftp.active)

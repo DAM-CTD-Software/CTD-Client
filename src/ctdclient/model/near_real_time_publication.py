@@ -676,7 +676,9 @@ class DailyPublication(NearRealTimeTarget):
         list_to_process = [
             f for f in self.get_target_files() if self.time_filter(f)
         ]
-        if self._is_email():
+        if self.method == "ftp":
+            self.perform_ftp_transmission(list_to_process)
+        elif self._is_email():
             self.run_email_logic(list_to_process)
         else:
             for file in list_to_process:

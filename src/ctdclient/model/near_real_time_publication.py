@@ -15,6 +15,7 @@ from abc import abstractmethod
 from collections import UserList
 from datetime import date, datetime, timedelta, timezone
 from email.message import EmailMessage
+from ftplib import FTP, error_perm
 from pathlib import Path
 from typing import Callable
 
@@ -251,6 +252,32 @@ class NearRealTimeTarget:
     @abstractmethod
     def run(self):
         """Will move the recent files to the target location."""
+
+    def _ftp_mkdir_p(self, ftp, remote_dir: Path) -> None:
+        """Recursively create remote_dir, like mkdir -p."""
+        if remote_dir == Path("."):
+            return
+        for path in reversed(
+            list(remote_dir.absolute().parents)[:-1] + [remote_dir.absolute()]
+        ):
+            try:
+                ftp.mkd(str(path))
+            except error_perm as e:
+                # 550/553 = directory already exists
+                if not str(e).startswith(("550", "553")):
+                    raise
+
+    def perform_ftp_transmission(
+        self,
+        target_files: list[Path],
+        to_address: str = "",
+        user_name: str = "",
+        passwd: str = "",
+        path: str = "",
+    ):
+        ftp = FTP(to_address, user_name, passwd)
+        self._ftp_mkdir_p(ftp, Path(path))
+        ftp.cwd(path)
 
     def create_email_message(
         self,

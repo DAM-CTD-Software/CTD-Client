@@ -14,8 +14,8 @@ copyright_year = "2024-2026"
 copyright_text = f"Copyright {copyright_year} {author_name}"
 company_name = "German Alliance for Marine Research (DAM); Leibniz Institute for Baltic Sea Research Warnemuende (IOW)"
 
-# Split version into parts (e.g., "1.2.3" -> "1, 2, 3, 0")
-version_parts = version.split(".")
+# Windows needs numbers here; the text fields keep the beta label.
+version_parts = version.split("b", 1)[0].split(".")
 while len(version_parts) < 4:
     version_parts.append("0")
 version_tuple = f"({', '.join(version_parts)})"

@@ -277,7 +277,9 @@ class NearRealTimeTarget:
             try:
                 with FTP(timeout=30) as ftp:
                     ftp.connect(str(self.address), self.ftp_info["port"])
-                    ftp.login(self.ftp_info["user_name"], self.ftp_info["password"])
+                    ftp.login(
+                        self.ftp_info["user_name"], self.ftp_info["password"]
+                    )
                     remote_dir = Path(self.ftp_info["remote_directory"])
                     self._ftp_mkdir_p(ftp, remote_dir)
                     ftp.cwd(remote_dir.as_posix())
@@ -285,7 +287,8 @@ class NearRealTimeTarget:
                         name.rsplit("/", 1)[-1] for name in ftp.nlst()
                     }
                     missing_files = [
-                        file for file in target_files
+                        file
+                        for file in target_files
                         if file.name not in remote_names or file == retry_file
                     ]
                     for file in missing_files:
@@ -296,11 +299,15 @@ class NearRealTimeTarget:
                         logger.info(f"Uploaded {file.name} to {self.address}")
                 return
             except Exception as error:
-                logger.warning(f"FTP sync attempt {attempt + 1} failed: {error}")
+                logger.warning(
+                    f"FTP sync attempt {attempt + 1} failed: {error}"
+                )
                 if attempt == 0:
                     time.sleep(5)
-                    
-        logger.error("FTP sync failed after two attempts; waiting for the next run.")
+
+        logger.error(
+            "FTP sync failed after two attempts; waiting for the next run."
+        )
 
     def create_email_message(
         self,

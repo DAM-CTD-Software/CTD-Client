@@ -46,7 +46,8 @@ class NRTConfigurator(ViewMixin, TomlEditor):
 
     def load_config_specific_data(self, row=0):
         section = (
-            "ftp_info" if self.config_data.get("method") == "ftp"
+            "ftp_info"
+            if self.config_data.get("method") == "ftp"
             else "email_info"
         )
         frame = ctk.CTkFrame(self.content_frame, fg_color="gray16")
@@ -58,7 +59,8 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         header = ctk.CTkLabel(
             frame,
             text=(
-                "FTP configuration" if section == "ftp_info"
+                "FTP configuration"
+                if section == "ftp_info"
                 else "Email configuration"
             ),
             font=("Arial", 14, "bold"),

@@ -127,7 +127,8 @@ class NRTControlFrame(ViewMixin, CtkFrame):
         editor = NRTConfigurator(
             config_window,
             title=(
-                "FTP NRT Configuration" if nrt.method == "ftp"
+                "FTP NRT Configuration"
+                if nrt.method == "ftp"
                 else "NRT Configuration"
             ),
             config_file=nrt.file_path,
@@ -143,7 +144,8 @@ class NRTControlFrame(ViewMixin, CtkFrame):
         config_window.bind(
             "<Destroy>",
             lambda event: self.callbacks["update_nrts"]()
-            if event.widget is config_window else None,
+            if event.widget is config_window
+            else None,
         )
 
         config_window.title(f"NRT configuration of {nrt.file_path}")

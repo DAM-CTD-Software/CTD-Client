@@ -1,10 +1,15 @@
+import logging
+import threading
+
 from ctdclient.controller.Controller import Controller
-from ctdclient.definitions import CONFIG_PATH, config
+from ctdclient.definitions import CONFIG_PATH, TEMPLATE_PATH, config
 from ctdclient.model.near_real_time_publication import (
     NearRealTimeTarget,
     NRTList,
 )
 from ctdclient.view.nrtcontrol import NRTControlFrame
+
+logger = logging.getLogger(__name__)
 
 
 class NRTController(Controller):
@@ -17,10 +22,12 @@ class NRTController(Controller):
         self.model: NRTList
         self.view: NRTControlFrame
         self.view.add_callback("get_template", self.fetch_template)
+        self.view.add_callback("get_ftp_template", self.fetch_ftp_template)
         self.view.add_callback("new_nrt", self.add_new_nrt_pub)
         self.view.add_callback("update_nrts", self.update)
         self.view.add_callback("toggle_activity", self.toggle_activity)
         self.view.add_callback("send_email", self.send_email)
+        self.view.add_callback("send_ftp", self.send_ftp)
         self.view.add_callback("delete_nrt", self.delete)
         self.remove_unused_keys()
         self.update()
@@ -39,6 +46,9 @@ class NRTController(Controller):
     def fetch_template(self):
         return self.model.get_template()
 
+    def fetch_ftp_template(self):
+        return self.model.get_template(TEMPLATE_PATH / "nrt_ftp_config.toml")
+
     def add_new_nrt_pub(self):
         return self.model.get_template()
 
@@ -56,6 +66,15 @@ class NRTController(Controller):
     def send_email(self, nrt: NearRealTimeTarget):
         files_to_attach = nrt.get_target_files()
         nrt.run_email_logic(files_to_attach=files_to_attach, run_manually=True)
+
+    def send_ftp(self, nrt: NearRealTimeTarget):
+        def upload():
+            try:
+                nrt.perform_ftp_transmission(nrt.get_target_files())
+            except Exception as error:
+                logger.error(f"FTP sync failed: {error}")
+
+        threading.Thread(target=upload, daemon=True).start()
 
     def delete(self, nrt: NearRealTimeTarget):
         self.model.delete_nrt(nrt)

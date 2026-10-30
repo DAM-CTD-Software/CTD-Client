@@ -45,6 +45,11 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         self.configure(fg_color="gray16")
 
     def load_config_specific_data(self, row=0):
+        section = (
+            "ftp_info"
+            if self.config_data.get("method") == "ftp"
+            else "email_info"
+        )
         frame = ctk.CTkFrame(self.content_frame, fg_color="gray16")
         frame.grid(row=row, column=0, sticky="ew", padx=5, pady=5)
         frame.grid_columnconfigure(0, weight=1)
@@ -53,19 +58,20 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         )
         header = ctk.CTkLabel(
             frame,
-            text="Email configuration",
+            text=(
+                "FTP configuration"
+                if section == "ftp_info"
+                else "Email configuration"
+            ),
             font=("Arial", 14, "bold"),
         )
         header.grid(row=1, column=0, columnspan=2, sticky="w", padx=5, pady=5)
-        if "email_info" in self.config_data:
-            for key, value in self.config_data["email_info"].items():
-                self.create_email_info_param(frame, key, value, row)
-                row += 1
+        for index, (key, value) in enumerate(
+            self.config_data.get(section, {}).items(), start=2
+        ):
+            self.create_info_param(frame, section, key, value, index)
 
-    def create_email_info_param(self, frame, key, value, row):
-        if not row:
-            row = len(frame.winfo_children())
-
+    def create_info_param(self, frame, section, key, value, row):
         frame = ctk.CTkFrame(frame, fg_color="transparent")
         frame.grid(row=row, column=0, sticky="ew", padx=5, pady=5)
         frame.grid_columnconfigure(0, weight=1)
@@ -73,11 +79,11 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         key_label = ctk.CTkLabel(frame, text=key.replace("_", " "), anchor="w")
         key_label.grid(row=0, column=0, sticky="w", padx=2, pady=2)
 
-        if key == "body":
+        if section == "email_info" and key == "body":
             value_entry = ctk.CTkTextbox(frame, height=200, width=300)
             value_entry.insert(1.0, value)
             args = {"index1": "1.0", "index2": "end"}
-        elif key == "open_draft":
+        elif section == "email_info" and key == "open_draft":
             switch_var = ctk.StringVar(value=value)
             value_entry = ctk.CTkSwitch(
                 frame,
@@ -89,18 +95,22 @@ class NRTConfigurator(ViewMixin, TomlEditor):
         else:
             value_entry = ctk.CTkEntry(frame, width=300)
             value_entry.insert(0, value)
+            if section == "ftp_info" and key == "password":
+                value_entry.configure(show="*")
             args = {}
-        value_entry.grid(row=0, column=1)  # , padx=5, pady=5)
+        value_entry.grid(row=0, column=1)
 
-        def update_param(event):
+        def update_param(event=None):
             if key == "open_draft":
-                self.config_data["email_info"][key] = switch_var.get()
+                self.config_data[section][key] = switch_var.get()
             else:
-                self.config_data["email_info"][key] = value_entry.get(**args)
+                self.config_data[section][key] = value_entry.get(**args)
 
         key_label.bind("<Leave>", update_param)
         value_entry.bind("<Leave>", update_param)
-        frame.grid(row=row + 1, column=0, columnspan=3, sticky="ew")
+        value_entry.bind("<FocusOut>", update_param)
+        if key == "open_draft":
+            value_entry.configure(command=update_param)
 
     def check_input(self) -> bool:
         # check frequency_of_action
@@ -115,6 +125,18 @@ class NRTConfigurator(ViewMixin, TomlEditor):
                     }. Expected either each_processing or "HH:MM:SS"'
                 )
                 return False
+        if self.config_data.get("method") == "ftp":
+            try:
+                port = int(self.config_data["ftp_info"]["port"])
+                if not 1 <= port <= 65535:
+                    raise ValueError
+            except (KeyError, TypeError, ValueError):
+                self.bad_input_warning(
+                    "FTP port must be a number from 1 to 65535."
+                )
+                return False
+            self.config_data["ftp_info"]["port"] = port
+            return True
         # check open_draft
         input = self.config_data["email_info"]["open_draft"]
         if input.lower() not in ["true", "false", ""]:

@@ -17,7 +17,7 @@ class NRTControlFrame(ViewMixin, CtkFrame):
     def reload(self):
         self.callbacks["update_nrts"]()
 
-    def instantiate(self, nrt_list: list, ftp_active: bool = False):
+    def instantiate(self, nrt_list: list):
         # clean slate before refilling the frame
         for frame in self.winfo_children():
             try:
@@ -36,24 +36,26 @@ class NRTControlFrame(ViewMixin, CtkFrame):
             row += 1
         new_nrt_pub = ctk.CTkButton(
             self,
-            text="Create new NRT publication",
+            text="Create new E-mail NRT publication",
             command=self.open_template,
         )
         new_nrt_pub.grid(
             row=row, column=0, sticky="ew", padx=self.padx, pady=self.pady
         )
-        for index, nrt in enumerate(nrt_list, start=row + 1):
+        new_ftp_pub = ctk.CTkButton(
+            self,
+            text="Create FTP NRT publication",
+            command=lambda: self.open_template(ftp=True),
+        )
+        new_ftp_pub.grid(
+            row=row + 1, column=0, sticky="ew", padx=self.padx, pady=self.pady
+        )
+        for index, nrt in enumerate(nrt_list, start=row + 2):
             self.create_nrt_overview(nrt, index)
 
-        self.ftp_button = ctk.CTkButton(
-            self,
-            text="Disable FTP" if ftp_active else "Enable FTP",
-            command=self.callbacks["toggle_ftp"],
-        )
-        self.ftp_button.grid(row=0, column=0, sticky="w")
-
-    def open_template(self):
-        template = self.callbacks["get_template"]()
+    def open_template(self, ftp: bool = False):
+        callback = "get_ftp_template" if ftp else "get_template"
+        template = self.callbacks[callback]()
         if template:
             self.open_config(template)
 
@@ -88,12 +90,14 @@ class NRTControlFrame(ViewMixin, CtkFrame):
         )
         toggle_status.grid(row=0, column=3, padx=self.padx, pady=self.pady)
 
-        send_mail = ctk.CTkButton(
+        send_files = ctk.CTkButton(
             frame,
-            text="Send mail",
-            command=lambda: self.callbacks["send_email"](nrt),
+            text="Send files" if nrt.method == "ftp" else "Send mail",
+            command=lambda: self.callbacks[
+                "send_ftp" if nrt.method == "ftp" else "send_email"
+            ](nrt),
         )
-        send_mail.grid(row=0, column=4, padx=self.padx, pady=self.pady)
+        send_files.grid(row=0, column=4, padx=self.padx, pady=self.pady)
         delete = ctk.CTkButton(
             frame,
             text="Delete",
@@ -122,6 +126,10 @@ class NRTControlFrame(ViewMixin, CtkFrame):
 
         editor = NRTConfigurator(
             config_window,
+            title=(
+                "FTP NRT Configuration" if nrt.method == "ftp"
+                else "NRT Configuration"
+            ),
             config_file=nrt.file_path,
             title_size=35,
         )
@@ -132,9 +140,10 @@ class NRTControlFrame(ViewMixin, CtkFrame):
             padx=self.padx,
             pady=self.pady,
         )
-        editor.bind(
+        config_window.bind(
             "<Destroy>",
-            command=lambda e: self.callbacks["update_nrts"](),
+            lambda event: self.callbacks["update_nrts"]()
+            if event.widget is config_window else None,
         )
 
         config_window.title(f"NRT configuration of {nrt.file_path}")

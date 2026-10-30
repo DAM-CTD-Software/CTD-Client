@@ -143,9 +143,11 @@ class NRTControlFrame(ViewMixin, CtkFrame):
         )
         config_window.bind(
             "<Destroy>",
-            lambda event: self.callbacks["update_nrts"]()
-            if event.widget is config_window
-            else None,
+            lambda event: (
+                self.callbacks["update_nrts"]()
+                if event.widget is config_window
+                else None
+            ),
         )
 
         config_window.title(f"NRT configuration of {nrt.file_path}")

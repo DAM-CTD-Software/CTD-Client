@@ -268,7 +268,6 @@ class NearRealTimeTarget:
                 ftp.cwd(current_dir)
 
     def perform_ftp_transmission(self, target_files: list[Path]):
-<<<<<<< HEAD
         """Upload missing files, retrying the sync once after any error."""
         if not target_files:
             return
@@ -309,22 +308,6 @@ class NearRealTimeTarget:
         logger.error(
             "FTP sync failed after two attempts; waiting for the next run."
         )
-=======
-        """Upload files using the FTP settings loaded from ftp config TOML"""
-        if not target_files:
-            return
-
-        with FTP() as ftp:
-            ftp.connect(str(self.address), self.ftp_info["port"])
-            ftp.login(self.ftp_info["user_name"], self.ftp_info["password"])
-            remote_dir = Path(self.ftp_info["remote_directory"])
-            self._ftp_mkdir_p(ftp, remote_dir)
-            ftp.cwd(remote_dir.as_posix())
-            for file in target_files:
-                with file.open("rb") as data:
-                    ftp.storbinary(f"STOR {file.name}", data)
-                logger.info(f"Uploaded {file.name} to {self.address}")
->>>>>>> 3e8f32e (feat(nrt): added FTP TOML loading and ftp method to later split between the two)
 
     def create_email_message(
         self,

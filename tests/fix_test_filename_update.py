@@ -1,10 +1,11 @@
-from pathlib import Path
 import json
+from pathlib import Path
+
 import pytest
-from ctdclient.model.dshipcaller import get_ctd_last_event
-from ctdclient.model.dshipcaller import get_station_id
-from ctdclient.model.fileupdater import UpdateFiles
 from seabirdfilehandler.seabirdfiles import SeaBirdFile
+
+from ctdclient.model.dshipcaller import get_ctd_last_event, get_station_id
+from ctdclient.model.fileupdater import UpdateFiles
 
 station_event_info = "MSM129/1_6-1"
 test_file = "MSM129_1_000-00_CTD_0022.hex"

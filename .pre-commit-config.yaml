@@ -1,11 +1,25 @@
 fail_fast: true
 
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.14
+  - repo: local
     hooks:
       - id: ruff-check
+        name: Ruff lint
+        entry: uv run --no-sync ruff check
+        language: system
+        types_or: [python, pyi, jupyter]
+        require_serial: true
         args: [--fix]
-      - id: ruff-check
+      - id: ruff-imports
+        name: Ruff import sorting
+        entry: uv run --no-sync ruff check
+        language: system
+        types_or: [python, pyi, jupyter]
+        require_serial: true
         args: [--select, I, --fix]
       - id: ruff-format
+        name: Ruff formatting
+        entry: uv run --no-sync ruff format
+        language: system
+        types_or: [python, pyi, jupyter]
+        require_serial: true

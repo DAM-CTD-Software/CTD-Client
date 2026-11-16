@@ -111,4 +111,3 @@ class MainController:
         config.write()
         self.dship_controller.kill_threads()
         self.nrt.kill_processes()
-        self.nrt_controller.ftp.stop()

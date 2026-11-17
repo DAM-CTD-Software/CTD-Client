@@ -80,9 +80,9 @@ class LoggingConfig:
                         icon="cancel",
                         message=record.getMessage(),
                         option_1="Ok",
-                        option_2="Send as email",
+                        option_2="Send error report as email",
                     )
-                    if answer.get() == "Send as email":
+                    if answer.get() == "Send error report as email":
                         self.send_email(record)
         except queue.Empty:
             pass

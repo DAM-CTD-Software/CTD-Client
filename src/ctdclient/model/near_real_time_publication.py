@@ -783,7 +783,8 @@ class EachProcessingPublication(NearRealTimeTarget):
         super().__init__(*args, **kwargs)
         if self.active:
             event_manager.subscribe("processing_successful", self.run)
-        self.address = Path(self.address)
+        if self.method != "ftp":
+            self.address = Path(self.address)
 
     def toggle_activity(self):
         """Sets activity on or off."""
@@ -803,7 +804,9 @@ class EachProcessingPublication(NearRealTimeTarget):
             The file path to retrieve target files from
         """
         target_files = self.get_target_files(target)
-        if self._is_email():
+        if self.method == "ftp":
+            self.perform_ftp_transmission(target_files)
+        elif self._is_email():
             self.run_email_logic(target_files)
         else:
             self.copy_files(target)

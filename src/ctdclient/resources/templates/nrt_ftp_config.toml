@@ -1,0 +1,12 @@
+method = "ftp"
+recipient_address = ""
+target_file_directory = ""
+target_file_suffix = "_1m.cnv"
+frequency_of_action = "23:59:30"
+geo_filter = ""
+
+[ftp_info]
+port = 21
+user_name = ""
+password = ""
+remote_directory = ""

@@ -1,12 +1,12 @@
 [project]
 name = "CTD-Client"
 authors = [{ name = "Emil Michels", email = "emil.michels@iow.de" }]
-version = "1.17.2"
+version = "1.17.3"
 description = "A program designed to facilitate the measurement and processing of Sea-Bird SBE9/11 CTD data. The program enhances datasets with ship metadata and ensures standardized, consistent data collection."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "ctdam[all]>=1.1.2",
+    "ctdam[all]>=1.1.2, <2",
     "requests>=2.31.0",
     "ctkmessagebox>=2.5",
     "psutil>=5.9.8",

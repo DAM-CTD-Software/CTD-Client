@@ -1,3 +1,3 @@
-__version__ = "1.17.2"
+__version__ = "1.17.3"
 # beautified imports for use in external modules
 # from .configurationhandler import ConfigurationFile

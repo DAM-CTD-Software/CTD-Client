@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QTabWidget
 
 from ctdclient import __version__
 from ctdclient.view_qt.measurements import Measurements
+from ctdclient.view_qt.processing import Processing
 
 
 class MainWindow(QTabWidget):
@@ -22,6 +23,8 @@ class MainWindow(QTabWidget):
 
         self.measurements_window = Measurements()
         self.addTab(self.measurements_window, "Measurement")
+        self.processing_window = Processing()
+        self.addTab(self.processing_window, "Processing")
         self.resize(self.BASE_SIZE)
 
     def resizeEvent(self, event):

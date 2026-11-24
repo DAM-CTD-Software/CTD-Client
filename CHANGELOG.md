@@ -2,6 +2,31 @@
 
 <!-- version list -->
 
+## v1.18.0 (2026-11-24)
+
+### Bug Fixes
+
+- Update logger message to avoid confusion between email error report and email nrt
+  ([`5631558`](https://github.com/DAM-CTD-Software/CTD-Client/commit/5631558c78225d503dad099fea93dfa04aa8d7d4))
+
+### Features
+
+- **nrt**: Add configurable FTP publications with manual uploads and retries
+  ([`97d4cd6`](https://github.com/DAM-CTD-Software/CTD-Client/commit/97d4cd6051b8e7d479cd32212b10562cb1e4da3d))
+
+- **nrt**: Add each_proccessing to the FTP nrt logic
+  ([`98209d1`](https://github.com/DAM-CTD-Software/CTD-Client/commit/98209d113427b4894132eb0f08adce2dd365a0f9))
+
+- **nrt**: Add ftp time handling and toggle button in gui and controller
+  ([`841d371`](https://github.com/DAM-CTD-Software/CTD-Client/commit/841d371ac61dcc45ebb1eb05d081ade91c6d79cb))
+
+- **nrt**: Added FTP TOML loading and ftp method to later split between the two
+  ([`589ae49`](https://github.com/DAM-CTD-Software/CTD-Client/commit/589ae49282c7c56f98d684b0eec03ab83fe253cf))
+
+- **nrt**: Recursive directory creation for ftp
+  ([`4b32012`](https://github.com/DAM-CTD-Software/CTD-Client/commit/4b32012defca56b3c2878af98af2725feb65f767))
+
+
 ## v1.17.2 (2026-08-03)
 
 ### Bug Fixes

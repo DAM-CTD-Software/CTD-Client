@@ -28,8 +28,10 @@ class Measurements(QWidget):
         left = QVBoxLayout()
         content.addLayout(left, 3)
 
+        self.alerts = Alerts(self)
         self.dship = Dship(self)
         self.bottle_depths = BottleDepths(bottle_count)
+        left.addWidget(self.alerts)
         left.addWidget(self.dship)
         content.addWidget(self.bottle_depths, 2)
 
@@ -86,8 +88,8 @@ class Measurements(QWidget):
 
 
 class Alerts(QGroupBox):
-    def __init__(self):
-        super().__init__("Alerts")
+    def __init__(self, parent=None):
+        super().__init__("Alerts", parent)
         layout = QVBoxLayout(self)
         self.alerts_label = QLabel("No alerts")
         layout.addWidget(self.alerts_label)

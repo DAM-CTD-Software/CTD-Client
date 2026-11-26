@@ -62,8 +62,14 @@ class Measurements(QWidget):
         layout.addLayout(stopwatch)
 
         self.autostart = QCheckBox("Autostart")
-        self.autostart.setChecked(True)
+        self.autostart.setChecked(False)
+        self.autostart.setToolTip(
+            "Automatically start real-time data acquisition in Seasave when you click Start Seasave."
+        )
         self.autoproccess = QCheckBox("Auto Proccess")
+        self.autoproccess.setToolTip(
+            "Automatically process the data after each measurement."
+        )
         options = QHBoxLayout()
         options.addWidget(self.autostart)
         options.addWidget(

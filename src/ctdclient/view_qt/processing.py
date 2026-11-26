@@ -17,8 +17,10 @@ class Processing(QWidget):
 
         layout = QVBoxLayout(self)
 
+        load_workflow_btn = QPushButton(self)
+        load_workflow_btn.setText("Load an existing Workflow")
         new_workflow_btn = QPushButton(self)
-        new_workflow_btn.setText("create new workflow")
+        new_workflow_btn.setText("Create a new Workflow")
         new_workflow_btn.clicked.connect(lambda: new_workflow())
         scrollable_area = QScrollArea()
         scrollable_area.setWidgetResizable(True)
@@ -27,6 +29,7 @@ class Processing(QWidget):
         entries.setAlignment(Qt.AlignmentFlag.AlignTop)
         scrollable_area.setWidget(container)
 
+        layout.addWidget(load_workflow_btn)
         layout.addWidget(new_workflow_btn)
         layout.addWidget(scrollable_area)
 

@@ -28,8 +28,10 @@ class Measurements(QWidget):
         left = QVBoxLayout()
         content.addLayout(left, 3)
 
+        self.alerts = Alerts(self)
         self.dship = Dship(self)
         self.bottle_depths = BottleDepths(bottle_count)
+        left.addWidget(self.alerts)
         left.addWidget(self.dship)
         content.addWidget(self.bottle_depths, 2)
 
@@ -45,19 +47,11 @@ class Measurements(QWidget):
         controls.addWidget(QLabel("Last file name"), 1, 0)
         controls.addWidget(self.last_filename, 1, 1)
 
-        self.cast_number = QSpinBox()
-        self.cast_number.setRange(1, 999999)
-        controls.addWidget(QLabel("Cast number"), 2, 0)
-        controls.addWidget(self.cast_number, 2, 1)
-
         self.operator = QComboBox()
         self.operator.setEditable(True)
-        controls.addWidget(QLabel("Operator"), 3, 0)
-        controls.addWidget(self.operator, 3, 1)
+        controls.addWidget(QLabel("Operator"), 2, 0)
+        controls.addWidget(self.operator, 2, 1)
 
-        self.station_override = QLineEdit()
-        controls.addWidget(QLabel("Override position alias"), 4, 0)
-        controls.addWidget(self.station_override, 4, 1)
         controls.setColumnStretch(1, 1)
 
         self.stopwatch = Stopwatch(self)
@@ -68,10 +62,19 @@ class Measurements(QWidget):
         layout.addLayout(stopwatch)
 
         self.autostart = QCheckBox("Autostart")
-        self.autostart.setChecked(True)
+        self.autostart.setChecked(False)
+        self.autostart.setToolTip(
+            "Automatically start real-time data acquisition in Seasave when you click Start Seasave."
+        )
+        self.autoproccess = QCheckBox("Auto Proccess")
+        self.autoproccess.setToolTip(
+            "Automatically process the data after each measurement."
+        )
         options = QHBoxLayout()
         options.addWidget(self.autostart)
-        options.addStretch()
+        options.addWidget(
+            self.autoproccess, alignment=Qt.AlignmentFlag.AlignRight
+        )
         layout.addLayout(options)
 
         self.measurement_button = QPushButton("Start Seasave")
@@ -86,8 +89,8 @@ class Measurements(QWidget):
 
 
 class Alerts(QGroupBox):
-    def __init__(self):
-        super().__init__("Alerts")
+    def __init__(self, parent=None):
+        super().__init__("Alerts", parent)
         layout = QVBoxLayout(self)
         self.alerts_label = QLabel("No alerts")
         layout.addWidget(self.alerts_label)
